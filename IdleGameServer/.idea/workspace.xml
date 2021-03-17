@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="a9753df3-6933-4a31-959e-8cf3c72864d0" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1pmBomrGo1dM3DB94yQcJSrkP2d" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+    <property name="show.unlinked.gradle.project.popup" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Git\IdleGameServer\IdleGameServer\src\main\java\com\onlyonegames\eternalfantasia\config" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="EternalfantasiaApplication" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.onlyonegames.eternalfantasia.EternalfantasiaApplication" />
+      <module name="eternalfantasia.main" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.onlyonegames.eternalfantasia.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.EternalfantasiaApplication" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="a9753df3-6933-4a31-959e-8cf3c72864d0" name="Default Changelist" comment="" />
+      <created>1615778564883</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1615778564883</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1407" y="261" key="#com.intellij.ide.util.ExportDialog" timestamp="1615786722808">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1407" y="261" key="#com.intellij.ide.util.ExportDialog/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615786722808" />
+    <state width="438" height="466" key="DebuggerActiveHint" timestamp="1615866604285">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="438" height="466" key="DebuggerActiveHint/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615866604285" />
+    <state width="1458" height="209" key="GridCell.Tab.0.bottom" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.0.center" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.0.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.0.left" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.0.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.0.right" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.0.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.1.bottom" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.1.bottom/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.1.center" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.1.center/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.1.left" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.1.left/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state width="1458" height="209" key="GridCell.Tab.1.right" timestamp="1615892921852">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1458" height="209" key="GridCell.Tab.1.right/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615892921852" />
+    <state x="-1629" y="164" key="SettingsEditor" timestamp="1615779666236">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1629" y="164" key="SettingsEditor/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615779666236" />
+    <state x="-753" y="82" width="674" height="804" key="find.popup" timestamp="1615891879363">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-753" y="82" width="674" height="804" key="find.popup/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615891879363" />
+    <state x="-1658" y="133" key="new project wizard" timestamp="1615790238215">
+      <screen x="-1920" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-1658" y="133" key="new project wizard/0.0.1920.1040/-1920.0.1920.1040@-1920.0.1920.1040" timestamp="1615790238215" />
+  </component>
+</project>

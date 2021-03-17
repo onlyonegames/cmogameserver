@@ -1,0 +1,32 @@
+{
+  "groups": [
+    {
+      "name": "datasource",
+      "type": "com.onlyonegames.util.replication.DatabaseProperty",
+      "sourceType": "com.onlyonegames.util.replication.DatabaseProperty"
+    }
+  ],
+  "properties": [
+    {
+      "name": "datasource.password",
+      "type": "java.lang.String",
+      "sourceType": "com.onlyonegames.util.replication.DatabaseProperty"
+    },
+    {
+      "name": "datasource.slave-list",
+      "type": "java.util.List<com.onlyonegames.util.replication.DatabaseProperty$Slave>",
+      "sourceType": "com.onlyonegames.util.replication.DatabaseProperty"
+    },
+    {
+      "name": "datasource.url",
+      "type": "java.lang.String",
+      "sourceType": "com.onlyonegames.util.replication.DatabaseProperty"
+    },
+    {
+      "name": "datasource.username",
+      "type": "java.lang.String",
+      "sourceType": "com.onlyonegames.util.replication.DatabaseProperty"
+    }
+  ],
+  "hints": []
+}

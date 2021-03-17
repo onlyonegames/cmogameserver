@@ -1,0 +1,13 @@
+spring:
+  redis:
+    #SendBox(AWS)
+    #host : arenaranking.k0mey4.ng.0001.apn2.cache.amazonaws.com
+    #Dev(NCP)
+    #host : redis-515gq.cdb.ntruss.com
+    #LIVE(NCP)
+    #host : redis-5o6ct.cdb.ntruss.com
+    #local
+    host: localhost
+    port: 6379
+  profiles:
+    active: local

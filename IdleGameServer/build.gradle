@@ -1,0 +1,87 @@
+plugins {
+    id 'org.springframework.boot' version '2.2.5.RELEASE'
+    id 'java'
+    id "org.asciidoctor.convert" version "1.5.9.2"  //REST Docs 1
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.onlyonegames'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+    developmentOnly
+    runtimeClasspath {
+        extendsFrom developmentOnly
+    }
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'mysql:mysql-connector-java'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    // spring-data-redis
+    compile('org.springframework.boot:spring-boot-starter-data-redis')
+    //embedded-redis
+    compile group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+
+    //스웨거 설정 API 문서화
+    //compileOnly 'io.springfox:springfox-swagger2:2.6.1'
+    //compileOnly 'io.springfox:springfox-swagger-ui:2.6.1'
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
+
+    compileOnly 'org.modelmapper:modelmapper:2.3.5'
+    //security&jwt
+    implementation 'io.jsonwebtoken:jjwt:0.9.0'
+
+    //로그에 Stack 예쁘게 나오도록
+    implementation 'org.apache.commons:commons-lang3:3.9'
+    implementation 'org.jetbrains:annotations:15.0'
+    implementation 'junit:junit:4.12'
+
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+
+    //REST Docs 2
+    asciidoctor 'org.springframework.restdocs:spring-restdocs-asciidoctor:2.0.3.RELEASE'
+    //REST Docs 3
+    testCompile 'org.springframework.restdocs:spring-restdocs-mockmvc'
+}
+ext {
+    //REST Docs 4
+    snippetsDir = file('build/generated-snippets')
+}
+test {
+    //REST Docs 5
+    outputs.dir snippetsDir
+}
+//REST Docs 6
+asciidoctor {
+    //REST Docs 7
+    inputs.dir snippetsDir
+    //REST Docs 8
+    dependsOn test
+}
+//REST Docs 9
+bootJar {
+    dependsOn asciidoctor
+    from ("${asciidoctor.outputDir}/html5") {
+        into 'static/docs'
+    }
+}
