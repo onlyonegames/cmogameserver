@@ -132,6 +132,8 @@ public class CreateUserService
 
     private final MyShopInfoRepository myShopInfoRepository;
 
+    private final MyForTestRepository myForTestRepository;
+
     private final MyMissionsDataRepository myMissionsDataRepository;
 
     private final MyMailBoxRepository myMailBoxRepository;
@@ -150,6 +152,8 @@ public class CreateUserService
     private final MyProfileDataRepository myProfileDataRepository;
 
     private final MyAttendanceDataRepository myAttendanceDataRepository;
+
+    private final UpgradeStatusRepository upgradeStatusRepository;
 
     private final ErrorLoggingService errorLoggingService;
     private final ArenaSeasonInfoDataRepository arenaSeasonInfoDataRepository;
@@ -170,6 +174,18 @@ public class CreateUserService
         map.put("user", createdUser);
         long userid = createdUser.getId();
 
+        /* UpgradeStatus */
+        UpgradeStatusDto upgradeStatusDto = new UpgradeStatusDto();
+        upgradeStatusDto.setUseridUser(userid);
+        upgradeStatusDto.setPhysicalAttackPowerLevel(1); // 물리공격력
+        upgradeStatusDto.setMagicAttackPowerLevel(1); // 마법공격력
+        upgradeStatusDto.setMaxHealthPointLevel(1); // 최대 생명력 (int)
+        upgradeStatusDto.setMaxManaPointLevel(1); // 최대 마나 (int)
+        upgradeStatusDto.setCriticalChanceLevel(1); // 치명확률
+        upgradeStatusDto.setCriticalPercentLevel(1); // 치명데미지
+        upgradeStatusRepository.save(upgradeStatusDto.ToEntity());
+
+        /**/
         // long startTime = System.currentTimeMillis();
         List<herostable> heros = herostableRepository.findAll();
         // long endTime = System.currentTimeMillis();
@@ -315,6 +331,10 @@ public class CreateUserService
         //최초 유저 동료 별점 셋팅 테이블 생성
         CompanionStarPointsAverageTable companionStarPointsAverageTable = createCompanionStarPointsAverage(userid);
         companionStarPointsAverageRepository.save(companionStarPointsAverageTable);
+
+        MyForTest myForTest = createMyForTest(userid);
+        myForTestRepository.save(myForTest);
+
         //최초 유저 상점 데이터 생성
         MyShopInfo myShopInfo = createMyShopInfo(userid);
         myShopInfoRepository.save(myShopInfo);
@@ -716,6 +736,19 @@ public class CreateUserService
         companionStarPointsAverageTableDto.setJson_StarPointsAverage(starPointsAverageDtoList.getInitJson());
         return companionStarPointsAverageTableDto.ToEntity();
     }
+
+    public MyForTest createMyForTest(Long userId)
+    {
+        MyForTestDto myForTestDto = new MyForTestDto();
+        myForTestDto.setUseridUser(userId);
+        myForTestDto.setMyStringValue("hello");
+        myForTestDto.setMyIntValue(10);
+        myForTestDto.setMyFloatValue(1.0f);
+        myForTestDto.setMyBooleanValue(false);
+
+        return myForTestDto.ToEntity();
+    }
+
     //최초 유저 상점 데이터 셋팅
     public MyShopInfo createMyShopInfo(Long userId) {
         InitJsonDatasForFirstUser myShopJson = gameDataTableService.InitJsonDatasForFirstUserList().get(11);

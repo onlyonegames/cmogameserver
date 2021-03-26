@@ -13,7 +13,9 @@ import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
-public class GameDataTableService {
+public class GameDataTableService
+{
+    private List<UpgradeStatusBuyInfoTable> upgradeStatusBuyInfoTableList = null; // 2021-03-23 재형: 능력치 상승 초기 구매 가격
     private List<HeroEquipmentsTable> heroEquipmentsTableList = null;
     private List<EquipmentOptionsInfoTable> optionsInfoTableList = null;
     private List<MainHeroSkillExpandInfo> mainHeroSkillExpandInfoList = null;
@@ -99,6 +101,8 @@ public class GameDataTableService {
     private List<FieldDungeonRewardProbabilityTable> fieldDungeonRewardProbabilityTableList = null;
     private List<FieldDungeonBuyCountTable> fieldDungeonBuyCountTableList = null;
 
+    @Autowired
+    private UpgradeStatusBuyInfoTableRepository upgradeStatusBuyInfoTableRepository;  // 2021-03-23 재형: 능력치 상승 초기 구매 가격
     @Autowired
     private HeroEquipmentsTableRepository heroEquipmentsTableRepository;
     @Autowired
@@ -258,6 +262,13 @@ public class GameDataTableService {
     @Autowired
     private FieldDungeonBuyCountTableRepository fieldDungeonBuyCountTableRepository;
 
+    /**/
+    // 2021-03-23 재형: 능력치 상승 초기 구매 가격
+    public List<UpgradeStatusBuyInfoTable> UpgradeStatusBuyInfoTableList() {
+        upgradeStatusBuyInfoTableList = upgradeStatusBuyInfoTableList == null ? upgradeStatusBuyInfoTableRepository.findAll() : upgradeStatusBuyInfoTableList;
+        return upgradeStatusBuyInfoTableList;
+    }
+
     public List<HeroEquipmentsTable> HeroEquipmentsTableList() {
         heroEquipmentsTableList = heroEquipmentsTableList == null ? heroEquipmentsTableRepository.findAll() : heroEquipmentsTableList;
         return heroEquipmentsTableList;
@@ -322,6 +333,8 @@ public class GameDataTableService {
         herosTableList = herosTableList == null ? herostableRepository.findAll() : herosTableList;
         return herosTableList;
     }
+
+
     public List<GiftTable> GiftsTableList() {
         giftTableList = giftTableList == null ? giftTableRepository.findAll() : giftTableList;
         return giftTableList;
@@ -621,7 +634,9 @@ public class GameDataTableService {
         return fieldDungeonBuyCountTableList;
     }
 
-    public Map<String, Object> ResetGameDataTable(Map<String, Object> map) {
+    public Map<String, Object> ResetGameDataTable(Map<String, Object> map)
+    {
+        upgradeStatusBuyInfoTableList = null;
         heroEquipmentsTableList = null;
         optionsInfoTableList = null;
         mainHeroSkillExpandInfoList = null;
@@ -701,6 +716,8 @@ public class GameDataTableService {
         fieldMonsterInfoTableList = null;
         fieldDungeonRewardProbabilityTableList = null;
         fieldDungeonBuyCountTableList = null;
+
+        UpgradeStatusBuyInfoTableList();
 
         HeroEquipmentsTableList();
         OptionsInfoTableList();

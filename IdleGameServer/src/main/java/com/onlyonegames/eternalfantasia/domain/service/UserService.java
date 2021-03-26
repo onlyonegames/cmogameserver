@@ -137,6 +137,10 @@ public class UserService {
     private final MyProfileService myProfileService;
     private final MyAchieveEventMissionsDataRepository myAchieveEventMissionsDataRepository;
 
+
+
+    private final UpgradeStatusService upgradeStatusService;
+
     //세션 redis
     private final OnlyoneSessionRepository sessionRepository;
 
@@ -160,6 +164,19 @@ public class UserService {
             throw new MyCustomException("Black User", ResponseErrorCode.BLACK_USER);
         }
 
+        user.SetLastLoginDate();
+        map.put("userInfo", user);
+
+        // UpgradeStatus
+        upgradeStatusService.GetUpgradeStatus(userId, map);
+
+        // upgradeStatusBuyInfoTableList
+        List<UpgradeStatusBuyInfoTable> upgradeStatusBuyInfoTableList = gameDataTableService.UpgradeStatusBuyInfoTableList();
+        String json = JsonStringHerlper.WriteValueAsStringFromData(upgradeStatusBuyInfoTableList);
+        map.put("upgradeStatusBuyInfoTable", upgradeStatusBuyInfoTableList);
+
+
+        /*
         //차원석 차징타임 및 차징에 따른 차원석 갯수 갱신
         //user.CheckStoneOfDimensionChargingTime();
         user.SetLastLoginDate();
@@ -769,7 +786,7 @@ public class UserService {
 
 
         myMissionsDataService.GetMyMissionData(userId, map);
-        /*패스 업적 : 체크 준비*/
+        //패스 업적 : 체크 준비
         MyEternalPassMissionsData myEternalPassMissionsData = myEternalPassMissionsDataRepository.findByUseridUser(userId)
                 .orElse(null);
         if(myEternalPassMissionsData == null) {
@@ -805,6 +822,8 @@ public class UserService {
         
         myEternalPassService.GetMyEternalPassInfo(userId, map);
         myShopService.getMyShopData(userId, map);
+        */
+
         return map;
     }
 
