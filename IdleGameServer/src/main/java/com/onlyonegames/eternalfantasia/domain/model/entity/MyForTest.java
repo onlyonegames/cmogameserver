@@ -21,4 +21,29 @@ public class MyForTest
     int myIntValue;
     boolean myBooleanValue;
     float myFloatValue;
+
+    public void Set(String key, String value )
+    {
+        switch (key)
+        {
+            case "myStringValue":
+                this.myStringValue = value;
+                break;
+            case "myIntValue":
+                this.myIntValue = Integer.parseInt(value);
+                break;
+            case "myBooleanValue":
+                this.myBooleanValue = Boolean.parseBoolean(value);
+                break;
+            case "myFloatValue":
+                this.myFloatValue = Float.parseFloat(value);
+                break;
+        }
+    }
+
+    /*
+    public void SetMyStringValue(String myStringValue) {
+        this.myStringValue = myStringValue;
+    }
+     */
 }
