@@ -1,9 +1,5 @@
 package com.onlyonegames.eternalfantasia.domain.model.dto;
 
-import com.onlyonegames.eternalfantasia.domain.model.dto.GiftItemDto.GiftItemDtosList;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Managementtool.MyCharactersDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.GotchaCharacterResponseDto;
-import com.onlyonegames.eternalfantasia.domain.model.entity.MyCharacters;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -25,14 +21,6 @@ public class ReceiveItemCommonDto {
     int gettingMiddleDragonScale;
     int gettingHighDragonScale;
 
-    /*재료, 제련석, 강화석*/
-    List<BelongingInventoryDto> changedBelongingInventoryList = new ArrayList<>();
-    /*선물*/
-    List<GiftItemDtosList.GiftItemDto> changedMyGiftInventoryList = new ArrayList<>();
-    /*장비*/
-    List<HeroEquipmentInventoryDto> changedHeroEquipmentInventoryList = new ArrayList<>();
-    /*케릭터*/
-    GotchaCharacterResponseDto gotchaCharacterResponseDto = new GotchaCharacterResponseDto();
     public void AddGettingGold(int gettingGold) {
         this.gettingGold += gettingGold;
     }
