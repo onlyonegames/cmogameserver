@@ -36,14 +36,15 @@ public class SetterService {
     private final MyRuneInventoryRepository myRuneInventoryRepository;
     private final ErrorLoggingService errorLoggingService;
 
-    public Map<String, Object> Setter(Long userId, Map<String, String> requestList, Map<String, Object> map) {
+    public Map<String, Object> Setter(Long userId, Map<String, Map<String, String>> requestList, Map<String, Object> map) {
         Collection keys = requestList.keySet();
         Iterator itr = keys.iterator();
         while(itr.hasNext()) {
             String key = (String) itr.next();
             switch(key) {
                 case "MyPixieInfoData":
-                    String json_Data = requestList.get(key);
+//                    String json_Data = requestList.get(key);
+//                    MyPixieInfoDataDto myPixieInfoDataDto = JsonStringHerlper.ReadValueFromJson(json_Data, MyPixieInfoDataDto.class);
                     break;
                 case "MyRuneLevelInfoData":
                     break;

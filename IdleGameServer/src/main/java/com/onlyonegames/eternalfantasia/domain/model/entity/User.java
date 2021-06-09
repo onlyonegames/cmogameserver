@@ -42,6 +42,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     String gold;
+    int diamond;
     String soulStone; // 형식 변경 가능성 있음
     int skillPoint;
     int moveStone;
