@@ -36,16 +36,16 @@ public class MyForTestService
             switch (element.getElement())
             {
                 case "myStringValue":
-                    element.setValue(myForTest.getMyStringValue());
+                    element.SetValue(myForTest.getMyStringValue());
                     break;
                 case "myIntValue":
-                    element.setValue(Integer.toString(myForTest.getMyIntValue()));
+                    element.SetValue(Integer.toString(myForTest.getMyIntValue()));
                     break;
                 case "myBooleanValue":
-                    element.setValue(Boolean.toString(myForTest.isMyBooleanValue()));
+                    element.SetValue(Boolean.toString(myForTest.isMyBooleanValue()));
                     break;
                 case "myFloatValue":
-                    element.setValue(Float.toString(myForTest.getMyFloatValue()));
+                    element.SetValue(Float.toString(myForTest.getMyFloatValue()));
                     break;
             }
         }

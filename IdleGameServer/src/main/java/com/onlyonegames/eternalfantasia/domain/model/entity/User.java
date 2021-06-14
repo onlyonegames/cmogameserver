@@ -37,12 +37,15 @@ public class User {
     String password;
     String socialProvider;
     String userGameName;
+    int level;
+    int exp;
+    int sexType; //0 : 남자, 1 : 여자
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
     String gold;
-    int diamond;
+    Long diamond;
     String soulStone; // 형식 변경 가능성 있음
     int skillPoint;
     int moveStone;
@@ -118,5 +121,29 @@ public class User {
             return true;
         }
         return false;
+    }
+
+    public void SetSexType(int sexType) {
+        this.sexType = sexType;
+    }
+
+    public void SetGold(String element) {
+        this.gold = element;
+    }
+
+    public void SetDiamond(String element) {
+        this.diamond = Long.parseLong(element);
+    }
+
+    public void SetSoulStone(String element) {
+        this.soulStone = element;
+    }
+
+    public void SetSkillPoint(String element) {
+        this.skillPoint = Integer.parseInt(element);
+    }
+
+    public void SetMoveStone(String element) {
+        this.moveStone = Integer.parseInt(element);
     }
 }

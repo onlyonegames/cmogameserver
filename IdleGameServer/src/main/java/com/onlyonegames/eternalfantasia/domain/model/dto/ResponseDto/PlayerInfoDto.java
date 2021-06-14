@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class PlayerInfoDto {
     public String gold;
-    public int diamond;
+    public Long diamond;
     public String soulStone;
     public int skillPoint;
     public int moveStone;

@@ -25,4 +25,8 @@ public class MyRuneLevelInfoData extends BaseTimeEntity {
         else
             this.level += level;
     }
+
+    public void SetLevel(String element){
+        this.level = Integer.parseInt(element);
+    }
 }
