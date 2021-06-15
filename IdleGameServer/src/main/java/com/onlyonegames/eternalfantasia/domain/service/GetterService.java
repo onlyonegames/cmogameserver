@@ -12,6 +12,7 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ElementDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.RequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.CarvingRuneUserData;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.PixieUserDataDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RuneInventoryResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyClassInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyEquipmentInventory;
@@ -60,7 +61,7 @@ public class GetterService {
 
                         break;
                     case "PlayerInfo":
-                        for (ElementDto i : containerDto.Element) {
+                        for (ElementDto i : containerDto.elements) {
                             switch (i.getElement()) {
                                 case "gold":
                                 case "diamond":
@@ -70,7 +71,8 @@ public class GetterService {
                                     if (user == null) {
                                         user = userRepository.findById(userId).orElse(null);
                                         if (user == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -78,7 +80,8 @@ public class GetterService {
                                     if (myRuneLevelInfoData == null) {
                                         myRuneLevelInfoData = myRuneLevelInfoDataRepository.findByUseridUser(userId).orElse(null);
                                         if (myRuneLevelInfoData == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneLevelInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyRuneLevelInfoData", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -86,7 +89,8 @@ public class GetterService {
                                     if (myRuneInventoryList == null) {
                                         myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
                                         if (myRuneInventoryList == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -94,7 +98,8 @@ public class GetterService {
                                     if (myPixieInfoData == null) {
                                         myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
                                         if (myPixieInfoData == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -102,7 +107,7 @@ public class GetterService {
                         }
                         break;
                     case "UserInfo":
-                        for (ElementDto i : containerDto.Element) {
+                        for (ElementDto i : containerDto.elements) {
                             switch (i.getElement()) {
                                 case "userGameName":
                                 case "level":
@@ -111,7 +116,8 @@ public class GetterService {
                                     if (user == null) {
                                         user = userRepository.findById(userId).orElse(null);
                                         if (user == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -119,7 +125,8 @@ public class GetterService {
                                     if (myActiveSkillData == null) {
                                         myActiveSkillData = myActiveSkillDataRepository.findByUseridUser(userId).orElse(null);
                                         if (myActiveSkillData == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyActiveSkillData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyActiveSkillData", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -128,7 +135,8 @@ public class GetterService {
                                     if (myPixieInfoData == null) {
                                         myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
                                         if (myPixieInfoData == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -136,7 +144,8 @@ public class GetterService {
                                     if (myClassInventoryList == null) {
                                         myClassInventoryList = myClassInventoryRepository.findAllByUseridUser(userId);
                                         if (myPixieInfoData == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -144,10 +153,20 @@ public class GetterService {
                                     if (myEquipmentInventoryList == null) {
                                         myEquipmentInventoryList = myEquipmentInventoryRepository.findALLByUseridUser(userId);
                                         if (myEquipmentInventoryList == null) {
-
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyEquipmentInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found MyEquipmentInventory", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
+                            }
+                        }
+                        break;
+                    case "runeInventory":
+                        if (myRuneInventoryList == null) {
+                            myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
+                            if (myRuneInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventoryList", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyRuneInventoryList", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                         break;
@@ -160,7 +179,7 @@ public class GetterService {
                     for (ContainerDto i : cmd.containers) {
                         switch (i.getContainer()) {
                             case "PlayerInfo":
-                                for (ElementDto temp : i.Element) {
+                                for (ElementDto temp : i.elements) {
                                     switch (temp.getElement()) {
                                         case "gold":
                                             temp.SetValue(user.getGold());
@@ -180,11 +199,12 @@ public class GetterService {
                                         case "runeLevel":
                                             temp.SetValue(myRuneLevelInfoData.getLevel());
                                             break;
+
                                     }
                                 }
                                 break;
                             case "UserInfo":
-                                for (ElementDto temp : i.Element) {
+                                for (ElementDto temp : i.elements) {
                                     switch (temp.getElement()) {
                                         case "userGameName":
                                             temp.SetValue(user.getUserGameName());
@@ -230,6 +250,30 @@ public class GetterService {
                                     }
                                 }
                                 break;
+                            case "runeInventory":
+                                List<ElementDto> elementDtoList = new ArrayList<>();
+                                boolean flag = false;
+                                for (ElementDto temp : i.elements) {
+                                    if(temp.getElement().equals("all")) {
+                                        for(MyRuneInventory j : myRuneInventoryList){
+                                            ElementDto inventory = new ElementDto();
+                                            inventory.SetElement(Integer.toString(j.getType_Id()), Integer.toString(j.getCount()));
+                                            elementDtoList.add(inventory);
+                                        }
+                                        flag = true;
+                                        break;
+                                    }
+                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(temp.getElement())).findAny().orElse(null);
+                                    if (myRuneInventory == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    temp.SetValue(myRuneInventory.getCount());
+                                }
+                                if(flag){
+                                    i.elements = elementDtoList;
+                                }
+                                break;
                         }
                     }
                     break;
@@ -237,7 +281,7 @@ public class GetterService {
                     for (ContainerDto i : cmd.containers) {
                         switch (i.container) {
                             case "PlayerInfo":
-                                for (ElementDto temp : i.Element) {
+                                for (ElementDto temp : i.elements) {
                                     switch (temp.getElement()) {
                                         case "gold":
                                             user.SetGold(temp.getValue());
@@ -261,7 +305,19 @@ public class GetterService {
                                 }
                                 break;
                             case "UserInfo":
-
+                                break;
+                            case "runeInventory":
+                                for (ElementDto temp : i.elements) {
+                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(temp.getElement())).findAny().orElse(null);
+                                    if (myRuneInventory == null) {
+                                        MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
+                                        myRuneInventoryDto.SetMyRuneInventoryDto(userId, temp.getElement(), temp.getValue());
+                                        myRuneInventory = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
+                                        myRuneInventoryList.add(myRuneInventory);
+                                    } else {
+                                        myRuneInventory.SetCount(temp.getValue());
+                                    }
+                                }
                         }
                     }
                     break;

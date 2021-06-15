@@ -8,5 +8,5 @@ import java.util.List;
 
 public class ContainerDto {
     public String container;
-    public List<ElementDto> Element;
+    public List<ElementDto> elements;
 }

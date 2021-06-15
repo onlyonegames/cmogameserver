@@ -7,48 +7,33 @@ import lombok.Data;
 public class MyRuneInventoryDto {
     Long id;
     Long useridUser;
-    int rune_Id;
-    String itemClass;
-    int itemClassValue;
-    int grade;
+    int type_Id;
     int count;
 
     public MyRuneInventory ToEntity() {
-        return MyRuneInventory.builder().useridUser(useridUser).rune_Id(rune_Id).itemClass(itemClass).itemClassValue(itemClassValue).grade(grade).count(count).build();
+        return MyRuneInventory.builder().useridUser(useridUser).type_Id(type_Id).count(count).build();
     }
 
     public void InitFromDBData(MyRuneInventory dbData){
         this.id = dbData.getId();
         this.useridUser = dbData.getUseridUser();
-        this.rune_Id = dbData.getRune_Id();
-        this.itemClass = dbData.getItemClass();
-        this.itemClassValue = dbData.getItemClassValue();
-        this.grade = dbData.getGrade();
+        this.type_Id = dbData.getType_Id();
+//        this.rune_Id = dbData.getRune_Id();
+//        this.itemClass = dbData.getItemClass();
+//        this.itemClassValue = dbData.getItemClassValue();
+//        this.grade = dbData.getGrade();
         this.count = dbData.getCount();
     }
 
-    public void SetMyRuneInventoryDto(Long useridUser, int rune_Id, int itemClassValue, int grade, int count) {
+    public void SetMyRuneInventoryDto(Long useridUser, int type_Id, int count) {
         this.useridUser = useridUser;
-        this.rune_Id = rune_Id;
-        switch(itemClassValue){
-            case 1:
-                this.itemClass = "D";
-                break;
-            case 2:
-                this.itemClass = "C";
-                break;
-            case 3:
-                this.itemClass = "B";
-                break;
-            case 4:
-                this.itemClass = "A";
-                break;
-            case 5:
-                this.itemClass = "S";
-                break;
-        }
-        this.itemClassValue = itemClassValue;
-        this.grade = grade;
+        this.type_Id = type_Id;
         this.count = count;
+    }
+
+    public void SetMyRuneInventoryDto(Long useridUser, String type_Id, String count) {
+        this.useridUser = useridUser;
+        this.type_Id = Integer.parseInt(type_Id);
+        this.count = Integer.parseInt(count);
     }
 }

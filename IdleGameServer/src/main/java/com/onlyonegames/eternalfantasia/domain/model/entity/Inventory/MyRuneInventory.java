@@ -17,19 +17,16 @@ public class MyRuneInventory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    int rune_Id;
-    String itemClass;
-    int itemClassValue;
-    int grade;
+    int type_Id;
     int count;
 
-    public boolean RuneEvolution() {
-        if(rune_Id != 30 || count >= 2){
-            count -= 2;
-            return true;
-        } else
-            return false;
-    }
+//    public boolean RuneEvolution() {
+//        if(rune_Id != 30 || count >= 2){
+//            count -= 2;
+//            return true;
+//        } else
+//            return false;
+//    }
 
     public void AddCount(int addCount) {
        count += addCount;
@@ -41,5 +38,13 @@ public class MyRuneInventory extends BaseTimeEntity {
             return true;
         }
         return false;
+    }
+
+    public void SetCount(String count) {
+        this.count = Integer.parseInt(count);
+    }
+
+    public void SetCount(int count) {
+        this.count = count;
     }
 }

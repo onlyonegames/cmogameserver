@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,10 @@ public class GetterController {
     public ResponseDTO<Map<String, Object>> Getter(@RequestBody RequestDto dto) {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Map<String, Object> response = getterService.Getter(userId, dto, map);
+        RequestDto modifyData = new RequestDto();
+        modifyData.cmds = new ArrayList<>();
+        modifyData.cmds.addAll(dto.cmds);
+        Map<String, Object> response = getterService.Getter(userId, modifyData, map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }

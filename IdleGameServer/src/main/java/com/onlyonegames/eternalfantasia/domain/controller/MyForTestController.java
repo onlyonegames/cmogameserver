@@ -57,7 +57,7 @@ public class MyForTestController
                         switch (container.container)
                         {
                             case "MyForTest":
-                                container.Element = myForTestService.Get(userId, container.Element);
+                                container.elements = myForTestService.Get(userId, container.elements);
                                 break;
                         }
                     }
@@ -69,7 +69,7 @@ public class MyForTestController
                         switch (container.container)
                         {
                             case "MyForTest":
-                                container.Element = myForTestService.Set(userId, container.Element);
+                                container.elements = myForTestService.Set(userId, container.elements);
                                 break;
                         }
                     }

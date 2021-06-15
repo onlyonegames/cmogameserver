@@ -19,4 +19,9 @@ public class ElementDto {
     public void SetValue(String element) {
         this.value = element;
     }
+
+    public void SetElement(String element, String value) {
+        this.element = element;
+        this.value = value;
+    }
 }

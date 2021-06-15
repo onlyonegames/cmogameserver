@@ -13,4 +13,5 @@ public class RuneInfoTable {
     String runeName;
     int qualityNo;
     int gradeNo;
+    int rune_Id; // 1: ,2: ,3:, 4:, 5:, 6:
 }
