@@ -3,6 +3,7 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyBelongingInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyClassInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyEquipmentInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyRuneInventoryDto;
@@ -14,10 +15,12 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.CarvingRune
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.PixieUserDataDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RuneInventoryResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyClassInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyEquipmentInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyRuneInventory;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyClassInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyEquipmentInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyRuneInventoryRepository;
@@ -43,6 +46,7 @@ public class GetterService {
     private final MyEquipmentInventoryRepository myEquipmentInventoryRepository;
     private final MyRuneInventoryRepository myRuneInventoryRepository;
     private final ErrorLoggingService errorLoggingService;
+    private final MyBelongingInventoryRepository myBelongingInventoryRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map){
         MyPixieInfoData myPixieInfoData = null;
@@ -52,6 +56,7 @@ public class GetterService {
         List<MyClassInventory> myClassInventoryList = null;
         List<MyEquipmentInventory> myEquipmentInventoryList = null;
         User user = null;
+        List<MyBelongingInventory> myBelongingInventoryList = null;
         for (CommandDto cmd : requestList.cmds) {
             for(ContainerDto containerDto : cmd.containers) {
                 switch (containerDto.container) {
@@ -170,6 +175,14 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "useUpItemInventory":
+                        if (myBelongingInventoryList == null) {
+                            myBelongingInventoryList = myBelongingInventoryRepository.findAllByUseridUser(userId);
+                            if(myBelongingInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyBelongingInventoryList", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyBelongingInventoryList", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
                 }
             }
         }
@@ -251,14 +264,14 @@ public class GetterService {
                                 }
                                 break;
                             case "runeInventory":
-                                List<ElementDto> elementDtoList = new ArrayList<>();
+                                List<ElementDto> runeInventoryElementDtoList = new ArrayList<>();
                                 boolean flag = false;
                                 for (ElementDto temp : i.elements) {
                                     if(temp.getElement().equals("all")) {
                                         for(MyRuneInventory j : myRuneInventoryList){
                                             ElementDto inventory = new ElementDto();
                                             inventory.SetElement(Integer.toString(j.getType_Id()), Integer.toString(j.getCount()));
-                                            elementDtoList.add(inventory);
+                                            runeInventoryElementDtoList.add(inventory);
                                         }
                                         flag = true;
                                         break;
@@ -271,6 +284,29 @@ public class GetterService {
                                     temp.SetValue(myRuneInventory.getCount());
                                 }
                                 if(flag){
+                                    i.elements = runeInventoryElementDtoList;
+                                }
+                                break;
+                            case "useUpItemInventory":
+                                List<ElementDto> elementDtoList = new ArrayList<>();
+                                flag = false;
+                                for (ElementDto temp : i.elements) {
+                                    if(temp.getElement().equals("all")) {
+                                        for(MyBelongingInventory j : myBelongingInventoryList) {
+                                            ElementDto inventory = new ElementDto();
+                                            inventory.SetElement(j.getCode(), Integer.toString(j.getCount()));
+                                            elementDtoList.add(inventory);
+                                        }
+                                        flag = true;
+                                        break;
+                                    }
+                                    MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
+                                    if(myBelongingInventory == null) {
+
+                                    }
+                                    temp.SetValue(myBelongingInventory.getCount());
+                                }
+                                if(flag) {
                                     i.elements = elementDtoList;
                                 }
                                 break;
@@ -318,6 +354,20 @@ public class GetterService {
                                         myRuneInventory.SetCount(temp.getValue());
                                     }
                                 }
+                                break;
+                            case "useUpItemInventory":
+                                for (ElementDto temp : i.elements) {
+                                    MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
+                                    if (myBelongingInventory == null) {
+                                        MyBelongingInventoryDto myBelongingInventoryDto = new MyBelongingInventoryDto();
+                                        myBelongingInventoryDto.SetMyBelongingInventoryDto(userId, temp.getElement(), Integer.parseInt(temp.getValue()));
+                                        myBelongingInventory = myBelongingInventoryRepository.save(myBelongingInventoryDto.ToEntity());
+                                        myBelongingInventoryList.add(myBelongingInventory);
+                                    } else {
+                                        myBelongingInventory.SetCount(temp.getValue());
+                                    }
+                                }
+                                break;
                         }
                     }
                     break;
