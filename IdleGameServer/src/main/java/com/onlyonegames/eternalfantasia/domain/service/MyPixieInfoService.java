@@ -40,27 +40,27 @@ public class MyPixieInfoService {
     }
 
     public Map<String, Object> PixieLevelUp(Long userId, List<PixieLevelUpRequestDto.PixieGettingRuneInfo> pixieGettingRuneInfoList, Map<String, Object> map) {
-        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
-        if(myPixieInfoData == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        List<MyRuneInventory> myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
-        for(PixieLevelUpRequestDto.PixieGettingRuneInfo temp : pixieGettingRuneInfoList) {
-            MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(i -> i.getRune_Id() == temp.rune_id && i.getItemClassValue() == temp.classValue && i.getGrade() == temp.grade).findAny().orElse(null);
-            if(myRuneInventory == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
-            }
-            if(!myRuneInventory.SpendRune(temp.count)) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_RUNE.getIntegerValue(), "Need More Rune", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Need More Rune", ResponseErrorCode.NEED_MORE_RUNE);
-            }
-        }
-        myPixieInfoData.GetExp(GetExpCalculate(pixieGettingRuneInfoList));
-        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
-        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
-        map.put("myPixieInfoData", myPixieInfoDataDto);
+//        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
+//        if(myPixieInfoData == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        List<MyRuneInventory> myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
+//        for(PixieLevelUpRequestDto.PixieGettingRuneInfo temp : pixieGettingRuneInfoList) {
+//            MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(i -> i.getRune_Id() == temp.rune_id && i.getItemClassValue() == temp.classValue && i.getGrade() == temp.grade).findAny().orElse(null);
+//            if(myRuneInventory == null) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
+//            }
+//            if(!myRuneInventory.SpendRune(temp.count)) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_RUNE.getIntegerValue(), "Need More Rune", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Need More Rune", ResponseErrorCode.NEED_MORE_RUNE);
+//            }
+//        }
+//        myPixieInfoData.GetExp(GetExpCalculate(pixieGettingRuneInfoList));
+//        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
+//        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
+//        map.put("myPixieInfoData", myPixieInfoDataDto);
         return map;
     }
 
