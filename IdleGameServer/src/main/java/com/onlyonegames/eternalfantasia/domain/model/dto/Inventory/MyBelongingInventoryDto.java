@@ -10,6 +10,7 @@ public class MyBelongingInventoryDto {
     String code;
     int count;
     int slotNo;
+    int slotPercent;
 
     public MyBelongingInventory ToEntity() {
         InitData();
@@ -18,6 +19,7 @@ public class MyBelongingInventoryDto {
 
     void InitData(){
         this.slotNo = 0;
+        this.slotPercent = 0;
     }
 
     public void InitFromDBData(MyBelongingInventory dbData) {

@@ -299,7 +299,7 @@ public class GetterService {
                                         for(MyBelongingInventory j : myBelongingInventoryList) {
                                             ElementDto inventory = new ElementDto();
                                             BelongingInventoryJsonData belongingInventoryJsonData = new BelongingInventoryJsonData();
-                                            belongingInventoryJsonData.SetBelongingInventoryJsonData(j.getCount(), j.getSlotNo());
+                                            belongingInventoryJsonData.SetBelongingInventoryJsonData(j.getCount(), j.getSlotNo(), j.getSlotPercent());
                                             String jsonData = JsonStringHerlper.WriteValueAsStringFromData(belongingInventoryJsonData);
                                             inventory.SetElement(j.getCode(), jsonData);
                                             elementDtoList.add(inventory);
@@ -312,7 +312,7 @@ public class GetterService {
 
                                     }
                                     BelongingInventoryJsonData belongingInventoryJsonData = new BelongingInventoryJsonData();
-                                    belongingInventoryJsonData.SetBelongingInventoryJsonData(myBelongingInventory.getCount(), myBelongingInventory.getSlotNo());
+                                    belongingInventoryJsonData.SetBelongingInventoryJsonData(myBelongingInventory.getCount(), myBelongingInventory.getSlotNo(), myBelongingInventory.getSlotPercent());
                                     String jsonData = JsonStringHerlper.WriteValueAsStringFromData(belongingInventoryJsonData);
                                     temp.SetValue(jsonData);
                                 }
@@ -385,7 +385,7 @@ public class GetterService {
                                         myBelongingInventory = myBelongingInventoryRepository.save(myBelongingInventoryDto.ToEntity());
                                         myBelongingInventoryList.add(myBelongingInventory);
                                     } else {
-                                        myBelongingInventory.SetCountAndSlotNo(belongingInventoryJsonData.getCount(), belongingInventoryJsonData.getSlot());
+                                        myBelongingInventory.SetCountAndSlotNoAndSlotPercent(belongingInventoryJsonData.getCount(), belongingInventoryJsonData.getSlot(), belongingInventoryJsonData.getSlotPercent());
                                     }
                                 }
                                 break;

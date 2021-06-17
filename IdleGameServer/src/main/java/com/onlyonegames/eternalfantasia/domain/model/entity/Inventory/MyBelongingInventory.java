@@ -20,6 +20,7 @@ public class MyBelongingInventory extends BaseTimeEntity {
     String code;
     int count;
     int slotNo; // 0 : 슬롯 미지정  1, 2, 3 : 해당 번호 슬롯에 지정
+    int slotPercent;
 
     public void SetCount(String count) {
         this.count = Integer.parseInt(count);
@@ -37,14 +38,16 @@ public class MyBelongingInventory extends BaseTimeEntity {
         return true;
     }
 
-    public void SetCountAndSlotNo(String count, String slotNo) {
+    public void SetCountAndSlotNoAndSlotPercent(String count, String slotNo, String slotPercent) {
         this.count = Integer.parseInt(count);
         this.slotNo = Integer.parseInt(slotNo);
+        this.slotPercent = Integer.parseInt(slotPercent);
     }
 
-    public void SetCountAndSlotNo(int count, int slotNo) {
+    public void SetCountAndSlotNoAndSlotPercent(int count, int slotNo, int slotPercent) {
         this.count = count;
         this.slotNo = slotNo;
+        this.slotPercent = slotPercent;
     }
 
     public void SetSlotNo(String element) {

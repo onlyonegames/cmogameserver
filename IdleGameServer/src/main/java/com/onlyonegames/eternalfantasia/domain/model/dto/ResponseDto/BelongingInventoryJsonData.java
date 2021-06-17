@@ -6,9 +6,11 @@ import lombok.Data;
 public class BelongingInventoryJsonData {
     int count;
     int slot;
+    int slotPercent;
 
-    public void SetBelongingInventoryJsonData(int count, int slotNo) {
+    public void SetBelongingInventoryJsonData(int count, int slotNo, int slotPercent) {
         this.count = count;
         this.slot = slotNo;
+        this.slotPercent = slotPercent;
     }
 }
