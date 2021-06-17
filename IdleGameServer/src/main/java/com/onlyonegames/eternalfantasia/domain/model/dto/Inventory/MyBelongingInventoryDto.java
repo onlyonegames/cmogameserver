@@ -9,9 +9,15 @@ public class MyBelongingInventoryDto {
     Long useridUser;
     String code;
     int count;
+    int slotNo;
 
     public MyBelongingInventory ToEntity() {
-        return MyBelongingInventory.builder().useridUser(useridUser).code(code).count(count).build();
+        InitData();
+        return MyBelongingInventory.builder().useridUser(useridUser).code(code).count(count).slotNo(slotNo).build();
+    }
+
+    void InitData(){
+        this.slotNo = 0;
     }
 
     public void InitFromDBData(MyBelongingInventory dbData) {
@@ -21,7 +27,7 @@ public class MyBelongingInventoryDto {
         this.count = dbData.getCount();
     }
 
-    public void SetMyBelongingInventoryDto(Long useridUser, String code, int count) {
+    public void SetFirstMyBelongingInventoryDto(Long useridUser, String code, int count) {
         this.useridUser = useridUser;
         this.code = code;
         this.count = count;

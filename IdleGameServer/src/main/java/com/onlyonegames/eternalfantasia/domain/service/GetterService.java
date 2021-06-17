@@ -11,6 +11,7 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.CommandDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ContainerDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ElementDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.RequestDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.BelongingInventoryJsonData;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.CarvingRuneUserData;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.PixieUserDataDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RuneInventoryResponseDto;
@@ -57,6 +58,8 @@ public class GetterService {
         List<MyEquipmentInventory> myEquipmentInventoryList = null;
         User user = null;
         List<MyBelongingInventory> myBelongingInventoryList = null;
+
+        //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
             for(ContainerDto containerDto : cmd.containers) {
                 switch (containerDto.container) {
@@ -186,6 +189,7 @@ public class GetterService {
                 }
             }
         }
+
         for (CommandDto cmd : requestList.cmds) {
             switch (cmd.cmd) {
                 case "get":
@@ -294,7 +298,10 @@ public class GetterService {
                                     if(temp.getElement().equals("all")) {
                                         for(MyBelongingInventory j : myBelongingInventoryList) {
                                             ElementDto inventory = new ElementDto();
-                                            inventory.SetElement(j.getCode(), Integer.toString(j.getCount()));
+                                            BelongingInventoryJsonData belongingInventoryJsonData = new BelongingInventoryJsonData();
+                                            belongingInventoryJsonData.SetBelongingInventoryJsonData(j.getCount(), j.getSlotNo());
+                                            String jsonData = JsonStringHerlper.WriteValueAsStringFromData(belongingInventoryJsonData);
+                                            inventory.SetElement(j.getCode(), jsonData);
                                             elementDtoList.add(inventory);
                                         }
                                         flag = true;
@@ -304,7 +311,10 @@ public class GetterService {
                                     if(myBelongingInventory == null) {
 
                                     }
-                                    temp.SetValue(myBelongingInventory.getCount());
+                                    BelongingInventoryJsonData belongingInventoryJsonData = new BelongingInventoryJsonData();
+                                    belongingInventoryJsonData.SetBelongingInventoryJsonData(myBelongingInventory.getCount(), myBelongingInventory.getSlotNo());
+                                    String jsonData = JsonStringHerlper.WriteValueAsStringFromData(belongingInventoryJsonData);
+                                    temp.SetValue(jsonData);
                                 }
                                 if(flag) {
                                     i.elements = elementDtoList;
@@ -341,6 +351,16 @@ public class GetterService {
                                 }
                                 break;
                             case "UserInfo":
+                                for (ElementDto temp : i.elements) {
+                                    switch (temp.getElement()) {
+                                        case "level":
+                                            user.SetLevel(temp.getValue());
+                                            break;
+                                        case "exp":
+                                            user.SetExp(temp.getValue());
+                                            break;
+                                    }
+                                }
                                 break;
                             case "runeInventory":
                                 for (ElementDto temp : i.elements) {
@@ -358,13 +378,14 @@ public class GetterService {
                             case "useUpItemInventory":
                                 for (ElementDto temp : i.elements) {
                                     MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
+                                    BelongingInventoryJsonData belongingInventoryJsonData = JsonStringHerlper.ReadValueFromJson(temp.getValue(), BelongingInventoryJsonData.class);
                                     if (myBelongingInventory == null) {
                                         MyBelongingInventoryDto myBelongingInventoryDto = new MyBelongingInventoryDto();
-                                        myBelongingInventoryDto.SetMyBelongingInventoryDto(userId, temp.getElement(), Integer.parseInt(temp.getValue()));
+                                        myBelongingInventoryDto.SetFirstMyBelongingInventoryDto(userId, temp.getElement(), belongingInventoryJsonData.getCount());
                                         myBelongingInventory = myBelongingInventoryRepository.save(myBelongingInventoryDto.ToEntity());
                                         myBelongingInventoryList.add(myBelongingInventory);
                                     } else {
-                                        myBelongingInventory.SetCount(temp.getValue());
+                                        myBelongingInventory.SetCountAndSlotNo(belongingInventoryJsonData.getCount(), belongingInventoryJsonData.getSlot());
                                     }
                                 }
                                 break;

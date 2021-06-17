@@ -39,7 +39,7 @@ public class User {
     String userGameName;
     int level;
     int exp;
-    int sexType; //0 : 남자, 1 : 여자
+    int sexType; //0 : 남자, 1 : 여자 default : 0
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
@@ -68,7 +68,13 @@ public class User {
 
     public void InitData() {
         this.gold = "0";
+        this.diamond = 0L;
         this.soulStone = "0";
+        this.skillPoint = 0;
+        this.moveStone = 0;
+        this.level = 1;
+        this.exp = 0;
+        this.sexType = 0;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -145,5 +151,13 @@ public class User {
 
     public void SetMoveStone(String element) {
         this.moveStone = Integer.parseInt(element);
+    }
+
+    public void SetLevel(String element) {
+        this.level = Integer.parseInt(element);
+    }
+
+    public void SetExp(String element) {
+        this.exp = Integer.parseInt(element);
     }
 }
