@@ -30,6 +30,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
@@ -48,8 +49,9 @@ public class GetterService {
     private final MyRuneInventoryRepository myRuneInventoryRepository;
     private final ErrorLoggingService errorLoggingService;
     private final MyBelongingInventoryRepository myBelongingInventoryRepository;
+    private final MyEquipmentInfoRepository myEquipmentInfoRepository;
 
-    public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map){
+    public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
         MyRuneLevelInfoData myRuneLevelInfoData = null;
         List<MyRuneInventory> myRuneInventoryList = null;
@@ -58,6 +60,7 @@ public class GetterService {
         List<MyEquipmentInventory> myEquipmentInventoryList = null;
         User user = null;
         List<MyBelongingInventory> myBelongingInventoryList = null;
+        MyEquipmentInfo myEquipmentInfo = null;
 
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
@@ -186,6 +189,16 @@ public class GetterService {
                                 throw new MyCustomException("Not Found MyBelongingInventoryList", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
+                        break;
+                    case "equipmentInfo":
+                        if (myEquipmentInfo == null) {
+                            myEquipmentInfo = myEquipmentInfoRepository.findByUseridUser(userId).orElse(null);
+                            if(myEquipmentInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyEquipmentInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyEquipmentInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -293,7 +306,7 @@ public class GetterService {
                                 break;
                             case "useUpItemInventory":
                                 List<ElementDto> elementDtoList = new ArrayList<>();
-                                flag = false;
+                                boolean itemFlag = false;
                                 for (ElementDto temp : i.elements) {
                                     if(temp.getElement().equals("all")) {
                                         for(MyBelongingInventory j : myBelongingInventoryList) {
@@ -304,7 +317,7 @@ public class GetterService {
                                             inventory.SetElement(j.getCode(), jsonData);
                                             elementDtoList.add(inventory);
                                         }
-                                        flag = true;
+                                        itemFlag = true;
                                         break;
                                     }
                                     MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
@@ -316,8 +329,31 @@ public class GetterService {
                                     String jsonData = JsonStringHerlper.WriteValueAsStringFromData(belongingInventoryJsonData);
                                     temp.SetValue(jsonData);
                                 }
-                                if(flag) {
+                                if(itemFlag) {
                                     i.elements = elementDtoList;
+                                }
+                                break;
+                            case "equipmentInfo":
+                                List<ElementDto> equipmentElementDtoList = new ArrayList<>();
+                                boolean equipmentFlag = false;
+                                for(ElementDto temp : i.elements) {
+                                    if(temp.getElement().equals("all")) {
+                                        for(Field j : myEquipmentInfo.getClass().getDeclaredFields()) {
+                                            ElementDto inventory = new ElementDto();
+                                            String name = j.getName();
+                                            if(name.equals("id") || name.equals("useridUser") || name.equals("createdate") || name.equals("modifieddate"))
+                                                continue;
+                                            inventory.SetElement(j.getName(), j.get(myEquipmentInfo).toString());
+                                            equipmentElementDtoList.add(inventory);
+                                        }
+                                        equipmentFlag = true;
+                                        break;
+                                    }
+                                    Field j = myEquipmentInfo.getClass().getDeclaredField(temp.getElement());
+                                    temp.SetValue(j.get(myEquipmentInfo).toString());
+                                }
+                                if(equipmentFlag) {
+                                    i.elements = equipmentElementDtoList;
                                 }
                                 break;
                         }
@@ -387,6 +423,17 @@ public class GetterService {
                                     } else {
                                         myBelongingInventory.SetCountAndSlotNoAndSlotPercent(belongingInventoryJsonData.getCount(), belongingInventoryJsonData.getSlot(), belongingInventoryJsonData.getSlotPercent());
                                     }
+                                }
+                                break;
+                            case "equipmentInfo":
+                                for (ElementDto temp : i.elements) {
+                                    Field j = myEquipmentInfo.getClass().getDeclaredField(temp.getElement());
+                                    Class<?> elementType = j.getType();
+                                    if(elementType.getTypeName().equals("java.long.Long"))
+                                        j.set(myEquipmentInfo, Long.parseLong(temp.getValue()));
+                                    else if(elementType.getTypeName().equals("int"))
+                                        j.set(myEquipmentInfo, Integer.parseInt(temp.getValue()));
+
                                 }
                                 break;
                         }

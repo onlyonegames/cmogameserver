@@ -22,7 +22,7 @@ public class GetterController {
     private final GetterService getterService;
 
     @PostMapping("/api/Getter")
-    public ResponseDTO<Map<String, Object>> Getter(@RequestBody RequestDto dto) {
+    public ResponseDTO<Map<String, Object>> Getter(@RequestBody RequestDto dto) throws IllegalAccessException, NoSuchFieldException {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         RequestDto modifyData = new RequestDto();
