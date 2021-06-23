@@ -1,7 +1,4 @@
 package com.onlyonegames.eternalfantasia.config;
-import com.onlyonegames.eternalfantasia.domain.model.dto.RdsScoreDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RankingInfoDto;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Dungeon.Leaderboard.RedisScore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,16 +28,6 @@ public class RedisRepositoryConfig {
     public RedisTemplate<?, ?> redisTemplate() {
         RedisTemplate<byte[], byte[]> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisTemplate<String, RdsScoreDto> redisRdsScoreDtoTemplate() {
-        final RedisTemplate<String, RdsScoreDto> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer( new StringRedisSerializer() );
-        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(RdsScoreDto.class) );
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(RdsScoreDto.class) );
         return redisTemplate;
     }
 
