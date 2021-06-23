@@ -63,7 +63,7 @@ public class MyClassInventoryService {
             myClassInventoryDto.setCode(code);
             myClassInventoryDto.setCount(addCount);
             myClassInventoryDto.setLevel(1);
-            myClassInventoryDto.setSkillUpgradeIndex(0);
+//            myClassInventoryDto.setSkillUpgradeIndex(0);
             myClassInventoryDto.setUseridUser(userId);
             myClassInventory = myClassInventoryRepository.save(myClassInventoryDto.ToEntity());
             myClassInventoryList.add(myClassInventory);
@@ -130,58 +130,58 @@ public class MyClassInventoryService {
         return map;
     }
 
-    public Map<String, Object> SkillUpgrade(Long userId, Long classId, Map<String, Object> map) {
-        MyClassInventory myClassInventory = myClassInventoryRepository.findById(classId).orElse(null);
-        if(myClassInventory == null){
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyClassInventory not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: MyClassInventory not find.", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        MyActiveSkillData myActiveSkillData = myActiveSkillDataRepository.findByUseridUser(userId).orElse(null);
-        if(myActiveSkillData == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyActiveSkillData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: MyActiveSkillData not find.", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        String myActiveSkillString = myActiveSkillData.getJson_saveDataValue();
-        ActiveSkillDataJsonDto activeSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myActiveSkillString, ActiveSkillDataJsonDto.class);
-        List<SkillUpgradeInfoTable> skillUpgradeInfoTableList = gameDataTableService.SkillUpgradeInfoTable().stream().filter(i -> i.getOwnerClass().equals(myClassInventory.getCode())).collect(Collectors.toList());
-        SkillUpgradeInfoTable skillUpgradeInfoTable = skillUpgradeInfoTableList.get(myClassInventory.getSkillUpgradeIndex());
-
-//        switch(skillUpgradeInfoTable.getUpgradeInfo()){
-//            case "MaxLV_UP":
-//
+//    public Map<String, Object> SkillUpgrade(Long userId, Long classId, Map<String, Object> map) {
+//        MyClassInventory myClassInventory = myClassInventoryRepository.findById(classId).orElse(null);
+//        if(myClassInventory == null){
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyClassInventory not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Fail! -> Cause: MyClassInventory not find.", ResponseErrorCode.NOT_FIND_DATA);
 //        }
-        String upgradeString = skillUpgradeInfoTable.getUpgradeInfo();
-        if(upgradeString.contains("MaxLV_UP")){
-            String[] upgradeStringSplit = upgradeString.split("-");
-            ActiveSkillDataJsonDto.SkillInfo skillInfo = activeSkillDataJsonDto.getSkillInfoList().stream()
-                    .filter(i -> i.code.equals(upgradeStringSplit[1])).findAny().orElse(null);
-            if(skillInfo == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", ResponseErrorCode.NOT_FIND_DATA);
-            }
-            skillInfo.MaxLevelUp(20);
-        }
-        else if(upgradeString.contains("Option_Open")) {
-            String[] upgradeStringSplit = upgradeString.split("-");
-            ActiveSkillDataJsonDto.SkillInfo skillInfo = activeSkillDataJsonDto.getSkillInfoList().stream()
-                    .filter(i -> i.code.equals(upgradeStringSplit[1])).findAny().orElse(null);
-            if(skillInfo == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", ResponseErrorCode.NOT_FIND_DATA);
-            }
-            String[] optionSplit = upgradeStringSplit[2].split("_");
-            int optionIndex = Integer.parseInt(optionSplit[2]);
-            skillInfo.OptionOpen(optionIndex);
-        }
-        myClassInventory.SkillUpgrade();
-        MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
-        myClassInventoryDto.InitFromDBData(myClassInventory);
-        myActiveSkillString = JsonStringHerlper.WriteValueAsStringFromData(activeSkillDataJsonDto);
-        myActiveSkillData.ResetJson_SaveDataValue(myActiveSkillString);
-        map.put("myClassInventory", myClassInventoryDto);
-        map.put("myActiveSkill", activeSkillDataJsonDto);
-        return map;
-    }
+//        MyActiveSkillData myActiveSkillData = myActiveSkillDataRepository.findByUseridUser(userId).orElse(null);
+//        if(myActiveSkillData == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyActiveSkillData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Fail! -> Cause: MyActiveSkillData not find.", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        String myActiveSkillString = myActiveSkillData.getJson_saveDataValue();
+//        ActiveSkillDataJsonDto activeSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myActiveSkillString, ActiveSkillDataJsonDto.class);
+//        List<SkillUpgradeInfoTable> skillUpgradeInfoTableList = gameDataTableService.SkillUpgradeInfoTable().stream().filter(i -> i.getOwnerClass().equals(myClassInventory.getCode())).collect(Collectors.toList());
+//        SkillUpgradeInfoTable skillUpgradeInfoTable = skillUpgradeInfoTableList.get(myClassInventory.getSkillUpgradeIndex());
+//
+////        switch(skillUpgradeInfoTable.getUpgradeInfo()){
+////            case "MaxLV_UP":
+////
+////        }
+//        String upgradeString = skillUpgradeInfoTable.getUpgradeInfo();
+//        if(upgradeString.contains("MaxLV_UP")){
+//            String[] upgradeStringSplit = upgradeString.split("-");
+//            ActiveSkillDataJsonDto.SkillInfo skillInfo = activeSkillDataJsonDto.getSkillInfoList().stream()
+//                    .filter(i -> i.code.equals(upgradeStringSplit[1])).findAny().orElse(null);
+//            if(skillInfo == null) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", ResponseErrorCode.NOT_FIND_DATA);
+//            }
+//            skillInfo.MaxLevelUp(20);
+//        }
+//        else if(upgradeString.contains("Option_Open")) {
+//            String[] upgradeStringSplit = upgradeString.split("-");
+//            ActiveSkillDataJsonDto.SkillInfo skillInfo = activeSkillDataJsonDto.getSkillInfoList().stream()
+//                    .filter(i -> i.code.equals(upgradeStringSplit[1])).findAny().orElse(null);
+//            if(skillInfo == null) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Fail! -> Cause: ActiveSkillDataJsonDto.SkillInfo not find.", ResponseErrorCode.NOT_FIND_DATA);
+//            }
+//            String[] optionSplit = upgradeStringSplit[2].split("_");
+//            int optionIndex = Integer.parseInt(optionSplit[2]);
+//            skillInfo.OptionOpen(optionIndex);
+//        }
+//        myClassInventory.SkillUpgrade();
+//        MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
+//        myClassInventoryDto.InitFromDBData(myClassInventory);
+//        myActiveSkillString = JsonStringHerlper.WriteValueAsStringFromData(activeSkillDataJsonDto);
+//        myActiveSkillData.ResetJson_SaveDataValue(myActiveSkillString);
+//        map.put("myClassInventory", myClassInventoryDto);
+//        map.put("myActiveSkill", activeSkillDataJsonDto);
+//        return map;
+//    }
 
     private BigInteger CalculatedCost(int grade, int level) {
         int baseCost = 0;
