@@ -9,11 +9,10 @@ public class MyClassInventoryDto {
     Long useridUser;
     String code;
     int level;
-    int skillUpgradeIndex;
     int count;
 
     public MyClassInventory ToEntity() {
-        return MyClassInventory.builder().useridUser(useridUser).code(code).level(level).skillUpgradeIndex(skillUpgradeIndex).count(count).build();
+        return MyClassInventory.builder().useridUser(useridUser).code(code).level(level).count(count).build();
     }
 
     public void InitFromDBData(MyClassInventory dbData) {
@@ -21,7 +20,13 @@ public class MyClassInventoryDto {
         this.useridUser = dbData.getUseridUser();
         this.code = dbData.getCode();
         this.level = dbData.getLevel();
-        this.skillUpgradeIndex = dbData.getSkillUpgradeIndex();
         this.count = dbData.getCount();
+    }
+
+    public void SetMyClassInventoryDto(Long useridUser, String code, int level, int count) {
+        this.useridUser = useridUser;
+        this.code = code;
+        this.level = level;
+        this.count = count;
     }
 }

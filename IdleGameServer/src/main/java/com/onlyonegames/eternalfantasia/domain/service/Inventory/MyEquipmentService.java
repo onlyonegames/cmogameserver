@@ -33,7 +33,7 @@ public class MyEquipmentService {
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> GetInventoryInfo(Long userId, Map<String, Object> map) {
-        List<MyEquipmentInventory> myEquipmentInventoryList = myEquipmentInventoryRepository.findALLByUseridUser(userId);
+        List<MyEquipmentInventory> myEquipmentInventoryList = myEquipmentInventoryRepository.findAllByUseridUser(userId);
         List<MyEquipmentInventoryDto> myEquipmentInventoryDtoList = new ArrayList<>();
         for(MyEquipmentInventory temp : myEquipmentInventoryList){
             MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
@@ -45,7 +45,7 @@ public class MyEquipmentService {
     }
 
     public Map<String, Object> GettingEquipmentItem(Long userId, GettingEquipmentItemRequestDto dto, Map<String, Object> map) {
-        List<MyEquipmentInventory> myEquipmentInventoryList = myEquipmentInventoryRepository.findALLByUseridUser(userId);
+        List<MyEquipmentInventory> myEquipmentInventoryList = myEquipmentInventoryRepository.findAllByUseridUser(userId);
         List<EquipmentTable> equipmentTableList = gameDataTableService.EquipmentTable();
         for(GettingEquipmentItemRequestDto.GettingEquipmentItemInfo temp : dto.gettingEquipmentItemInfoList){
             MyEquipmentInventory myEquipmentInventory = myEquipmentInventoryList.stream().filter(i -> i.getCode().equals(temp.code)).findAny().orElse(null);
@@ -56,7 +56,7 @@ public class MyEquipmentService {
                     throw new MyCustomException("Fail! -> Cause: EquipmentTable not find.", ResponseErrorCode.NOT_FIND_DATA);
                 }
                 MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.code, equipmentTable.getGrade(), equipmentTable.getGradeValue(), temp.count, 1);
+                myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.code, equipmentTable.getGrade(), temp.count, 1);
                 myEquipmentInventoryList.add(myEquipmentInventoryRepository.save(myEquipmentInventoryDto.ToEntity()));
                 continue;
             }
@@ -77,11 +77,11 @@ public class MyEquipmentService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        BigInteger finalCost = GetLevelUpCost(myEquipmentInventory.getGradeValue(), myEquipmentInventory.getLevel());
-        if(!user.SpendSoulStone(finalCost)){
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_SOULSTONE.getIntegerValue(), "Fail! -> Cause: Need More SoulStone.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: Need More SoulStone.", ResponseErrorCode.NEED_MORE_SOULSTONE);
-        }
+        //BigInteger finalCost = GetLevelUpCost(myEquipmentInventory.getGradeValue(), myEquipmentInventory.getLevel());
+//        if(!user.SpendSoulStone(finalCost)){
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_SOULSTONE.getIntegerValue(), "Fail! -> Cause: Need More SoulStone.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Fail! -> Cause: Need More SoulStone.", ResponseErrorCode.NEED_MORE_SOULSTONE);
+//        }
         myEquipmentInventory.UpgradeLevel();
         map.put("user", user);
         MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();

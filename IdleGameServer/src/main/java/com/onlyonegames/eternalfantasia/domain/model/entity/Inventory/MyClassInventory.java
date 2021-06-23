@@ -1,6 +1,7 @@
 package com.onlyonegames.eternalfantasia.domain.model.entity.Inventory;
 
 import com.onlyonegames.eternalfantasia.domain.BaseTimeEntity;
+import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.ClassInventoryResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,7 +20,6 @@ public class MyClassInventory extends BaseTimeEntity {
     Long useridUser;
     String code;
     int level;
-    int skillUpgradeIndex;
     int count;
 
     public void AddCount(int addCount) {
@@ -38,7 +38,8 @@ public class MyClassInventory extends BaseTimeEntity {
         this.level += 1;
     }
 
-    public void SkillUpgrade() {
-        this.skillUpgradeIndex += 1;
+    public void SetMyClassInventory(ClassInventoryResponseDto dto) {
+        this.level = dto.getLevel();
+        this.count = dto.getCount();
     }
 }

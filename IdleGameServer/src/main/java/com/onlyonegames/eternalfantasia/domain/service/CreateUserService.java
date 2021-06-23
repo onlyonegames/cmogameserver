@@ -52,6 +52,8 @@ public class CreateUserService
 
     private final MyRuneLevelInfoDataRepository myRuneLevelInfoDataRepository;
 
+    private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -101,6 +103,10 @@ public class CreateUserService
         MyRuneLevelInfoData myRuneLevelInfoData = createMyRuneLevelInfoData(userid);
         myRuneLevelInfoDataRepository.save(myRuneLevelInfoData);
 
+        //최초 유저 페시브 스킬 데이터 생성 및 저장
+        MyPassiveSkillData myPassiveSkillData = createMyPassiveSkillData(userid);
+        myPassiveSkillDataRepository.save(myPassiveSkillData);
+
         return map;
     }
 
@@ -127,7 +133,7 @@ public class CreateUserService
                 String[] codeSplit = temp.getCode().split("_");
                 if(codeSplit[1].equals("000")){
                     MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 1, 1, 1);
+                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 1, 1);
                     myEquipmentInventoryList.add(myEquipmentInventoryDto.ToEntity());
                 }
             }
@@ -154,5 +160,14 @@ public class CreateUserService
         MyRuneLevelInfoDataDto myRuneLevelInfoDataDto = new MyRuneLevelInfoDataDto();
         myRuneLevelInfoDataDto.SetFirstUserData(userId);
         return myRuneLevelInfoDataDto.ToEntity();
+    }
+
+    private MyPassiveSkillData createMyPassiveSkillData(Long userId) {
+        List<InitJsonDatasForFirstUser> initJsonDatasForFirstUserList = gameDataTableService.InitJsonDatasForFirstUser();
+        InitJsonDatasForFirstUser initJsonDatasForFirstUser = initJsonDatasForFirstUserList.get(1);
+        MyPassiveSkillDataDto myPassiveSkillDataDto = new MyPassiveSkillDataDto();
+        myPassiveSkillDataDto.setJson_saveDataValue(initJsonDatasForFirstUser.getInitJson());
+        myPassiveSkillDataDto.setUseridUser(userId);
+        return myPassiveSkillDataDto.ToEntity();
     }
 }

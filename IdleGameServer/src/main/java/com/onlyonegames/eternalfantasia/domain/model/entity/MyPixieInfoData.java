@@ -19,7 +19,6 @@ public class MyPixieInfoData extends BaseTimeEntity {
     Long useridUser;
     int level;
     Long exp;
-    Long maxExp;
     Long runeSlot1;
     Long runeSlot2;
     Long runeSlot3;
@@ -27,21 +26,21 @@ public class MyPixieInfoData extends BaseTimeEntity {
     Long runeSlot5;
     Long runeSlot6;
 
-    public void GetExp(Long addExp) { //TODO 공식 변경 가능성 있음 중요!!
-        Long temp = addExp;
-        do{
-            if(this.exp + temp >= this.maxExp){
-                temp -= this.maxExp - this.exp;
-                this.exp = 0L;
-                this.level += 1;
-                this.maxExp += this.level * (3 * this.level + 1);
-            } else {
-                this.exp += temp;
-                temp -= temp;
-            }
-        }while (temp != 0L);
-
-    }
+//    public void GetExp(Long addExp) { //TODO 공식 변경 가능성 있음 중요!!
+//        Long temp = addExp;
+//        do{
+//            if(this.exp + temp >= this.maxExp){
+//                temp -= this.maxExp - this.exp;
+//                this.exp = 0L;
+//                this.level += 1;
+//                this.maxExp += this.level * (3 * this.level + 1);
+//            } else {
+//                this.exp += temp;
+//                temp -= temp;
+//            }
+//        }while (temp != 0L);
+//
+//    }
 
     public Long EquipmentRune(Long runeInventoryId, int slotNo){
         Long temp = 0L;

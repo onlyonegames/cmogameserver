@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MyEquipmentInventoryRepository extends JpaRepository<MyEquipmentInventory, Long> {
-    List<MyEquipmentInventory> findALLByUseridUser(Long userId);
+    List<MyEquipmentInventory> findAllByUseridUser(Long userId);
 }

@@ -19,6 +19,8 @@ public class GameDataTableService
     private List<InitJsonDatasForFirstUser> initJsonDatasForFirstUserList = null;
     private List<RuneInfoTable> runeInfoTableList = null;
     private List<SkillUpgradeInfoTable> skillUpgradeInfoTableList = null;
+    private List<AccessoryTable> accessoryTableList = null;
+    private List<PassiveSkillTable> passiveSkillTableList = null;
 
     @Autowired
     private UpgradeStatusBuyInfoTableRepository upgradeStatusBuyInfoTableRepository;  // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -35,6 +37,10 @@ public class GameDataTableService
     private RuneInfoTableRepository runeInfoTableRepository;
     @Autowired
     private SkillUpgradeInfoTableRepository skillUpgradeInfoTableRepository;
+    @Autowired
+    private AccessoryTableRepository accessoryTableRepository;
+    @Autowired
+    private PassiveSkillTableRepository passiveSkillTableRepository;
 
     /**/
     // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -74,6 +80,16 @@ public class GameDataTableService
         return skillUpgradeInfoTableList;
     }
 
+    public List<AccessoryTable> AccessoryTable() {
+        accessoryTableList = accessoryTableList == null ? accessoryTableRepository.findAll() : accessoryTableList;
+        return accessoryTableList;
+    }
+
+    public List<PassiveSkillTable> PassiveSkillTable() {
+        passiveSkillTableList = passiveSkillTableList == null ? passiveSkillTableRepository.findAll() : passiveSkillTableList;
+        return passiveSkillTableList;
+    }
+
     public Map<String, Object> ResetGameDataTable(Map<String, Object> map)
     {
         upgradeStatusBuyInfoTableList = null;
@@ -85,6 +101,8 @@ public class GameDataTableService
         initJsonDatasForFirstUserList = null;
         runeInfoTableList = null;
         skillUpgradeInfoTableList = null;
+        accessoryTableList = null;
+        passiveSkillTableList = null;
 
         UpgradeStatusBuyInfoTableList();
 
@@ -95,6 +113,8 @@ public class GameDataTableService
         InitJsonDatasForFirstUser();
         RuneInfoTable();
         SkillUpgradeInfoTable();
+        AccessoryTable();
+        PassiveSkillTable();
 
         /*idle game*/
         map.put("heroClassInfoTable", heroClassInfoTableList);
@@ -103,6 +123,8 @@ public class GameDataTableService
         map.put("initJsonDatasForFirstUser", initJsonDatasForFirstUserList);
         map.put("runeInfoTable", runeInfoTableList);
         map.put("skillUpgradeInfoTable", skillUpgradeInfoTableList);
+        map.put("accessoryTable", accessoryTableList);
+        map.put("passiveSkillTable", passiveSkillTableList);
         return map;
     }
 }

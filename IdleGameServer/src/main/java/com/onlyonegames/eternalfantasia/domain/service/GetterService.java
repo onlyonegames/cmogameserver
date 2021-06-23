@@ -3,28 +3,18 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyBelongingInventoryDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyClassInventoryDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyEquipmentInventoryDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyRuneInventoryDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.CommandDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ContainerDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ElementDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.RequestDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.BelongingInventoryJsonData;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.CarvingRuneUserData;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.PixieUserDataDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RuneInventoryResponseDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyClassInventory;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyEquipmentInventory;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyRuneInventory;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.*;
+import com.onlyonegames.eternalfantasia.domain.model.gamedatas.AccessoryTable;
+import com.onlyonegames.eternalfantasia.domain.model.gamedatas.EquipmentTable;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
-import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyClassInventoryRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyEquipmentInventoryRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyRuneInventoryRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,6 +40,10 @@ public class GetterService {
     private final ErrorLoggingService errorLoggingService;
     private final MyBelongingInventoryRepository myBelongingInventoryRepository;
     private final MyEquipmentInfoRepository myEquipmentInfoRepository;
+    private final GameDataTableService gameDataTableService;
+    private final MyAccessoryInventoryRepository myAccessoryInventoryRepository;
+    private final MyRelicInventoryRepository myRelicInventoryRepository;
+    private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
@@ -61,6 +55,10 @@ public class GetterService {
         User user = null;
         List<MyBelongingInventory> myBelongingInventoryList = null;
         MyEquipmentInfo myEquipmentInfo = null;
+        List<MyAccessoryInventory> myAccessoryInventoryList = null;
+        List<MyRelicInventory> myRelicInventoryList = null;
+        MyStatusInfo myStatusInfo = null;
+        MyPassiveSkillData myPassiveSkillData = null;
 
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
@@ -105,15 +103,6 @@ public class GetterService {
                                         }
                                     }
                                     break;
-                                case "pixieUserData":
-                                    if (myPixieInfoData == null) {
-                                        myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
-                                        if (myPixieInfoData == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
-                                    break;
                             }
                         }
                         break;
@@ -129,43 +118,6 @@ public class GetterService {
                                         if (user == null) {
                                             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                             throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
-                                    break;
-                                case "skillUserDataTable":
-                                    if (myActiveSkillData == null) {
-                                        myActiveSkillData = myActiveSkillDataRepository.findByUseridUser(userId).orElse(null);
-                                        if (myActiveSkillData == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyActiveSkillData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found MyActiveSkillData", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
-                                    break;
-                                case "pixieUserData":
-                                case "carvingRuneUserData":
-                                    if (myPixieInfoData == null) {
-                                        myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
-                                        if (myPixieInfoData == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
-                                    break;
-                                case "heroClassInventory":
-                                    if (myClassInventoryList == null) {
-                                        myClassInventoryList = myClassInventoryRepository.findAllByUseridUser(userId);
-                                        if (myPixieInfoData == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
-                                    break;
-                                case "weaponInventory":
-                                    if (myEquipmentInventoryList == null) {
-                                        myEquipmentInventoryList = myEquipmentInventoryRepository.findALLByUseridUser(userId);
-                                        if (myEquipmentInventoryList == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyEquipmentInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found MyEquipmentInventory", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                     }
                                     break;
@@ -199,6 +151,78 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "skillUserDataTable":
+                        if (myActiveSkillData == null) {
+                            myActiveSkillData = myActiveSkillDataRepository.findByUseridUser(userId).orElse(null);
+                            if(myActiveSkillData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found mMActiveSkillData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyActiveSkillData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                    case "weaponInventory":
+                        if (myEquipmentInventoryList == null) {
+                            myEquipmentInventoryList = myEquipmentInventoryRepository.findAllByUseridUser(userId);
+                            if (myEquipmentInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyEquipmentInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyEquipmentInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "accessoryInventory":
+                        if (myAccessoryInventoryList == null) {
+                            myAccessoryInventoryList = myAccessoryInventoryRepository.findAllByUseridUser(userId);
+                            if (myAccessoryInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyAccessoryInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyAccessoryInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "artifactUserDataTable":
+                        if (myRelicInventoryList == null) {
+                            myRelicInventoryList = myRelicInventoryRepository.findAllByUseridUser(userId);
+                            if(myRuneInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRelicInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyRelicInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "pixieUserData":
+                    case "carvingRuneUserData":
+                        if (myPixieInfoData == null) {
+                            myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
+                            if (myPixieInfoData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "heroClassInventory":
+                        if (myClassInventoryList == null) {
+                            myClassInventoryList = myClassInventoryRepository.findAllByUseridUser(userId);
+                            if (myPixieInfoData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "UpgradeStatusUserData":
+                        if (myStatusInfo == null) {
+                            myStatusInfo = myStatusInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myStatusInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "passiveSkillUserDataTable":
+                        if (myPassiveSkillData == null) {
+                            myPassiveSkillData = myPassiveSkillDataRepository.findByUseridUser(userId).orElse(null);
+                            if(myPassiveSkillData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPassiveSkillData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyPassiveSkillData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -206,76 +230,46 @@ public class GetterService {
         for (CommandDto cmd : requestList.cmds) {
             switch (cmd.cmd) {
                 case "get":
-                    for (ContainerDto i : cmd.containers) {
-                        switch (i.getContainer()) {
+                    for (ContainerDto container : cmd.containers) {
+                        switch (container.getContainer()) {
                             case "PlayerInfo":
-                                for (ElementDto temp : i.elements) {
-                                    switch (temp.getElement()) {
+                                for (ElementDto element : container.elements) {
+                                    switch (element.getElement()) {
                                         case "gold":
-                                            temp.SetValue(user.getGold());
+                                            element.SetValue(user.getGold());
                                             break;
                                         case "diamond":
-                                            temp.SetValue(user.getDiamond());
+                                            element.SetValue(user.getDiamond());
                                             break;
                                         case "soulStone":
-                                            temp.SetValue(user.getSoulStone());
+                                            element.SetValue(user.getSoulStone());
                                             break;
                                         case "skillPoint":
-                                            temp.SetValue(user.getSkillPoint());
+                                            element.SetValue(user.getSkillPoint());
                                             break;
                                         case "moveStone":
-                                            temp.SetValue(user.getMoveStone());
+                                            element.SetValue(user.getMoveStone());
                                             break;
                                         case "runeLevel":
-                                            temp.SetValue(myRuneLevelInfoData.getLevel());
+                                            element.SetValue(myRuneLevelInfoData.getLevel());
                                             break;
-
                                     }
                                 }
                                 break;
                             case "UserInfo":
-                                for (ElementDto temp : i.elements) {
-                                    switch (temp.getElement()) {
+                                for (ElementDto element : container.elements) {
+                                    switch (element.getElement()) {
                                         case "userGameName":
-                                            temp.SetValue(user.getUserGameName());
+                                            element.SetValue(user.getUserGameName());
                                             break;
                                         case "level":
-                                            temp.SetValue(user.getLevel());
+                                            element.SetValue(user.getLevel());
                                             break;
                                         case "exp":
-                                            temp.SetValue(user.getExp());
+                                            element.SetValue(user.getExp());
                                             break;
                                         case "sexType":
-                                            temp.SetValue(user.getSexType());
-                                            break;
-                                        case "skillUserDataTable":
-                                            temp.setElement(myActiveSkillData.getJson_saveDataValue());
-                                            break;
-                                        case "pixieUserData":
-                                            PixieUserDataDto pixieUserDataDto = new PixieUserDataDto();
-                                            pixieUserDataDto.SetPixieUserDataDto(myPixieInfoData);
-                                            break;
-                                        case "carvingRuneUserData":
-                                            CarvingRuneUserData carvingRuneUserData = new CarvingRuneUserData();
-                                            carvingRuneUserData.SetCarvingRuneUserData(myPixieInfoData);
-                                            break;
-                                        case "heroClassInventory":
-                                            List<MyClassInventoryDto> myClassInventoryDtoList = new ArrayList<>();
-                                            for (MyClassInventory j : myClassInventoryList) {
-                                                MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
-                                                myClassInventoryDto.InitFromDBData(j);
-                                                myClassInventoryDtoList.add(myClassInventoryDto);
-                                            }
-                                            String listJson = JsonStringHerlper.WriteValueAsStringFromData(myClassInventoryDtoList);
-                                            temp.SetValue(listJson);
-                                            break;
-                                        case "weaponInventory":
-                                            List<MyEquipmentInventoryDto> myEquipmentInventoryDtoList = new ArrayList<>();
-                                            for (MyEquipmentInventory j : myEquipmentInventoryList) {
-                                                MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                                                myEquipmentInventoryDto.InitFromDBData(j);
-                                                myEquipmentInventoryDtoList.add(myEquipmentInventoryDto);
-                                            }
+                                            element.SetValue(user.getSexType());
                                             break;
                                     }
                                 }
@@ -283,7 +277,7 @@ public class GetterService {
                             case "runeInventory":
                                 List<ElementDto> runeInventoryElementDtoList = new ArrayList<>();
                                 boolean flag = false;
-                                for (ElementDto temp : i.elements) {
+                                for (ElementDto temp : container.elements) {
                                     if(temp.getElement().equals("all")) {
                                         for(MyRuneInventory j : myRuneInventoryList){
                                             ElementDto inventory = new ElementDto();
@@ -301,13 +295,13 @@ public class GetterService {
                                     temp.SetValue(myRuneInventory.getCount());
                                 }
                                 if(flag){
-                                    i.elements = runeInventoryElementDtoList;
+                                    container.elements = runeInventoryElementDtoList;
                                 }
                                 break;
                             case "useUpItemInventory":
                                 List<ElementDto> elementDtoList = new ArrayList<>();
                                 boolean itemFlag = false;
-                                for (ElementDto temp : i.elements) {
+                                for (ElementDto temp : container.elements) {
                                     if(temp.getElement().equals("all")) {
                                         for(MyBelongingInventory j : myBelongingInventoryList) {
                                             ElementDto inventory = new ElementDto();
@@ -330,19 +324,146 @@ public class GetterService {
                                     temp.SetValue(jsonData);
                                 }
                                 if(itemFlag) {
-                                    i.elements = elementDtoList;
+                                    container.elements = elementDtoList;
                                 }
+                                break;
+                            case "pixieUserData":
+                                List<ElementDto> pixieElementDtoList = new ArrayList<>();
+                                boolean pixieFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(Field field : myPixieInfoData.getClass().getDeclaredFields()) {
+                                            String name = field.getName();
+                                            if(name.equals("id") || name.equals("useridUser") || name.equals("runeSlot1")
+                                                    || name.equals("runeSlot2") || name.equals("runeSlot3")
+                                                    || name.equals("runeSlot4") || name.equals("runeSlot5")
+                                                    || name.equals("runeSlot6"))
+                                                continue;
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(field.getName(), field.get(myPixieInfoData).toString());
+                                            pixieElementDtoList.add(elementDto);
+                                        }
+                                        pixieFlag = true;
+                                        break;
+                                    }
+                                    Field field = myPixieInfoData.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myPixieInfoData).toString());
+                                }
+                                if(pixieFlag)
+                                    container.elements = pixieElementDtoList;
+                                break;
+                            case "carvingRuneUserData":
+                                List<ElementDto> carvingRuneElementDtoList = new ArrayList<>();
+                                boolean carvingRuneFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(Field field : myPixieInfoData.getClass().getDeclaredFields()) {
+                                            String name = field.getName();
+                                            if(name.equals("id") || name.equals("useridUser") || name.equals("level") || name.equals("exp"))
+                                                continue;
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(field.getName(), field.get(myPixieInfoData).toString());
+                                            carvingRuneElementDtoList.add(elementDto);
+                                        }
+                                        carvingRuneFlag = true;
+                                        break;
+                                    }
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.delete(0, stringBuilder.length()-1);
+                                    stringBuilder.append("runeSlot");
+                                    stringBuilder.append(element.getElement());
+                                    Field field = myPixieInfoData.getClass().getDeclaredField(stringBuilder.toString());
+                                    element.SetValue(field.get(myPixieInfoData).toString());
+                                }
+                                if(carvingRuneFlag)
+                                    container.elements = carvingRuneElementDtoList;
+                                break;
+                            case "heroClassInventory":
+                                List<ElementDto> heroClassElementDtoList = new ArrayList<>();
+                                boolean heroClassFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(MyClassInventory myClassInventory : myClassInventoryList) {
+                                            ClassInventoryResponseDto classInventoryResponseDto = new ClassInventoryResponseDto();
+                                            classInventoryResponseDto.InitFromDB(myClassInventory);
+                                            String class_Json = JsonStringHerlper.WriteValueAsStringFromData(classInventoryResponseDto);
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(myClassInventory.getCode(), class_Json);
+                                            heroClassElementDtoList.add(elementDto);
+                                        }
+                                        heroClassFlag = true;
+                                        break;
+                                    }
+                                    MyClassInventory myClassInventory = myClassInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if(myClassInventory == null) {
+
+                                    }
+                                    ClassInventoryResponseDto classInventoryResponseDto = new ClassInventoryResponseDto();
+                                    classInventoryResponseDto.InitFromDB(myClassInventory);
+                                    String class_Json = JsonStringHerlper.WriteValueAsStringFromData(classInventoryResponseDto);
+                                    element.SetValue(class_Json);
+                                }
+                                if(heroClassFlag)
+                                    container.elements = heroClassElementDtoList;
+                                break;
+                            case "UpgradeStatusUserData":
+                                List<ElementDto> statusElementDtoList = new ArrayList<>();
+                                boolean statusFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(Field field : myStatusInfo.getClass().getDeclaredFields()) {
+                                            String name = field.getName();
+                                            if(name.equals("id") || name.equals("useridUser"))
+                                                continue;
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(name, field.get(myStatusInfo).toString());
+                                            statusElementDtoList.add(elementDto);
+                                        }
+                                        statusFlag = true;
+                                        break;
+                                    }
+                                    Field field = myStatusInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myStatusInfo).toString());
+                                }
+                                if(statusFlag)
+                                    container.elements = statusElementDtoList;
+                                break;
+                            case "skillUserDataTable":
+                                List<ElementDto> activeSkillElementDtoList = new ArrayList<>();
+                                boolean activeSkillFlag = false;
+                                ActiveSkillDataJsonDto activeSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myActiveSkillData.getJson_saveDataValue(), ActiveSkillDataJsonDto.class);
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(ActiveSkillDataJsonDto.SkillInfo skillInfo : activeSkillDataJsonDto.getSkillInfoList()) {
+                                            ElementDto elementDto = new ElementDto();
+                                            String skill_Json = JsonStringHerlper.WriteValueAsStringFromData(skillInfo);
+                                            elementDto.SetElement(Integer.toString(skillInfo.id), skill_Json);
+                                            activeSkillElementDtoList.add(elementDto);
+                                        }
+                                        activeSkillFlag = true;
+                                        break;
+                                    }
+                                    ActiveSkillDataJsonDto.SkillInfo skillInfo = activeSkillDataJsonDto.skillInfoList.stream().filter(i -> i.id == Integer.parseInt(element.getElement())).findAny().orElse(null);
+                                    if(skillInfo == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found SkillInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found SkillInfo", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    String skill_Json = JsonStringHerlper.WriteValueAsStringFromData(skillInfo);
+                                    element.SetValue(skill_Json);
+                                }
+                                if(activeSkillFlag)
+                                    container.elements = activeSkillElementDtoList;
                                 break;
                             case "equipmentInfo":
                                 List<ElementDto> equipmentElementDtoList = new ArrayList<>();
                                 boolean equipmentFlag = false;
-                                for(ElementDto temp : i.elements) {
+                                for(ElementDto temp : container.elements) {
                                     if(temp.getElement().equals("all")) {
                                         for(Field j : myEquipmentInfo.getClass().getDeclaredFields()) {
-                                            ElementDto inventory = new ElementDto();
                                             String name = j.getName();
                                             if(name.equals("id") || name.equals("useridUser") || name.equals("createdate") || name.equals("modifieddate"))
                                                 continue;
+                                            ElementDto inventory = new ElementDto();
                                             inventory.SetElement(j.getName(), j.get(myEquipmentInfo).toString());
                                             equipmentElementDtoList.add(inventory);
                                         }
@@ -353,71 +474,183 @@ public class GetterService {
                                     temp.SetValue(j.get(myEquipmentInfo).toString());
                                 }
                                 if(equipmentFlag) {
-                                    i.elements = equipmentElementDtoList;
+                                    container.elements = equipmentElementDtoList;
                                 }
+                                break;
+                            case "weaponInventory":
+                                List<ElementDto> weaponElementDtoList = new ArrayList<>();
+                                boolean weaponFlag = false;
+                                for(ElementDto temp : container.elements) {
+                                    if(temp.getElement().equals("all")) {
+                                        for (MyEquipmentInventory j : myEquipmentInventoryList) {
+                                            ElementDto inventory = new ElementDto();
+                                            WeaponInventoryResponseDto weaponInventoryResponseDto = new WeaponInventoryResponseDto();
+                                            weaponInventoryResponseDto.InitFromDB(j);
+                                            String jsonData = JsonStringHerlper.WriteValueAsStringFromData(weaponInventoryResponseDto);
+                                            inventory.SetElement(j.getId().toString(), jsonData);
+                                            weaponElementDtoList.add(inventory);
+                                        }
+                                        weaponFlag = true;
+                                        break;
+                                    }
+                                    MyEquipmentInventory myEquipmentInventory = myEquipmentInventoryList.stream().filter(i -> i.getCode().equals(temp.getElement())).findAny().orElse(null);
+                                    if(myEquipmentInventory == null) {
+
+                                    }
+                                    WeaponInventoryResponseDto weaponInventoryResponseDto = new WeaponInventoryResponseDto();
+                                    weaponInventoryResponseDto.InitFromDB(myEquipmentInventory);
+                                    String jsonData = JsonStringHerlper.WriteValueAsStringFromData(weaponInventoryResponseDto);
+                                    temp.SetValue(jsonData);
+                                }
+                                if (weaponFlag)
+                                    container.elements = weaponElementDtoList;
+                                break;
+                            case "accessoryInventory":
+                                List<ElementDto> accessoryElementDtoList = new ArrayList<>();
+                                boolean accessoryFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(MyAccessoryInventory item : myAccessoryInventoryList) {
+                                            ElementDto inventory = new ElementDto();
+                                            AccessoryInventoryResponseDto accessoryInventoryResponseDto = new AccessoryInventoryResponseDto();
+                                            accessoryInventoryResponseDto.InitFromDB(item);
+                                            String jsonData = JsonStringHerlper.WriteValueAsStringFromData(accessoryInventoryResponseDto);
+                                            inventory.SetElement(item.getCode(), jsonData);
+                                            accessoryElementDtoList.add(inventory);
+                                        }
+                                        accessoryFlag = true;
+                                        break;
+                                    }
+                                    MyAccessoryInventory myAccessoryInventory = myAccessoryInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if(myAccessoryInventory == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyAccessoryInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyAccessoryInventory", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    AccessoryInventoryResponseDto accessoryInventoryResponseDto = new AccessoryInventoryResponseDto();
+                                    accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);
+                                    String jsonData = JsonStringHerlper.WriteValueAsStringFromData(accessoryInventoryResponseDto);
+                                    element.SetValue(jsonData);
+                                }
+                                if (accessoryFlag)
+                                    container.elements = accessoryElementDtoList;
+                                break;
+                            case "artifactUserDataTable":
+                                List<ElementDto> relicElementDtoList = new ArrayList<>();
+                                boolean relicFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(MyRelicInventory item : myRelicInventoryList) {
+                                            ElementDto inventory = new ElementDto();
+                                            RelicInventoryResponseDto relicInventoryResponseDto = new RelicInventoryResponseDto();
+                                            relicInventoryResponseDto.InitFromDB(item);
+                                            String jsonData = JsonStringHerlper.WriteValueAsStringFromData(relicInventoryResponseDto);
+                                            inventory.SetElement(Integer.toString(item.getIndex()), jsonData);
+                                            relicElementDtoList.add(inventory);
+                                        }
+                                        relicFlag = true;
+                                        break;
+                                    }
+                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getIndex() == Integer.parseInt(element.getElement())).findAny().orElse(null);
+                                    if(myRelicInventory == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRelicInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyRelicInventory", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    RelicInventoryResponseDto relicInventoryResponseDto = new RelicInventoryResponseDto();
+                                    relicInventoryResponseDto.InitFromDB(myRelicInventory);
+                                    String jsonData = JsonStringHerlper.WriteValueAsStringFromData(relicInventoryResponseDto);
+                                    element.SetValue(jsonData);
+                                }
+                                if (relicFlag)
+                                    container.elements = relicElementDtoList;
+                                break;
+                            case "passiveSkillUserDataTable":
+                                List<ElementDto> passiveSkillElementDtoList = new ArrayList<>();
+                                boolean passiveSkillFlag = false;
+                                PassiveSkillDataJsonDto passiveSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassiveSkillData.getJson_saveDataValue(), PassiveSkillDataJsonDto.class);
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(PassiveSkillDataJsonDto.PassiveSkillInfo skillInfo : passiveSkillDataJsonDto.passiveSkillInfoList) {
+                                            ElementDto elementDto = new ElementDto();
+                                            String skill_Json = JsonStringHerlper.WriteValueAsStringFromData(skillInfo);
+                                            elementDto.SetElement(Integer.toString(skillInfo.id), skill_Json);
+                                            passiveSkillElementDtoList.add(elementDto);
+                                        }
+                                        passiveSkillFlag = true;
+                                        break;
+                                    }
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo skillInfo = passiveSkillDataJsonDto.passiveSkillInfoList.stream().filter(i -> i.id == Integer.parseInt(element.getElement())).findAny().orElse(null);
+                                    if(skillInfo == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found SkillInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found SkillInfo", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    String skill_Json = JsonStringHerlper.WriteValueAsStringFromData(skillInfo);
+                                    element.SetValue(skill_Json);
+                                }
+                                if(passiveSkillFlag)
+                                    container.elements = passiveSkillElementDtoList;
                                 break;
                         }
                     }
                     break;
                 case "set":
-                    for (ContainerDto i : cmd.containers) {
-                        switch (i.container) {
+                    for (ContainerDto container : cmd.containers) {
+                        switch (container.container) {
                             case "PlayerInfo":
-                                for (ElementDto temp : i.elements) {
-                                    switch (temp.getElement()) {
+                                for (ElementDto element : container.elements) {
+                                    switch (element.getElement()) {
                                         case "gold":
-                                            user.SetGold(temp.getValue());
+                                            user.SetGold(element.getValue());
                                             break;
                                         case "diamond":
-                                            user.SetDiamond(temp.getValue());
+                                            user.SetDiamond(element.getValue());
                                             break;
                                         case "soulStone":
-                                            user.SetSoulStone(temp.getValue());
+                                            user.SetSoulStone(element.getValue());
                                             break;
                                         case "skillPoint":
-                                            user.SetSkillPoint(temp.getValue());
+                                            user.SetSkillPoint(element.getValue());
                                             break;
                                         case "moveStone":
-                                            user.SetMoveStone(temp.getValue());
+                                            user.SetMoveStone(element.getValue());
                                             break;
                                         case "runeLevel":
-                                            myRuneLevelInfoData.SetLevel(temp.getValue());
+                                            myRuneLevelInfoData.SetLevel(element.getValue());
                                             break;
                                     }
                                 }
                                 break;
                             case "UserInfo":
-                                for (ElementDto temp : i.elements) {
-                                    switch (temp.getElement()) {
+                                for (ElementDto element : container.elements) {
+                                    switch (element.getElement()) {
                                         case "level":
-                                            user.SetLevel(temp.getValue());
+                                            user.SetLevel(element.getValue());
                                             break;
                                         case "exp":
-                                            user.SetExp(temp.getValue());
+                                            user.SetExp(element.getValue());
                                             break;
                                     }
                                 }
                                 break;
                             case "runeInventory":
-                                for (ElementDto temp : i.elements) {
-                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(temp.getElement())).findAny().orElse(null);
+                                for (ElementDto element : container.elements) {
+                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(element.getElement())).findAny().orElse(null);
                                     if (myRuneInventory == null) {
                                         MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
-                                        myRuneInventoryDto.SetMyRuneInventoryDto(userId, temp.getElement(), temp.getValue());
+                                        myRuneInventoryDto.SetMyRuneInventoryDto(userId, element.getElement(), element.getValue());
                                         myRuneInventory = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
                                         myRuneInventoryList.add(myRuneInventory);
                                     } else {
-                                        myRuneInventory.SetCount(temp.getValue());
+                                        myRuneInventory.SetCount(element.getValue());
                                     }
                                 }
                                 break;
                             case "useUpItemInventory":
-                                for (ElementDto temp : i.elements) {
-                                    MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
-                                    BelongingInventoryJsonData belongingInventoryJsonData = JsonStringHerlper.ReadValueFromJson(temp.getValue(), BelongingInventoryJsonData.class);
+                                for (ElementDto element : container.elements) {
+                                    MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    BelongingInventoryJsonData belongingInventoryJsonData = JsonStringHerlper.ReadValueFromJson(element.getValue(), BelongingInventoryJsonData.class);
                                     if (myBelongingInventory == null) {
                                         MyBelongingInventoryDto myBelongingInventoryDto = new MyBelongingInventoryDto();
-                                        myBelongingInventoryDto.SetFirstMyBelongingInventoryDto(userId, temp.getElement(), belongingInventoryJsonData.getCount());
+                                        myBelongingInventoryDto.SetFirstMyBelongingInventoryDto(userId, element.getElement(), belongingInventoryJsonData.getCount());
                                         myBelongingInventory = myBelongingInventoryRepository.save(myBelongingInventoryDto.ToEntity());
                                         myBelongingInventoryList.add(myBelongingInventory);
                                     } else {
@@ -425,17 +658,125 @@ public class GetterService {
                                     }
                                 }
                                 break;
+                            case "pixieUserData":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myPixieInfoData.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if(elementType.getTypeName().equals("java.lang.Long"))
+                                        field.set(myPixieInfoData, Long.parseLong(element.getValue()));
+                                    if(elementType.getTypeName().equals("int"))
+                                        field.set(myPixieInfoData, Integer.parseInt(element.getValue()));
+                                }
+                                break;
+                            case "carvingRuneUserData":
+                                for (ElementDto element : container.elements) {
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    stringBuilder.delete(0, stringBuilder.length() - 1);
+                                    stringBuilder.append("runeSlot");
+                                    stringBuilder.append(element.getElement());
+                                    Field field = myPixieInfoData.getClass().getDeclaredField(stringBuilder.toString());
+//                                    Class<?> elementType = field.getType();
+                                    field.set(myPixieInfoData, Long.parseLong(element.getValue()));
+                                }
+                            case "heroClassInventory":
+                                for(ElementDto element : container.elements) {
+                                    ClassInventoryResponseDto classInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), ClassInventoryResponseDto.class);
+                                    MyClassInventory myClassInventory = myClassInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if( myClassInventory == null) {
+                                        MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
+                                        myClassInventoryDto.SetMyClassInventoryDto(userId, classInventoryResponseDto.getCode(), classInventoryResponseDto.getLevel(), classInventoryResponseDto.getCount());
+                                        myClassInventory = myClassInventoryRepository.save(myClassInventoryDto.ToEntity());
+                                        myClassInventoryList.add(myClassInventory);
+                                    }else {
+                                        myClassInventory.SetMyClassInventory(classInventoryResponseDto);
+                                    }
+                                }
+                                break;
+                            case "UpgradeStatusUserData":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myStatusInfo.getClass().getDeclaredField(element.getElement());
+                                    field.set(myStatusInfo, Integer.parseInt(element.getValue()));
+                                }
+                                break;
                             case "equipmentInfo":
-                                for (ElementDto temp : i.elements) {
-                                    Field j = myEquipmentInfo.getClass().getDeclaredField(temp.getElement());
+                                for (ElementDto element : container.elements) {
+                                    Field j = myEquipmentInfo.getClass().getDeclaredField(element.getElement());
                                     Class<?> elementType = j.getType();
-                                    if(elementType.getTypeName().equals("java.long.Long"))
-                                        j.set(myEquipmentInfo, Long.parseLong(temp.getValue()));
+                                    if(elementType.getTypeName().equals("java.lang.Long"))
+                                        j.set(myEquipmentInfo, Long.parseLong(element.getValue()));
                                     else if(elementType.getTypeName().equals("int"))
-                                        j.set(myEquipmentInfo, Integer.parseInt(temp.getValue()));
+                                        j.set(myEquipmentInfo, Integer.parseInt(element.getValue()));
 
                                 }
                                 break;
+                            case "skillUserDataTable":
+                                ActiveSkillDataJsonDto activeSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myActiveSkillData.getJson_saveDataValue(), ActiveSkillDataJsonDto.class);
+                                for (ElementDto element : container.elements) {
+                                    ActiveSkillDataJsonDto.SkillInfo skillInfo = JsonStringHerlper.ReadValueFromJson(element.getValue(), ActiveSkillDataJsonDto.SkillInfo.class);
+                                    activeSkillDataJsonDto.skillInfoList.set(Integer.parseInt(element.getElement())-1, skillInfo);
+                                }
+                                String jsonData = JsonStringHerlper.WriteValueAsStringFromData(activeSkillDataJsonDto);
+                                myActiveSkillData.ResetJson_SaveDataValue(jsonData);
+                                break;
+                            case "weaponInventory":
+                                for(ElementDto element : container.elements) {
+                                    WeaponInventoryResponseDto weaponInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), WeaponInventoryResponseDto.class);
+                                    MyEquipmentInventory myEquipmentInventory = myEquipmentInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if (myEquipmentInventory == null) {
+                                        EquipmentTable equipmentTable = gameDataTableService.EquipmentTable().stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                        if(equipmentTable == null) {errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found EquipmentTable", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found EquipmentTable", ResponseErrorCode.NOT_FIND_DATA);
+                                        }
+                                        MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
+                                        myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, element.getElement(), equipmentTable.getGrade(), weaponInventoryResponseDto.getCount(), weaponInventoryResponseDto.getLevel());
+                                        myEquipmentInventory = myEquipmentInventoryRepository.save(myEquipmentInventoryDto.ToEntity());
+                                        myEquipmentInventoryList.add(myEquipmentInventory);
+                                    }else {
+                                        myEquipmentInventory.SetMyEquipmentInventory(weaponInventoryResponseDto);
+                                    }
+                                }
+                                break;
+                            case "accessoryInventory":
+                                for(ElementDto element : container.elements) {
+                                    AccessoryInventoryResponseDto accessoryInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), AccessoryInventoryResponseDto.class);
+                                    MyAccessoryInventory myAccessoryInventory = myAccessoryInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if (myAccessoryInventory == null) {
+                                        AccessoryTable accessoryTable = gameDataTableService.AccessoryTable().stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                        if(accessoryTable == null) {
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found AccessoryTable", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                            throw new MyCustomException("Not Found AccessoryTable", ResponseErrorCode.NOT_FIND_DATA);
+                                        }
+                                        MyAccessoryInventoryDto myAccessoryInventoryDto = new MyAccessoryInventoryDto();
+                                        myAccessoryInventoryDto.SetMyAccessoryInventoryDto(userId, accessoryTable.getCode(), accessoryInventoryResponseDto.getCount(), accessoryInventoryResponseDto.getLevel(), accessoryInventoryResponseDto.getOptionLockList(), accessoryInventoryResponseDto.getOptions());
+                                        myAccessoryInventory = myAccessoryInventoryRepository.save(myAccessoryInventoryDto.ToEntity());
+                                        myAccessoryInventoryList.add(myAccessoryInventory);
+                                    }else {
+                                        myAccessoryInventory.SetMyAccessoryInventory(accessoryInventoryResponseDto);
+                                    }
+                                }
+                                break;
+                            case "artifactUserDataTable":
+                                for(ElementDto elementDto : container.elements) {
+                                    RelicInventoryResponseDto relicInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(elementDto.getValue(), RelicInventoryResponseDto.class);
+                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getIndex() == Integer.parseInt(elementDto.getElement())).findAny().orElse(null);
+                                    if (myRelicInventory == null) {
+                                        MyRelicInventoryDto myRelicInventoryDto = new MyRelicInventoryDto();
+                                        myRelicInventoryDto.SetMyRelicInventoryDto(userId, Integer.parseInt(elementDto.getElement()), relicInventoryResponseDto.getCount(), relicInventoryResponseDto.getLevel());
+                                        myRelicInventory = myRelicInventoryRepository.save(myRelicInventoryDto.ToEntity());
+                                        myRelicInventoryList.add(myRelicInventory);
+                                    }else {
+                                        myRelicInventory.SetMyRelicInventory(relicInventoryResponseDto);
+                                    }
+                                }
+                                break;
+                            case "passiveSkillUserDataTable":
+                                PassiveSkillDataJsonDto passiveSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassiveSkillData.getJson_saveDataValue(), PassiveSkillDataJsonDto.class);
+                                for(ElementDto element : container.elements) {
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo passiveSkillInfo = JsonStringHerlper.ReadValueFromJson(element.getElement(), PassiveSkillDataJsonDto.PassiveSkillInfo.class);
+                                    passiveSkillDataJsonDto.passiveSkillInfoList.set(Integer.parseInt(element.getElement())-1, passiveSkillInfo);
+                                }
+                                String passiveSkill_Json = JsonStringHerlper.WriteValueAsStringFromData(passiveSkillDataJsonDto);
+                                myPassiveSkillData.ResetJson_SaveDataValue(passiveSkill_Json);
                         }
                     }
                     break;

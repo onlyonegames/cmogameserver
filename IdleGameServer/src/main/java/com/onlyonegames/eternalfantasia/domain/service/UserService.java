@@ -63,12 +63,12 @@ public class UserService {
         map.put("userInfo", user);
 
         // UpgradeStatus
-        upgradeStatusService.GetUpgradeStatus(userId, map);
+        //upgradeStatusService.GetUpgradeStatus(userId, map);
 
         // upgradeStatusBuyInfoTableList
-        List<UpgradeStatusBuyInfoTable> upgradeStatusBuyInfoTableList = gameDataTableService.UpgradeStatusBuyInfoTableList();
-        String json = JsonStringHerlper.WriteValueAsStringFromData(upgradeStatusBuyInfoTableList);
-        map.put("upgradeStatusBuyInfoTable", upgradeStatusBuyInfoTableList);
+//        List<UpgradeStatusBuyInfoTable> upgradeStatusBuyInfoTableList = gameDataTableService.UpgradeStatusBuyInfoTableList();
+//        String json = JsonStringHerlper.WriteValueAsStringFromData(upgradeStatusBuyInfoTableList);
+//        map.put("upgradeStatusBuyInfoTable", upgradeStatusBuyInfoTableList);
 
 
         /*
