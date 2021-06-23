@@ -46,11 +46,11 @@ public class MyClassInventoryController {
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 
-    @PostMapping("/api/SkillUpgrade")
-    public ResponseDTO<Map<String, Object>> SkillUpgrade(@RequestBody SkillUpgradeRequestDto dto) {
-        Map<String, Object> map = new HashMap<>();
-        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Map<String, Object> response = myClassInventoryService.SkillUpgrade(userId, dto.getClassInventoryId(), map);
-        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
-    }
+//    @PostMapping("/api/SkillUpgrade")
+//    public ResponseDTO<Map<String, Object>> SkillUpgrade(@RequestBody SkillUpgradeRequestDto dto) {
+//        Map<String, Object> map = new HashMap<>();
+//        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        Map<String, Object> response = myClassInventoryService.SkillUpgrade(userId, dto.getClassInventoryId(), map);
+//        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+//    }
 }
