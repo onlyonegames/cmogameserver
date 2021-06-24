@@ -9,12 +9,12 @@ public class MyPixieInfoDataDto {
     Long useridUser;
     int level;
     Long exp;
-    Long runeSlot1;
-    Long runeSlot2;
-    Long runeSlot3;
-    Long runeSlot4;
-    Long runeSlot5;
-    Long runeSlot6;
+    int runeSlot1;
+    int runeSlot2;
+    int runeSlot3;
+    int runeSlot4;
+    int runeSlot5;
+    int runeSlot6;
 
     public MyPixieInfoData ToEntity() {
         return MyPixieInfoData.builder().useridUser(useridUser).level(level).exp(exp).runeSlot1(runeSlot1)
@@ -29,12 +29,12 @@ public class MyPixieInfoDataDto {
     public void InitData(){
         this.level = 1;
         this.exp = 0L;
-        this.runeSlot1 = 0L;
-        this.runeSlot2 = 0L;
-        this.runeSlot3 = 0L;
-        this.runeSlot4 = 0L;
-        this.runeSlot5 = 0L;
-        this.runeSlot6 = 0L;
+        this.runeSlot1 = 0;
+        this.runeSlot2 = 0;
+        this.runeSlot3 = 0;
+        this.runeSlot4 = 0;
+        this.runeSlot5 = 0;
+        this.runeSlot6 = 0;
     }
 
     public void InitFromDBData(MyPixieInfoData dbData) {

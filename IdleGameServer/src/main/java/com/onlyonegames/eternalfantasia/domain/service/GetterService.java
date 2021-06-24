@@ -337,7 +337,7 @@ public class GetterService {
                                             if(name.equals("id") || name.equals("useridUser") || name.equals("runeSlot1")
                                                     || name.equals("runeSlot2") || name.equals("runeSlot3")
                                                     || name.equals("runeSlot4") || name.equals("runeSlot5")
-                                                    || name.equals("runeSlot6"))
+                                                    || name.equals("runeSlot6") || name.equals("createddate") || name.equals("modifieddate"))
                                                 continue;
                                             ElementDto elementDto = new ElementDto();
                                             elementDto.SetElement(field.getName(), field.get(myPixieInfoData).toString());
@@ -544,13 +544,13 @@ public class GetterService {
                                             RelicInventoryResponseDto relicInventoryResponseDto = new RelicInventoryResponseDto();
                                             relicInventoryResponseDto.InitFromDB(item);
                                             String jsonData = JsonStringHerlper.WriteValueAsStringFromData(relicInventoryResponseDto);
-                                            inventory.SetElement(Integer.toString(item.getIndex()), jsonData);
+                                            inventory.SetElement(Integer.toString(item.getTable_id()), jsonData);
                                             relicElementDtoList.add(inventory);
                                         }
                                         relicFlag = true;
                                         break;
                                     }
-                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getIndex() == Integer.parseInt(element.getElement())).findAny().orElse(null);
+                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getTable_id() == Integer.parseInt(element.getElement())).findAny().orElse(null);
                                     if(myRelicInventory == null) {
                                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRelicInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                         throw new MyCustomException("Not Found MyRelicInventory", ResponseErrorCode.NOT_FIND_DATA);
@@ -664,19 +664,18 @@ public class GetterService {
                                     Class<?> elementType = field.getType();
                                     if(elementType.getTypeName().equals("java.lang.Long"))
                                         field.set(myPixieInfoData, Long.parseLong(element.getValue()));
-                                    if(elementType.getTypeName().equals("int"))
+                                    else if(elementType.getTypeName().equals("int"))
                                         field.set(myPixieInfoData, Integer.parseInt(element.getValue()));
                                 }
                                 break;
                             case "carvingRuneUserData":
                                 for (ElementDto element : container.elements) {
-                                    StringBuilder stringBuilder = new StringBuilder();
-                                    stringBuilder.delete(0, stringBuilder.length() - 1);
-                                    stringBuilder.append("runeSlot");
-                                    stringBuilder.append(element.getElement());
-                                    Field field = myPixieInfoData.getClass().getDeclaredField(stringBuilder.toString());
-//                                    Class<?> elementType = field.getType();
-                                    field.set(myPixieInfoData, Long.parseLong(element.getValue()));
+                                    Field field = myPixieInfoData.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if(elementType.getTypeName().equals("java.lang.Long"))
+                                        field.set(myPixieInfoData, Long.parseLong(element.getValue()));
+                                    else if(elementType.getTypeName().equals("int"))
+                                        field.set(myPixieInfoData, Integer.parseInt(element.getValue()));
                                 }
                             case "heroClassInventory":
                                 for(ElementDto element : container.elements) {
@@ -758,14 +757,14 @@ public class GetterService {
                             case "artifactUserDataTable":
                                 for(ElementDto elementDto : container.elements) {
                                     RelicInventoryResponseDto relicInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(elementDto.getValue(), RelicInventoryResponseDto.class);
-                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getIndex() == Integer.parseInt(elementDto.getElement())).findAny().orElse(null);
+                                    MyRelicInventory myRelicInventory = myRelicInventoryList.stream().filter(i -> i.getTable_id() == Integer.parseInt(elementDto.getElement())).findAny().orElse(null);
                                     if (myRelicInventory == null) {
                                         MyRelicInventoryDto myRelicInventoryDto = new MyRelicInventoryDto();
                                         myRelicInventoryDto.SetMyRelicInventoryDto(userId, Integer.parseInt(elementDto.getElement()), relicInventoryResponseDto.getCount(), relicInventoryResponseDto.getLevel());
                                         myRelicInventory = myRelicInventoryRepository.save(myRelicInventoryDto.ToEntity());
                                         myRelicInventoryList.add(myRelicInventory);
                                     }else {
-                                        myRelicInventory.SetMyRelicInventory(relicInventoryResponseDto);
+                                        myRelicInventory.SetMyRelicInventoryForResponse(relicInventoryResponseDto);
                                     }
                                 }
                                 break;

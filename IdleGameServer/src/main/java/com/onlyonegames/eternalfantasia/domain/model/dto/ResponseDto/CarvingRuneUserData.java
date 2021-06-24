@@ -5,12 +5,12 @@ import lombok.Data;
 
 @Data
 public class CarvingRuneUserData {
-    public Long runeSlot1;
-    public Long runeSlot2;
-    public Long runeSlot3;
-    public Long runeSlot4;
-    public Long runeSlot5;
-    public Long runeSlot6;
+    public int runeSlot1;
+    public int runeSlot2;
+    public int runeSlot3;
+    public int runeSlot4;
+    public int runeSlot5;
+    public int runeSlot6;
 
     public void SetCarvingRuneUserData(MyPixieInfoData data){
         this.runeSlot1 = data.getRuneSlot1();

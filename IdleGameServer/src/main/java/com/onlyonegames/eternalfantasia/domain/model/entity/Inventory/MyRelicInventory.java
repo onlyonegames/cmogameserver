@@ -18,11 +18,11 @@ public class MyRelicInventory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    int index;
+    int table_id;
     int count;
     int level;
 
-    public void SetMyRelicInventory(RelicInventoryResponseDto dto) {
+    public void SetMyRelicInventoryForResponse(RelicInventoryResponseDto dto) {
         this.count = dto.getCount();
         this.level = dto.getLevel();
     }

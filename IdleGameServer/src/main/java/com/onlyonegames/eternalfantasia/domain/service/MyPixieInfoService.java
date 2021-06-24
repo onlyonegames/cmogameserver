@@ -65,85 +65,85 @@ public class MyPixieInfoService {
     }
 
     public Map<String, Object> EquipmentRune(Long userId, Long runeInventoryId, int slotNo, Map<String, Object> map) {
-        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
-        if(myPixieInfoData == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        MyRuneInventory myRuneInventory = myRuneInventoryRepository.findById(runeInventoryId).orElse(null);
-        if(myRuneInventory == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        if(!myRuneInventory.SpendRune(1)){
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_RUNE.getIntegerValue(), "Need More Rune", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Need More Rune", ResponseErrorCode.NEED_MORE_RUNE);
-        }
-        int levelCheck = 0;
-        switch(slotNo){
-            case 2:
-                levelCheck = 50;
-                break;
-            case 3:
-                levelCheck = 100;
-                break;
-            case 4:
-                levelCheck = 300;
-                break;
-            case 5:
-                levelCheck = 500;
-                break;
-            case 6:
-                levelCheck = 1000;
-                break;
-        }
-        if(myPixieInfoData.getLevel()<levelCheck){
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_LEVEL.getIntegerValue(), "Need More Level", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Need More Level", ResponseErrorCode.NEED_MORE_LEVEL);
-        }
-        Long unEquipmentRuneId = myPixieInfoData.EquipmentRune(runeInventoryId, slotNo);
-        if(!unEquipmentRuneId.equals(0L)) {
-            MyRuneInventory unEquipmentRune = myRuneInventoryRepository.findById(unEquipmentRuneId).orElse(null);
-            if(unEquipmentRune == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
-            }
-            unEquipmentRune.AddCount(1);
-            MyRuneInventoryDto unEquipmentRuneDto = new MyRuneInventoryDto();
-            unEquipmentRuneDto.InitFromDBData(unEquipmentRune);
-            map.put("unEquipmentRune", unEquipmentRuneDto);
-        }
-
-        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
-        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
-        MyRuneInventoryDto equipmentRuneDto = new MyRuneInventoryDto();
-        equipmentRuneDto.InitFromDBData(myRuneInventory);
-        map.put("myPixieInfoData", myPixieInfoDataDto);
-        map.put("unEquipmentRune", equipmentRuneDto);
+//        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
+//        if(myPixieInfoData == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        MyRuneInventory myRuneInventory = myRuneInventoryRepository.findById(runeInventoryId).orElse(null);
+//        if(myRuneInventory == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        if(!myRuneInventory.SpendRune(1)){
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_RUNE.getIntegerValue(), "Need More Rune", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Need More Rune", ResponseErrorCode.NEED_MORE_RUNE);
+//        }
+//        int levelCheck = 0;
+//        switch(slotNo){
+//            case 2:
+//                levelCheck = 50;
+//                break;
+//            case 3:
+//                levelCheck = 100;
+//                break;
+//            case 4:
+//                levelCheck = 300;
+//                break;
+//            case 5:
+//                levelCheck = 500;
+//                break;
+//            case 6:
+//                levelCheck = 1000;
+//                break;
+//        }
+//        if(myPixieInfoData.getLevel()<levelCheck){
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_LEVEL.getIntegerValue(), "Need More Level", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Need More Level", ResponseErrorCode.NEED_MORE_LEVEL);
+//        }
+//        Long unEquipmentRuneId = myPixieInfoData.EquipmentRune(runeInventoryId, slotNo);
+//        if(!unEquipmentRuneId.equals(0L)) {
+//            MyRuneInventory unEquipmentRune = myRuneInventoryRepository.findById(unEquipmentRuneId).orElse(null);
+//            if(unEquipmentRune == null) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
+//            }
+//            unEquipmentRune.AddCount(1);
+//            MyRuneInventoryDto unEquipmentRuneDto = new MyRuneInventoryDto();
+//            unEquipmentRuneDto.InitFromDBData(unEquipmentRune);
+//            map.put("unEquipmentRune", unEquipmentRuneDto);
+//        }
+//
+//        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
+//        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
+//        MyRuneInventoryDto equipmentRuneDto = new MyRuneInventoryDto();
+//        equipmentRuneDto.InitFromDBData(myRuneInventory);
+//        map.put("myPixieInfoData", myPixieInfoDataDto);
+//        map.put("unEquipmentRune", equipmentRuneDto);
         return map;
     }
 
     public Map<String, Object> UnEquipmentRune(Long userId, int slotNo, Map<String, Object> map) {
-        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
-        if(myPixieInfoData == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        Long unEquipmentRuneId = myPixieInfoData.UnEquipmentRune(slotNo);
-        if(!unEquipmentRuneId.equals(0L)){
-            MyRuneInventory unEquipmentRune = myRuneInventoryRepository.findById(unEquipmentRuneId).orElse(null);
-            if(unEquipmentRune == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
-            }
-            unEquipmentRune.AddCount(1);
-            MyRuneInventoryDto unEquipmentRuneDto = new MyRuneInventoryDto();
-            unEquipmentRuneDto.InitFromDBData(unEquipmentRune);
-            map.put("unEquipmentRune", unEquipmentRuneDto);
-        }
-        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
-        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
-        map.put("myPixieInfoData", myPixieInfoDataDto);
+//        MyPixieInfoData myPixieInfoData = myPixieInfoDataRepository.findByUseridUser(userId).orElse(null);
+//        if(myPixieInfoData == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPixieInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Not Found MyPixieInfoData", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        Long unEquipmentRuneId = myPixieInfoData.UnEquipmentRune(slotNo);
+//        if(!unEquipmentRuneId.equals(0L)){
+//            MyRuneInventory unEquipmentRune = myRuneInventoryRepository.findById(unEquipmentRuneId).orElse(null);
+//            if(unEquipmentRune == null) {
+//                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
+//            }
+//            unEquipmentRune.AddCount(1);
+//            MyRuneInventoryDto unEquipmentRuneDto = new MyRuneInventoryDto();
+//            unEquipmentRuneDto.InitFromDBData(unEquipmentRune);
+//            map.put("unEquipmentRune", unEquipmentRuneDto);
+//        }
+//        MyPixieInfoDataDto myPixieInfoDataDto = new MyPixieInfoDataDto();
+//        myPixieInfoDataDto.InitFromDBData(myPixieInfoData);
+//        map.put("myPixieInfoData", myPixieInfoDataDto);
         return map;
     }
 

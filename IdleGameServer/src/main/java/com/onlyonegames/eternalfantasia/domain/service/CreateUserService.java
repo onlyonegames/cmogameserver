@@ -54,6 +54,8 @@ public class CreateUserService
 
     private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
 
+    private final MyEquipmentInfoRepository myEquipmentInfoRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -106,6 +108,9 @@ public class CreateUserService
         //최초 유저 페시브 스킬 데이터 생성 및 저장
         MyPassiveSkillData myPassiveSkillData = createMyPassiveSkillData(userid);
         myPassiveSkillDataRepository.save(myPassiveSkillData);
+
+        MyEquipmentInfo myEquipmentInfo = createMyEquipmentInfo(userid);
+        myEquipmentInfoRepository.save(myEquipmentInfo);
 
         return map;
     }
@@ -169,5 +174,9 @@ public class CreateUserService
         myPassiveSkillDataDto.setJson_saveDataValue(initJsonDatasForFirstUser.getInitJson());
         myPassiveSkillDataDto.setUseridUser(userId);
         return myPassiveSkillDataDto.ToEntity();
+    }
+
+    private MyEquipmentInfo createMyEquipmentInfo(Long userId) {
+        return MyEquipmentInfo.builder().useridUser(userId).classEquipment(1).nowUsedWeapon(1).swordEquipment(1).daggerEquipment(25).spearEquipment(49).bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).build();
     }
 }

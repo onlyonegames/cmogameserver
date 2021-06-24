@@ -7,17 +7,17 @@ import lombok.Data;
 public class MyRelicInventoryDto {
     Long id;
     Long useridUser;
-    int index;
+    int table_id;
     int count;
     int level;
 
     public MyRelicInventory ToEntity() {
-        return MyRelicInventory.builder().useridUser(useridUser).index(index).count(count).level(level).build();
+        return MyRelicInventory.builder().useridUser(useridUser).table_id(table_id).count(count).level(level).build();
     }
 
-    public void SetMyRelicInventoryDto(Long useridUser, int index, int count, int level) {
+    public void SetMyRelicInventoryDto(Long useridUser, int table_id, int count, int level) {
         this.useridUser = useridUser;
-        this.index = index;
+        this.table_id = table_id;
         this.count = count;
         this.level = level;
     }
