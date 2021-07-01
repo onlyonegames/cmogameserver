@@ -119,10 +119,11 @@ public class CreateUserService
         List<HeroClassInfoTable> heroClassInfoTableList = gameDataTableService.HeroClassInfoTable();
         List<MyClassInventory> myClassInventoryList = new ArrayList<>();
         for(HeroClassInfoTable temp : heroClassInfoTableList) {
-            if(temp.getGrade().equals("Normal")){
+            if(temp.getGrade().equals("normal")){
                 MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
                 myClassInventoryDto.setCode(temp.getCode());
                 myClassInventoryDto.setCount(0);
+                myClassInventoryDto.setLevel(1);
                 myClassInventoryDto.setUseridUser(userId);
                 myClassInventoryList.add(myClassInventoryDto.ToEntity());
             }

@@ -23,12 +23,12 @@ public class MyStatusInfo extends BaseTimeEntity
     Long id;
     Long useridUser;
 
-    int physicalAttackPowerLevel; // 물리공격력
-    int magicAttackPowerLevel;// 마법공격력
-    int maxHealthPointLevel; // 최대 생명력 (int)
-    int maxManaPointLevel; // 최대 마나 (int)
-    int criticalChanceLevel; // 치명확률
-    int criticalPercentLevel; // 치명데미지
+    public int physicalAttackPowerLevel; // 물리공격력
+    public int magicAttackPowerLevel;// 마법공격력
+    public int maxHealthPointLevel; // 최대 생명력 (int)
+    public int maxManaPointLevel; // 최대 마나 (int)
+    public int criticalChanceLevel; // 치명확률
+    public int criticalPercentLevel; // 치명데미지
 
     public void AddStatus(STATUS_TYPE status_type, int addLevel, String previousPrice) {
         switch(status_type){

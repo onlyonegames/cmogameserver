@@ -12,7 +12,7 @@ public class AccessoryTable {
     int id;
     String code;
     String name;
-    String type;
+    int type;
     String riseStatusType;
     double riseStatusValue;
 }

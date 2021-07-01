@@ -9,6 +9,7 @@ import javax.persistence.Id;
 @Entity(name = "heroclassinfotable")
 public class HeroClassInfoTable {
     @Id
+    int id;
     String code;
     String grade;
     int gradeValue;

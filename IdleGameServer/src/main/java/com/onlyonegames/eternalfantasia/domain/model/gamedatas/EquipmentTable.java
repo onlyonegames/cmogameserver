@@ -9,9 +9,8 @@ import javax.persistence.Id;
 @Entity(name = "equipmenttable")
 public class EquipmentTable {
     @Id
-    int Id;
+    int id;
     String code;
     String name;
     String grade;
-    int gradeValue;
 }
