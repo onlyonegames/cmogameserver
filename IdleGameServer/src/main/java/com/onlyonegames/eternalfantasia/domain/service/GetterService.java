@@ -180,7 +180,7 @@ public class GetterService {
                     case "artifactUserDataTable":
                         if (myRelicInventoryList == null) {
                             myRelicInventoryList = myRelicInventoryRepository.findAllByUseridUser(userId);
-                            if(myRuneInventoryList == null) {
+                            if(myRelicInventoryList == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRelicInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyRelicInventory", ResponseErrorCode.NOT_FIND_DATA);
                             }
@@ -199,13 +199,13 @@ public class GetterService {
                     case "heroClassInventory":
                         if (myClassInventoryList == null) {
                             myClassInventoryList = myClassInventoryRepository.findAllByUseridUser(userId);
-                            if (myPixieInfoData == null) {
+                            if (myClassInventoryList == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                         break;
-                    case "UpgradeStatusUserData":
+                    case "upgradeStatusUserData":
                         if (myStatusInfo == null) {
                             myStatusInfo = myStatusInfoRepository.findByUseridUser(userId).orElse(null);
                             if (myStatusInfo == null) {
@@ -316,7 +316,8 @@ public class GetterService {
                                     }
                                     MyBelongingInventory myBelongingInventory = myBelongingInventoryList.stream().filter(j -> j.getCode().equals(temp.getElement())).findAny().orElse(null);
                                     if(myBelongingInventory == null) {
-
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyBelongingInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyBelongingInventory", ResponseErrorCode.NOT_FIND_DATA);
                                     }
                                     BelongingInventoryJsonData belongingInventoryJsonData = new BelongingInventoryJsonData();
                                     belongingInventoryJsonData.SetBelongingInventoryJsonData(myBelongingInventory.getCount(), myBelongingInventory.getSlotNo(), myBelongingInventory.getSlotPercent());
@@ -396,7 +397,8 @@ public class GetterService {
                                     }
                                     MyClassInventory myClassInventory = myClassInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if(myClassInventory == null) {
-
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyClassInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyClassInventory", ResponseErrorCode.NOT_FIND_DATA);
                                     }
                                     ClassInventoryResponseDto classInventoryResponseDto = new ClassInventoryResponseDto();
                                     classInventoryResponseDto.InitFromDB(myClassInventory);
@@ -406,7 +408,7 @@ public class GetterService {
                                 if(heroClassFlag)
                                     container.elements = heroClassElementDtoList;
                                 break;
-                            case "UpgradeStatusUserData":
+                            case "upgradeStatusUserData":
                                 List<ElementDto> statusElementDtoList = new ArrayList<>();
                                 boolean statusFlag = false;
                                 for(ElementDto element : container.elements) {
@@ -487,7 +489,7 @@ public class GetterService {
                                             WeaponInventoryResponseDto weaponInventoryResponseDto = new WeaponInventoryResponseDto();
                                             weaponInventoryResponseDto.InitFromDB(j);
                                             String jsonData = JsonStringHerlper.WriteValueAsStringFromData(weaponInventoryResponseDto);
-                                            inventory.SetElement(j.getId().toString(), jsonData);
+                                            inventory.SetElement(j.getCode(), jsonData);
                                             weaponElementDtoList.add(inventory);
                                         }
                                         weaponFlag = true;
@@ -495,7 +497,8 @@ public class GetterService {
                                     }
                                     MyEquipmentInventory myEquipmentInventory = myEquipmentInventoryList.stream().filter(i -> i.getCode().equals(temp.getElement())).findAny().orElse(null);
                                     if(myEquipmentInventory == null) {
-
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyEquipmentInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyEquipmentInventory", ResponseErrorCode.NOT_FIND_DATA);
                                     }
                                     WeaponInventoryResponseDto weaponInventoryResponseDto = new WeaponInventoryResponseDto();
                                     weaponInventoryResponseDto.InitFromDB(myEquipmentInventory);
@@ -691,7 +694,7 @@ public class GetterService {
                                     }
                                 }
                                 break;
-                            case "UpgradeStatusUserData":
+                            case "upgradeStatusUserData":
                                 for(ElementDto element : container.elements) {
                                     Field field = myStatusInfo.getClass().getDeclaredField(element.getElement());
                                     field.set(myStatusInfo, Integer.parseInt(element.getValue()));
