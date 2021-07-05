@@ -178,6 +178,6 @@ public class CreateUserService
     }
 
     private MyEquipmentInfo createMyEquipmentInfo(Long userId) {
-        return MyEquipmentInfo.builder().useridUser(userId).classEquipment(1).nowUsedWeapon(1).swordEquipment(1).daggerEquipment(25).spearEquipment(49).bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).build();
+        return MyEquipmentInfo.builder().useridUser(userId).classEquipment(1).nowUsedWeapon(0).swordEquipment(1).daggerEquipment(25).spearEquipment(49).bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).build();
     }
 }
