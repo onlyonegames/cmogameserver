@@ -21,6 +21,7 @@ public class MyClassInventory extends BaseTimeEntity {
     String code;
     int level;
     int count;
+    int awakeningLevel;
 
     public void AddCount(int addCount) {
         this.count += addCount;

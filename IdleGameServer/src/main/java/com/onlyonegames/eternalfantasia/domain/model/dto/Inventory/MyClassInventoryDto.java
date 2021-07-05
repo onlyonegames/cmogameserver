@@ -10,9 +10,10 @@ public class MyClassInventoryDto {
     String code;
     int level;
     int count;
+    int awakeningLevel;
 
     public MyClassInventory ToEntity() {
-        return MyClassInventory.builder().useridUser(useridUser).code(code).level(level).count(count).build();
+        return MyClassInventory.builder().useridUser(useridUser).code(code).level(level).count(count).awakeningLevel(awakeningLevel).build();
     }
 
     public void InitFromDBData(MyClassInventory dbData) {
@@ -21,12 +22,14 @@ public class MyClassInventoryDto {
         this.code = dbData.getCode();
         this.level = dbData.getLevel();
         this.count = dbData.getCount();
+        this.awakeningLevel = dbData.getAwakeningLevel();
     }
 
-    public void SetMyClassInventoryDto(Long useridUser, String code, int level, int count) {
+    public void SetMyClassInventoryDto(Long useridUser, String code, int level, int count, int awakeningLevel) {
         this.useridUser = useridUser;
         this.code = code;
         this.level = level;
         this.count = count;
+        this.awakeningLevel = awakeningLevel;
     }
 }

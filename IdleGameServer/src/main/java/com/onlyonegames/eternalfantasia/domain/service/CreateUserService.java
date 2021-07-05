@@ -124,6 +124,7 @@ public class CreateUserService
                 myClassInventoryDto.setCode(temp.getCode());
                 myClassInventoryDto.setCount(0);
                 myClassInventoryDto.setLevel(1);
+                myClassInventoryDto.setAwakeningLevel(1);
                 myClassInventoryDto.setUseridUser(userId);
                 myClassInventoryList.add(myClassInventoryDto.ToEntity());
             }
