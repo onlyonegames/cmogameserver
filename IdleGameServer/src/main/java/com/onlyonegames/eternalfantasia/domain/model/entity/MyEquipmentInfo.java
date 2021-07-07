@@ -17,7 +17,12 @@ public class MyEquipmentInfo extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    public int classEquipment;
+    public int nowUsedClass;
+    public int warriorEquipment;
+    public int thiefEquipment;
+    public int knightEquipment;
+    public int archerEquipment;
+    public int magicianEquipment;
     public int nowUsedWeapon;
     public int swordEquipment;
     public int daggerEquipment;
@@ -28,8 +33,28 @@ public class MyEquipmentInfo extends BaseTimeEntity {
     public int necklaceEquipment;
     public int ringEquipment;
 
-    public void SetClassEquipment(String element) {
-        this.classEquipment = Integer.parseInt(element);
+    public void SetNowUsedClass(String element) {
+        this.nowUsedClass = Integer.parseInt(element);
+    }
+
+    public void SetWarriorEquipment(String element) {
+        this.warriorEquipment = Integer.parseInt(element);
+    }
+
+    public void SetThiefEquipment(String element) {
+        this.thiefEquipment = Integer.parseInt(element);
+    }
+
+    public void SetKnightEquipment(String element) {
+        this.knightEquipment = Integer.parseInt(element);
+    }
+
+    public void SetArcherEquipment(String element) {
+        this.archerEquipment = Integer.parseInt(element);
+    }
+
+    public void SetMagicianEquipment(String element) {
+        this.magicianEquipment = Integer.parseInt(element);
     }
 
     public void SetNowUsedWeapon(String element) {

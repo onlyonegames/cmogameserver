@@ -6,10 +6,15 @@ import java.util.List;
 
 @Data
 public class AccessoryOptionJsonDto {
-    public static class Options{
+    public static class OptionInfo{
         public int grade;
         public int index;
+
+        public void SetOptionInfo(int grade, int index) {
+            this.grade = grade;
+            this.index = index;
+        }
     }
 
-    public List<Options> options;
+    public List<OptionInfo> options;
 }

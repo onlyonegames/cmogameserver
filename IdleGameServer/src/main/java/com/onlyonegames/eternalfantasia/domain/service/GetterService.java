@@ -631,6 +631,9 @@ public class GetterService {
                                         case "exp":
                                             user.SetExp(element.getValue());
                                             break;
+                                        case "sexType":
+                                            user.SetSexType(Integer.parseInt(element.getValue()));
+                                            break;
                                     }
                                 }
                                 break;
@@ -662,15 +665,6 @@ public class GetterService {
                                 }
                                 break;
                             case "pixieUserData":
-                                for (ElementDto element : container.elements) {
-                                    Field field = myPixieInfoData.getClass().getDeclaredField(element.getElement());
-                                    Class<?> elementType = field.getType();
-                                    if(elementType.getTypeName().equals("java.lang.Long"))
-                                        field.set(myPixieInfoData, Long.parseLong(element.getValue()));
-                                    else if(elementType.getTypeName().equals("int"))
-                                        field.set(myPixieInfoData, Integer.parseInt(element.getValue()));
-                                }
-                                break;
                             case "carvingRuneUserData":
                                 for (ElementDto element : container.elements) {
                                     Field field = myPixieInfoData.getClass().getDeclaredField(element.getElement());
@@ -680,6 +674,7 @@ public class GetterService {
                                     else if(elementType.getTypeName().equals("int"))
                                         field.set(myPixieInfoData, Integer.parseInt(element.getValue()));
                                 }
+                                break;
                             case "heroClassInventory":
                                 for(ElementDto element : container.elements) {
                                     ClassInventoryResponseDto classInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), ClassInventoryResponseDto.class);
@@ -774,7 +769,7 @@ public class GetterService {
                             case "passiveSkillUserDataTable":
                                 PassiveSkillDataJsonDto passiveSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassiveSkillData.getJson_saveDataValue(), PassiveSkillDataJsonDto.class);
                                 for(ElementDto element : container.elements) {
-                                    PassiveSkillDataJsonDto.PassiveSkillInfo passiveSkillInfo = JsonStringHerlper.ReadValueFromJson(element.getElement(), PassiveSkillDataJsonDto.PassiveSkillInfo.class);
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo passiveSkillInfo = JsonStringHerlper.ReadValueFromJson(element.getValue(), PassiveSkillDataJsonDto.PassiveSkillInfo.class);
                                     passiveSkillDataJsonDto.passiveSkillInfoList.set(Integer.parseInt(element.getElement())-1, passiveSkillInfo);
                                 }
                                 String passiveSkill_Json = JsonStringHerlper.WriteValueAsStringFromData(passiveSkillDataJsonDto);

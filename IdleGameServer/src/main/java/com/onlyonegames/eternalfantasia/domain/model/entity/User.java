@@ -109,6 +109,13 @@ public class User {
         return false;
     }
 
+    public boolean SpendDiamond(int spendDiamond) {
+        if(spendDiamond>this.diamond)
+            return false;
+        this.diamond -= spendDiamond;
+        return true;
+    }
+
     public void SetLastLoginDate() {
         this.lastloginDate = LocalDateTime.now();
     }

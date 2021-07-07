@@ -24,6 +24,7 @@ public enum ResponseErrorCode {
     /*300 부터 인벤토리 관련 프로세스 오류*/
     NEED_MORE_RUNE(-300, "NEED_MORE_RUNE"),
     NEED_MORE_LEVEL(-301, "NEED_MORE_LEVEL"),
+    NEED_MORE_RELIC(-302, "NEED_MORE_RELIC"),
     /*400 부터 장비 인벤토리 관련 프로세스 오류*/
     /*-1200부터 상점 관련 프로세스 오류*/
     SHOP_CANT_FIND_SHOPID(-1200, "SHOP_CANT_FIND_SHOPID"),

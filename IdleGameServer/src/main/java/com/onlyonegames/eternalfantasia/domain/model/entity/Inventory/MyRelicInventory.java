@@ -26,4 +26,15 @@ public class MyRelicInventory extends BaseTimeEntity {
         this.count = dto.getCount();
         this.level = dto.getLevel();
     }
+
+    public boolean SpendRelic(){
+        if(1>this.count)
+            return false;
+        this.count -= 1;
+        return true;
+    }
+
+    public void LevelUp() {
+        this.level += 1;
+    }
 }

@@ -30,4 +30,16 @@ public class MyAccessoryInventory extends BaseTimeEntity {
         this.optionLockList = dto.getOptionLockList();
         this.options = dto.getOptions();
     }
+
+    public void Reset_Options(String options) {
+        this.options = options;
+    }
+
+    public void AccessoryLevelUp() {
+        this.level += 1;
+    }
+
+    public void SpendAccessory() {
+        this.count -= 1;
+    }
 }
