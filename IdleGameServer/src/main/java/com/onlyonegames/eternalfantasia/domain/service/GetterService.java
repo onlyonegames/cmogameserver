@@ -77,6 +77,7 @@ public class GetterService {
                                 case "soulStone":
                                 case "skillPoint":
                                 case "moveStone":
+                                case "fieldIndex":
                                     if (user == null) {
                                         user = userRepository.findById(userId).orElse(null);
                                         if (user == null) {
@@ -252,6 +253,9 @@ public class GetterService {
                                             break;
                                         case "runeLevel":
                                             element.SetValue(myRuneLevelInfoData.getLevel());
+                                            break;
+                                        case "fieldIndex":
+                                            element.SetValue(user.getFieldIndex());
                                             break;
                                     }
                                 }
@@ -618,6 +622,9 @@ public class GetterService {
                                             break;
                                         case "runeLevel":
                                             myRuneLevelInfoData.SetLevel(element.getValue());
+                                            break;
+                                        case "fieldIndex":
+                                            user.SetFieldIndex(element.getValue());
                                             break;
                                     }
                                 }

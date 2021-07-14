@@ -49,6 +49,7 @@ public class User {
     String soulStone; // 형식 변경 가능성 있음
     int skillPoint;
     int moveStone;
+    int fieldIndex;
 
 
     @CreatedDate
@@ -75,6 +76,7 @@ public class User {
         this.level = 1;
         this.exp = 0;
         this.sexType = 0;
+        this.fieldIndex = 0;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -166,5 +168,9 @@ public class User {
 
     public void SetExp(String element) {
         this.exp = Integer.parseInt(element);
+    }
+
+    public void SetFieldIndex(String fieldIndex) {
+        this.fieldIndex = Integer.parseInt(fieldIndex);
     }
 }
