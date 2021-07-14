@@ -61,6 +61,7 @@ public class UserService {
 
         user.SetLastLoginDate();
         map.put("userInfo", user);
+        map.put("serverTime", user.getLastloginDate());
 
         // UpgradeStatus
         //upgradeStatusService.GetUpgradeStatus(userId, map);
