@@ -17,7 +17,10 @@ public class MyContentsInfo extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    int challengeTowerFloor;
+    public int challengeTowerFloor;
+    public int adventureChapter;
+    public int adventureStage;
+    public int adventureDifficulty;
 
     public void SetChallengeTowerFloor(int challengeTowerFloor) {
         this.challengeTowerFloor = challengeTowerFloor;
