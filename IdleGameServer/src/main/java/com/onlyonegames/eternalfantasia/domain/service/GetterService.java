@@ -44,6 +44,7 @@ public class GetterService {
     private final MyAccessoryInventoryRepository myAccessoryInventoryRepository;
     private final MyRelicInventoryRepository myRelicInventoryRepository;
     private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
+    private final MyContentsInfoRepository myContentsInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
@@ -59,6 +60,7 @@ public class GetterService {
         List<MyRelicInventory> myRelicInventoryList = null;
         MyStatusInfo myStatusInfo = null;
         MyPassiveSkillData myPassiveSkillData = null;
+        MyContentsInfo myContentsInfo = null;
 
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
@@ -224,6 +226,14 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "contentsInfo":
+                        if (myContentsInfo == null) {
+                            myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
+                            if(myContentsInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
                 }
             }
         }
@@ -463,8 +473,8 @@ public class GetterService {
                             case "equipmentInfo":
                                 List<ElementDto> equipmentElementDtoList = new ArrayList<>();
                                 boolean equipmentFlag = false;
-                                for(ElementDto temp : container.elements) {
-                                    if(temp.getElement().equals("all")) {
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
                                         for(Field j : myEquipmentInfo.getClass().getDeclaredFields()) {
                                             String name = j.getName();
                                             if(name.equals("id") || name.equals("useridUser") || name.equals("createdate") || name.equals("modifieddate"))
@@ -476,8 +486,8 @@ public class GetterService {
                                         equipmentFlag = true;
                                         break;
                                     }
-                                    Field j = myEquipmentInfo.getClass().getDeclaredField(temp.getElement());
-                                    temp.SetValue(j.get(myEquipmentInfo).toString());
+                                    Field j = myEquipmentInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(j.get(myEquipmentInfo).toString());
                                 }
                                 if(equipmentFlag) {
                                     container.elements = equipmentElementDtoList;
@@ -596,6 +606,11 @@ public class GetterService {
                                 if(passiveSkillFlag)
                                     container.elements = passiveSkillElementDtoList;
                                 break;
+                            case "contentsInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field j = myContentsInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(j.get(myEquipmentInfo).toString());
+                                }
                         }
                     }
                     break;
@@ -781,6 +796,16 @@ public class GetterService {
                                 }
                                 String passiveSkill_Json = JsonStringHerlper.WriteValueAsStringFromData(passiveSkillDataJsonDto);
                                 myPassiveSkillData.ResetJson_SaveDataValue(passiveSkill_Json);
+                                break;
+                            case "contentsInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field j = myContentsInfo.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = j.getType();
+                                    if(elementType.getTypeName().equals("java.lang.Long"))
+                                        j.set(myContentsInfo, Long.parseLong(element.getValue()));
+                                    else if(elementType.getTypeName().equals("int"))
+                                        j.set(myContentsInfo, Integer.parseInt(element.getValue()));
+                                }
                         }
                     }
                     break;

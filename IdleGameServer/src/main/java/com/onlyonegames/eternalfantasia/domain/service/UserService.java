@@ -31,6 +31,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ErrorLoggingService errorLoggingService;
     private final GameDataTableService gameDataTableService;
+    private final StandardTimeRepository standardTimeRepository;
 
 
 
@@ -63,6 +64,13 @@ public class UserService {
         map.put("userInfo", user);
         map.put("serverTime", user.getLastloginDate());
 
+        StandardTime standardTime = standardTimeRepository.findById(1).orElse(null);
+        if(standardTime == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: StandardTime Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: StandardTime Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+
+        map.put("standardTime", standardTime);
         // UpgradeStatus
         //upgradeStatusService.GetUpgradeStatus(userId, map);
 

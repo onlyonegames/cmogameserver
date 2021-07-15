@@ -56,6 +56,10 @@ public class CreateUserService
 
     private final MyEquipmentInfoRepository myEquipmentInfoRepository;
 
+    private final MyContentsInfoRepository myContentsInfoRepository;
+
+    private final StandardTimeRepository standardTimeRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -111,6 +115,11 @@ public class CreateUserService
 
         MyEquipmentInfo myEquipmentInfo = createMyEquipmentInfo(userid);
         myEquipmentInfoRepository.save(myEquipmentInfo);
+
+        MyContentsInfo myContentsInfo = createMyContentsInfo(userid);
+        myContentsInfoRepository.save(myContentsInfo);
+
+//        List<MyBelongingInventory> myBelongingInventoryList =
 
         return map;
     }
@@ -183,4 +192,13 @@ public class CreateUserService
                 .archerEquipment(4).magicianEquipment(5).nowUsedWeapon(0).swordEquipment(1).daggerEquipment(25).spearEquipment(49)
                 .bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).build();
     }
+
+    private MyContentsInfo createMyContentsInfo(Long userId) {
+        return MyContentsInfo.builder().useridUser(userId).challengeTowerFloor(0).build();
+    }
+
+//    private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
+//        List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
+//        MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code().count(10000).slotNo(0).slotPercent(0).build();
+//    }
 }
