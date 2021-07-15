@@ -42,5 +42,6 @@ public class MyClassInventory extends BaseTimeEntity {
     public void SetMyClassInventory(ClassInventoryResponseDto dto) {
         this.level = dto.getLevel();
         this.count = dto.getCount();
+        this.awakeningLevel = dto.getAwakeningLevel();
     }
 }
