@@ -50,6 +50,7 @@ public class User {
     int skillPoint;
     int moveStone;
     int fieldIndex;
+    Long battleStatus;
 
 
     @CreatedDate
@@ -77,6 +78,7 @@ public class User {
         this.exp = 0;
         this.sexType = 0;
         this.fieldIndex = 0;
+        this.battleStatus = 0L;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -170,7 +172,11 @@ public class User {
         this.exp = Integer.parseInt(element);
     }
 
-    public void SetFieldIndex(String fieldIndex) {
-        this.fieldIndex = Integer.parseInt(fieldIndex);
+    public void SetFieldIndex(String element) {
+        this.fieldIndex = Integer.parseInt(element);
+    }
+
+    public void SetBattleStatus(String element) {
+        this.battleStatus = Long.parseLong(element);
     }
 }
