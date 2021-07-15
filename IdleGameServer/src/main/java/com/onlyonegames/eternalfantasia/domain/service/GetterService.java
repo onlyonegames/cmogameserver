@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
@@ -45,6 +46,7 @@ public class GetterService {
     private final MyRelicInventoryRepository myRelicInventoryRepository;
     private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
     private final MyContentsInfoRepository myContentsInfoRepository;
+    private final MyDungeonInfoRepository myDungeonInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
@@ -61,6 +63,7 @@ public class GetterService {
         MyStatusInfo myStatusInfo = null;
         MyPassiveSkillData myPassiveSkillData = null;
         MyContentsInfo myContentsInfo = null;
+        MyDungeonInfo myDungeonInfo = null;
 
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
@@ -230,6 +233,15 @@ public class GetterService {
                         if (myContentsInfo == null) {
                             myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
                             if(myContentsInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "dungeonInfo":
+                        if (myDungeonInfo == null) {
+                            myDungeonInfo = myDungeonInfoRepository.findByUseridUser(userId).orElse(null);
+                            if(myDungeonInfo == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
                             }
@@ -611,6 +623,13 @@ public class GetterService {
                                     Field j = myContentsInfo.getClass().getDeclaredField(element.getElement());
                                     element.SetValue(j.get(myEquipmentInfo).toString());
                                 }
+                                break;
+                            case "dungeonInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myDungeonInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue((field.get(myDungeonInfo).toString()));
+                                }
+                                break;
                         }
                     }
                     break;
@@ -806,6 +825,17 @@ public class GetterService {
                                     else if(elementType.getTypeName().equals("int"))
                                         j.set(myContentsInfo, Integer.parseInt(element.getValue()));
                                 }
+                                break;
+                            case "dungeonInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myDungeonInfo.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if(elementType.getTypeName().equals("int"))
+                                        field.set(myDungeonInfo, Integer.parseInt(element.getValue()));
+                                    else if(elementType.getTypeName().equals("LocalDateTime"))
+                                        field.set(myDungeonInfo, LocalDateTime.parse(element.getValue()));
+                                }
+                                break;
                         }
                     }
                     break;
