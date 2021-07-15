@@ -58,7 +58,7 @@ public class CreateUserService
 
     private final MyContentsInfoRepository myContentsInfoRepository;
 
-    private final StandardTimeRepository standardTimeRepository;
+    private final MyDungeonInfoRepository myDungeonInfoRepository;
 
     private final ErrorLoggingService errorLoggingService;
 
@@ -118,6 +118,9 @@ public class CreateUserService
 
         MyContentsInfo myContentsInfo = createMyContentsInfo(userid);
         myContentsInfoRepository.save(myContentsInfo);
+
+        MyDungeonInfo myDungeonInfo = createMyDungeonInfo(userid);
+        myDungeonInfoRepository.save(myDungeonInfo);
 
 //        List<MyBelongingInventory> myBelongingInventoryList =
 
@@ -195,6 +198,12 @@ public class CreateUserService
 
     private MyContentsInfo createMyContentsInfo(Long userId) {
         return MyContentsInfo.builder().useridUser(userId).challengeTowerFloor(0).build();
+    }
+
+    private MyDungeonInfo createMyDungeonInfo(Long userId) {
+        MyDungeonInfoDto myDungeonInfoDto = new MyDungeonInfoDto();
+        myDungeonInfoDto.setUseridUser(userId);
+        return myDungeonInfoDto.ToEntity();
     }
 
 //    private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
