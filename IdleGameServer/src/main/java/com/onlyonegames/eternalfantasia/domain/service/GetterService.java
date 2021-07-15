@@ -83,6 +83,7 @@ public class GetterService {
                                 case "skillPoint":
                                 case "moveStone":
                                 case "fieldIndex":
+                                case "battleStatus":
                                     if (user == null) {
                                         user = userRepository.findById(userId).orElse(null);
                                         if (user == null) {
@@ -278,6 +279,9 @@ public class GetterService {
                                             break;
                                         case "fieldIndex":
                                             element.SetValue(user.getFieldIndex());
+                                            break;
+                                        case "battleStatus":
+                                            element.SetValue(user.getBattleStatus());
                                             break;
                                     }
                                 }
@@ -659,6 +663,9 @@ public class GetterService {
                                             break;
                                         case "fieldIndex":
                                             user.SetFieldIndex(element.getValue());
+                                            break;
+                                        case "battleStatus":
+                                            user.SetBattleStatus(element.getValue());
                                             break;
                                     }
                                 }
