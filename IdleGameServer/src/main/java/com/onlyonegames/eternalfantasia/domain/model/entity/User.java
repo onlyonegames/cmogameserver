@@ -72,7 +72,7 @@ public class User {
         this.diamond = 0L;
         this.soulStone = "0";
         this.skillPoint = 0;
-        this.moveStone = 0;
+        this.moveStone = 10000;
         this.level = 1;
         this.exp = 0;
         this.sexType = 0;
