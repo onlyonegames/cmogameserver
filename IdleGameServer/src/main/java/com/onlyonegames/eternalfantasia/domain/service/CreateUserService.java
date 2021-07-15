@@ -14,12 +14,14 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyClassInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyEquipmentInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyClassInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyEquipmentInventory;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.EquipmentTable;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.HeroClassInfoTable;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.InitJsonDatasForFirstUser;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyClassInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyEquipmentInventoryRepository;
 import lombok.AllArgsConstructor;
@@ -59,6 +61,8 @@ public class CreateUserService
     private final MyContentsInfoRepository myContentsInfoRepository;
 
     private final MyDungeonInfoRepository myDungeonInfoRepository;
+
+    private final MyBelongingInventoryRepository myBelongingInventoryRepository;
 
     private final ErrorLoggingService errorLoggingService;
 
@@ -122,7 +126,8 @@ public class CreateUserService
         MyDungeonInfo myDungeonInfo = createMyDungeonInfo(userid);
         myDungeonInfoRepository.save(myDungeonInfo);
 
-//        List<MyBelongingInventory> myBelongingInventoryList =
+        List<MyBelongingInventory> myBelongingInventoryList = createMyBelongingInventory(userid);
+        myBelongingInventoryRepository.saveAll(myBelongingInventoryList);
 
         return map;
     }
@@ -206,8 +211,10 @@ public class CreateUserService
         return myDungeonInfoDto.ToEntity();
     }
 
-//    private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
-//        List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
-//        MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code().count(10000).slotNo(0).slotPercent(0).build();
-//    }
+    private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
+        List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
+        MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code("item_008").count(10000).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(myBelongingInventory);
+        return myBelongingInventoryList;
+    }
 }
