@@ -50,7 +50,8 @@ public class User {
     int skillPoint;
     int moveStone;
     int fieldIndex;
-    Long battleStatus;
+    Long dungeonTicket;
+    String battleStatus;
 
 
     @CreatedDate
@@ -78,7 +79,8 @@ public class User {
         this.exp = 0;
         this.sexType = 0;
         this.fieldIndex = 0;
-        this.battleStatus = 0L;
+        this.battleStatus = "";
+        this.dungeonTicket = 0L;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -177,6 +179,10 @@ public class User {
     }
 
     public void SetBattleStatus(String element) {
-        this.battleStatus = Long.parseLong(element);
+        this.battleStatus = element;
+    }
+
+    public void SetDungeonTicket(String element) {
+        this.dungeonTicket = Long.parseLong(element);
     }
 }
