@@ -18,7 +18,6 @@ public class MyContentsInfo extends BaseTimeEntity {
     Long id;
     Long useridUser;
     public int challengeTowerFloor;
-    public int adventureChapter;
     public int adventureStage;
     public int adventureDifficulty;
 
