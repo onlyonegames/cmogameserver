@@ -625,7 +625,7 @@ public class GetterService {
                             case "contentsInfo":
                                 for(ElementDto element : container.elements) {
                                     Field j = myContentsInfo.getClass().getDeclaredField(element.getElement());
-                                    element.SetValue(j.get(myEquipmentInfo).toString());
+                                    element.SetValue(j.get(myContentsInfo).toString());
                                 }
                                 break;
                             case "dungeonInfo":
