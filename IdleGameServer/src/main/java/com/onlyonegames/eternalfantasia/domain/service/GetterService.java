@@ -55,7 +55,6 @@ public class GetterService {
         MyActiveSkillData myActiveSkillData = null;
         List<MyClassInventory> myClassInventoryList = null;
         List<MyEquipmentInventory> myEquipmentInventoryList = null;
-        User user = null;
         List<MyBelongingInventory> myBelongingInventoryList = null;
         MyEquipmentInfo myEquipmentInfo = null;
         List<MyAccessoryInventory> myAccessoryInventoryList = null;
@@ -64,6 +63,12 @@ public class GetterService {
         MyPassiveSkillData myPassiveSkillData = null;
         MyContentsInfo myContentsInfo = null;
         MyDungeonInfo myDungeonInfo = null;
+
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
+        }
 
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
@@ -85,13 +90,13 @@ public class GetterService {
                                 case "fieldIndex":
                                 case "battleStatus":
                                 case "dungeonTicket":
-                                    if (user == null) {
-                                        user = userRepository.findById(userId).orElse(null);
-                                        if (user == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
+//                                    if (user == null) {
+//                                        user = userRepository.findById(userId).orElse(null);
+//                                        if (user == null) {
+//                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
+//                                        }
+//                                    }
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -121,13 +126,13 @@ public class GetterService {
                                 case "level":
                                 case "exp":
                                 case "sexType":
-                                    if (user == null) {
-                                        user = userRepository.findById(userId).orElse(null);
-                                        if (user == null) {
-                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
-                                        }
-                                    }
+//                                    if (user == null) {
+//                                        user = userRepository.findById(userId).orElse(null);
+//                                        if (user == null) {
+//                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
+//                                        }
+//                                    }
                                     break;
                             }
                         }
@@ -846,12 +851,13 @@ public class GetterService {
                                     Class<?> elementType = field.getType();
                                     if(elementType.getTypeName().equals("int"))
                                         field.set(myDungeonInfo, Integer.parseInt(element.getValue()));
-                                    else if(elementType.getTypeName().equals("LocalDateTime"))
+                                    else if(elementType.getTypeName().equals("java.time.LocalDateTime"))
                                         field.set(myDungeonInfo, LocalDateTime.parse(element.getValue()));
                                 }
                                 break;
                         }
                     }
+                    user.SetLastSettingTime();
                     break;
             }
         }

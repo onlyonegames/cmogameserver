@@ -57,6 +57,7 @@ public class User {
     @CreatedDate
     private LocalDateTime createdDate;
     LocalDateTime lastloginDate;
+    LocalDateTime lastSettingTime;
 
     @Builder
     public User(String socialId, String password, String socialProvider, String userGameName, Set<Role> roles) {
@@ -140,6 +141,10 @@ public class User {
             return true;
         }
         return false;
+    }
+
+    public void SetLastSettingTime() {
+        this.lastSettingTime = LocalDateTime.now();
     }
 
     public void SetSexType(int sexType) {
