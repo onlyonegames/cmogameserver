@@ -2,7 +2,7 @@ package com.onlyonegames.eternalfantasia.domain.controller;
 
 import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
-import com.onlyonegames.eternalfantasia.domain.service.Dungeon.ContentsResetService;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.ContentsResetService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;

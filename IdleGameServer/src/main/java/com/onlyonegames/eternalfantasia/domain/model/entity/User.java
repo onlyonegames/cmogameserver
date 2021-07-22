@@ -52,6 +52,7 @@ public class User {
     int fieldIndex;
     Long dungeonTicket;
     String battleStatus;
+    boolean dummyUser;
 
 
     @CreatedDate
@@ -82,6 +83,7 @@ public class User {
         this.fieldIndex = 0;
         this.battleStatus = "";
         this.dungeonTicket = 0L;
+        this.dummyUser = false;
     }
 
     public void AddGold(BigInteger _addGold) {
