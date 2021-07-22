@@ -1,5 +1,6 @@
 package com.onlyonegames.eternalfantasia.domain.service.Contents;
 
+import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.ArenaRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.MyArenaPlayDataDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
@@ -62,6 +63,21 @@ public class ArenaMatchingService {
             ArenaRanking versus = GetReadyVersus(userId);
             myArenaPlayData.SetMatchedUserId(versus.getUseridUser());
         }
+
+        ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
+        if(arenaRanking == null) {
+            ArenaRankingDto arenaRankingDto = new ArenaRankingDto();
+            arenaRankingDto.SetFirstUser();
+            map.put("arenaRanking", arenaRankingDto);
+        }
+        else
+            map.put("arenaRanking", arenaRanking);
+
+        ArenaRanking enemyArenaRanking = arenaRankingRepository.findByUseridUser(myArenaPlayData.getMatchedUserId()).orElse(null);
+        if(enemyArenaRanking == null) {
+            //TODO ErrorCode add
+        }
+        map.put("enemyArenaRanking", enemyArenaRanking);
 
         User enemyUser = userRepository.findById(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyUser == null) {
