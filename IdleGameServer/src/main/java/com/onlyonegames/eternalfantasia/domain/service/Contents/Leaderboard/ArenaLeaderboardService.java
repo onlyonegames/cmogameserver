@@ -50,11 +50,10 @@ public class ArenaLeaderboardService {
             ArenaRedisRanking arenaRedisRanking = arenaRedisRankingRepository.findById(userId).orElse(null);
             if(arenaRedisRanking == null) {
                 arenaRedisRanking = ArenaRedisRanking.builder().id(userId).point(point).userGameName(user.getUserGameName()).build();
-                arenaRedisRankingRepository.save(arenaRedisRanking);
             } else {
                 arenaRedisRanking.refresh(point);
-                arenaRedisRankingRepository.save(arenaRedisRanking);
             }
+            arenaRedisRankingRepository.save(arenaRedisRanking);
 
             redisLongTemplate.opsForZSet().add(ARENA_RANKING_LEADERBOARD, userId, point);
         }
@@ -68,6 +67,13 @@ public class ArenaLeaderboardService {
             myRank = 0L;
         myRank = myRank + 1L;
         return myRank;
+    }
+
+    public Set<Long> getRangeOfMatch(Long userId) {
+        Long myRank = redisLongTemplate.opsForZSet().reverseRank(ARENA_RANKING_LEADERBOARD, userId);
+        if(myRank == null)
+            myRank = redisLongTemplate.opsForZSet().size(ARENA_RANKING_LEADERBOARD)-30L;
+        return redisLongTemplate.opsForZSet().reverseRange(ARENA_RANKING_LEADERBOARD, myRank -30L, myRank +30L);
     }
 
     public Map<String, Object> GetLeaderboardForAllUser(Long userId, long bottom, long top, Map<String, Object> map) {

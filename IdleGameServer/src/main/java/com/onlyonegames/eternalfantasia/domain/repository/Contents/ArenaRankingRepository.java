@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface ArenaRankingRepository extends JpaRepository<ArenaRanking, Long> {
     Optional<ArenaRanking> findByUseridUser (Long userId);
     List<ArenaRanking> findAllByRankingGreaterThanAndRankingLessThan(int low, int high);
+    List<ArenaRanking> findAllByUseridUserIn (List<Long> userId);
 }

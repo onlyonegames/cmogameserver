@@ -8,13 +8,16 @@ import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.ArenaRankingRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
 import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -23,6 +26,7 @@ public class ArenaMatchingService {
     private final UserRepository userRepository;
     private final ArenaRankingRepository arenaRankingRepository;
     private final MyArenaPlayDataRepository myArenaPlayDataRepository;
+    private final ArenaLeaderboardService arenaLeaderboardService;
 
     private ArenaRanking GetReadyVersus(Long userId){
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
@@ -37,7 +41,10 @@ public class ArenaMatchingService {
             low = arenaRanking.getRanking() + 30;
             high = arenaRanking.getRanking() <= 30 ? 0: arenaRanking.getRanking()- 30; //TODO 조건이 if문으로 변경될 가능성 있음
         }
-        List<ArenaRanking> probabilityList = arenaRankingRepository.findAllByRankingGreaterThanAndRankingLessThan(high, low);
+        //List<ArenaRanking> probabilityList = arenaRankingRepository.findAllByRankingGreaterThanAndRankingLessThan(high, low);
+        List<Long> userIdList = new ArrayList<>(arenaLeaderboardService.getRangeOfMatch(userId));
+
+        List<ArenaRanking> probabilityList = arenaRankingRepository.findAllByUseridUserIn(userIdList);
         ArenaRanking mine = null;
         if(arenaRanking != null)
             mine = probabilityList.stream().filter(i -> i.getId().equals(arenaRanking.getId())).findAny().orElse(null);
@@ -47,7 +54,7 @@ public class ArenaMatchingService {
         if(listSize <= 0) {
             //TODO ErrorLogging Add
         }
-        int selectedIndex = (int) MathHelper.Range(0, listSize);
+        int selectedIndex = (int) MathHelper.Range(0, listSize-1);
         ArenaRanking selectedUser = probabilityList.get(selectedIndex);
         return selectedUser;
     }
@@ -62,6 +69,7 @@ public class ArenaMatchingService {
         if(myArenaPlayData.getMatchedUserId().equals(0L) || myArenaPlayData.isResetAbleMatchingUser()) {
             ArenaRanking versus = GetReadyVersus(userId);
             myArenaPlayData.SetMatchedUserId(versus.getUseridUser());
+            myArenaPlayData.ResetUnResetAbleMatchingUser();
         }
 
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
@@ -70,13 +78,16 @@ public class ArenaMatchingService {
             arenaRankingDto.SetFirstUser();
             map.put("arenaRanking", arenaRankingDto);
         }
-        else
+        else {
+            arenaRanking.SetRanking(arenaLeaderboardService.getRank(userId).intValue());
             map.put("arenaRanking", arenaRanking);
+        }
 
         ArenaRanking enemyArenaRanking = arenaRankingRepository.findByUseridUser(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyArenaRanking == null) {
             //TODO ErrorCode add
         }
+        enemyArenaRanking.SetRanking(arenaLeaderboardService.getRank(myArenaPlayData.getMatchedUserId()).intValue());
         map.put("enemyArenaRanking", enemyArenaRanking);
 
         User enemyUser = userRepository.findById(myArenaPlayData.getMatchedUserId()).orElse(null);

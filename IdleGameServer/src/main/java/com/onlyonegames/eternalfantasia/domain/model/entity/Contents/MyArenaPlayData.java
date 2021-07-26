@@ -39,6 +39,10 @@ public class MyArenaPlayData extends BaseTimeEntity {
         this.resetAbleMatchingUser = true;
     }
 
+    public void ResetUnResetAbleMatchingUser() {
+        this.resetAbleMatchingUser = false;
+    }
+
     public boolean SpendPlayableCount() {
         if(this.playableCount < 1)
             return false;

@@ -49,6 +49,7 @@ public class User {
     String soulStone; // 형식 변경 가능성 있음
     int skillPoint;
     int moveStone;
+    Long arenaCoin;
     int fieldIndex;
     Long dungeonTicket;
     String battleStatus;
@@ -76,7 +77,8 @@ public class User {
         this.diamond = 0L;
         this.soulStone = "0";
         this.skillPoint = 0;
-        this.moveStone = 10000;
+        this.moveStone = 10000; //TODO 라이브때 0으로 설정해야함 !!!!!
+        this.arenaCoin = 0L;
         this.level = 1;
         this.exp = 0;
         this.sexType = 0;
@@ -191,5 +193,9 @@ public class User {
 
     public void SetDungeonTicket(String element) {
         this.dungeonTicket = Long.parseLong(element);
+    }
+
+    public void SetArenaCoin(String element) {
+        this.arenaCoin = Long.parseLong(element);
     }
 }
