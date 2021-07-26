@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface MyArenaPlayDataRepository extends JpaRepository<MyArenaPlayData, Long> {
     Optional<MyArenaPlayData> findByUseridUser(Long userId);
-    List<MyArenaPlayData> findAllByResetAbleMatchingUser(boolean resetAbleMatchingUser);
+    List<MyArenaPlayData> findAllByResetAbleMatchingUserOrReMatchingAbleCountNot(boolean resetAbleMatchingUser, int reMatchingAbleCount);
 }

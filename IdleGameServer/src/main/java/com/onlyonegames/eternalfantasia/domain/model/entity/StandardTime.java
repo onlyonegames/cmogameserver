@@ -26,24 +26,24 @@ public class StandardTime {
         baseDayTime = LocalDateTime.now();
     }
 
-    public void SetBaseDayTime(LocalDateTime localDateTime) {
-        baseDayTime = localDateTime;
+    public void SetBaseDayTime() {
+        baseDayTime = baseDayTime.plusDays(1);
     }
 
     public void SetBaseWeekTimeNow() {
         baseWeekTime = LocalDateTime.now();
     }
 
-    public void SetBaseWeekTime(LocalDateTime localDateTime) {
-        baseWeekTime = localDateTime;
+    public void SetBaseWeekTime() {
+        baseWeekTime = baseWeekTime.plusWeeks(1);
     }
 
     public void SetBaseMonthTimeNow() {
         baseMonthTime = LocalDateTime.now();
     }
 
-    public void SetBaseMonthTime(LocalDateTime localDateTime) {
-        baseMonthTime = localDateTime;
+    public void SetBaseMonthTime() {
+        baseMonthTime = baseMonthTime.plusMonths(1);
     }
 
     public void SetChallengeTowerClassIndex(int challengeTowerClassIndex) {

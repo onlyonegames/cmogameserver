@@ -28,6 +28,14 @@ public class ArenaMatchingController {
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 
+    @GetMapping("/api/Contents/Arena/ForceMatching")
+    public ResponseDTO<Map<String, Object>> ForceMatching() {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = arenaMatchingService.ForceGetReadyVersus(userId, map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
     @PostMapping("/api/Test/Arena/Matching")
     public ResponseDTO<Map<String, Object>> TestGetReadyVersus(@RequestBody userIdDto dto) {
         Map<String, Object> map = new HashMap<>();

@@ -87,4 +87,40 @@ public class ArenaMatchingService {
         map.put("myArenaPlayData", myArenaPlayData);
         return map;
     }
+
+    public Map<String, Object> ForceGetReadyVersus(Long userId, Map<String, Object> map) {
+        MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
+        if(myArenaPlayData == null) {
+            //TODO ErrorLogging Add
+        }
+        if(!myArenaPlayData.SpendReMatchingAbleCount()) {
+            //TODO ErrorLogging Add
+        }
+
+        ArenaRanking versus = GetReadyVersus(userId);
+        myArenaPlayData.SetMatchedUserId(versus.getUseridUser());
+
+        ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
+        if(arenaRanking == null) {
+            ArenaRankingDto arenaRankingDto = new ArenaRankingDto();
+            arenaRankingDto.SetFirstUser();
+            map.put("arenaRanking", arenaRankingDto);
+        }
+        else
+            map.put("arenaRanking", arenaRanking);
+
+        ArenaRanking enemyArenaRanking = arenaRankingRepository.findByUseridUser(myArenaPlayData.getMatchedUserId()).orElse(null);
+        if(enemyArenaRanking == null) {
+            //TODO ErrorCode add
+        }
+        map.put("enemyArenaRanking", enemyArenaRanking);
+
+        User enemyUser = userRepository.findById(myArenaPlayData.getMatchedUserId()).orElse(null);
+        if(enemyUser == null) {
+            //TODO ErrorLogging Add
+        }
+        map.put("enemyUserBattleStatus", enemyUser.getBattleStatus());
+        map.put("myArenaPlayData", myArenaPlayData);
+        return map;
+    }
 }

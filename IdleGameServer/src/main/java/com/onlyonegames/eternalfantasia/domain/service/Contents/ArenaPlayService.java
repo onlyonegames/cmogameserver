@@ -27,7 +27,6 @@ public class ArenaPlayService {
         if(myArenaPlayData == null) {
             //TODO ErrorCode add
         }
-        myArenaPlayData.StartArenaPlay();
         return map;
     }
 
@@ -39,8 +38,7 @@ public class ArenaPlayService {
         if(!myArenaPlayData.SpendPlayableCount()){
             //TODO ErrorCode add
         }
-        myArenaPlayData.StartArenaPlay();
-
+        myArenaPlayData.ResetResetAbleMatchingUser();
         return map;
     }
 
@@ -49,8 +47,7 @@ public class ArenaPlayService {
         if(myArenaPlayData == null) {
             //TODO ErrorCode add
         }
-        myArenaPlayData.ClearArenaPlay();
-
+        myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
         if(arenaRanking != null)
@@ -75,8 +72,7 @@ public class ArenaPlayService {
         if(myArenaPlayData == null) {
             //TODO ErrorCode add
         }
-        myArenaPlayData.DefeatArenaPlay();
-
+        myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
         if(arenaRanking != null)

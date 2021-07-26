@@ -20,9 +20,8 @@ public class MyArenaPlayData extends BaseTimeEntity {
     Long useridUser;
     Long matchedUserId;
     int playableCount;
+    int reMatchingAbleCount;
     boolean resetAbleMatchingUser;
-    LocalDateTime battleStartTime;
-    LocalDateTime battleEndTime;
 
     public void SetMatchedUserId(Long matchedUserId) {
         this.matchedUserId = matchedUserId;
@@ -32,6 +31,14 @@ public class MyArenaPlayData extends BaseTimeEntity {
         this.playableCount = 5;
     }
 
+    public void ResetReMatchingAbleCount() {
+        this.reMatchingAbleCount = 3;
+    }
+
+    public void ResetResetAbleMatchingUser() {
+        this.resetAbleMatchingUser = true;
+    }
+
     public boolean SpendPlayableCount() {
         if(this.playableCount < 1)
             return false;
@@ -39,16 +46,10 @@ public class MyArenaPlayData extends BaseTimeEntity {
         return true;
     }
 
-    public void StartArenaPlay() {
-        this.battleStartTime = LocalDateTime.now();
-        this.resetAbleMatchingUser = true;
-    }
-
-    public void ClearArenaPlay() {
-        this.battleEndTime = LocalDateTime.now();
-    }
-
-    public void DefeatArenaPlay() {
-        this.battleEndTime = LocalDateTime.now();
+    public boolean SpendReMatchingAbleCount() {
+        if(this.reMatchingAbleCount < 1)
+            return false;
+        reMatchingAbleCount -= 1;
+        return true;
     }
 }

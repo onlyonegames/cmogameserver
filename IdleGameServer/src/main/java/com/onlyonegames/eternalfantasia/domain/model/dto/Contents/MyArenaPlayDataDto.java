@@ -11,21 +11,19 @@ public class MyArenaPlayDataDto {
     Long useridUser;
     Long matchedUserId;
     int playableCount;
+    int reMatchingAbleCount;
     boolean resetAbleMatchingUser;
-    LocalDateTime battleStartTime;
-    LocalDateTime battleEndTime;
 
     public MyArenaPlayData ToEntity() {
         Init();
         return MyArenaPlayData.builder().useridUser(useridUser).matchedUserId(matchedUserId).playableCount(playableCount)
-                .resetAbleMatchingUser(resetAbleMatchingUser).battleStartTime(battleStartTime).battleEndTime(battleEndTime).build();
+                .resetAbleMatchingUser(resetAbleMatchingUser).reMatchingAbleCount(reMatchingAbleCount).build();
     }
 
     void Init() {
         this.matchedUserId = 0L;
         this.playableCount = 5;
+        this.reMatchingAbleCount = 3;
         this.resetAbleMatchingUser = false;
-        this.battleStartTime = LocalDateTime.now();
-        this.battleEndTime = LocalDateTime.now();
     }
 }

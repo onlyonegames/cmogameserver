@@ -28,4 +28,9 @@ public class ArenaRanking extends BaseTimeEntity {
     public void SetRanking(int ranking) {
         this.ranking = ranking;
     }
+
+    public void SetFirstUser() {
+        this.point = 0;
+        this.ranking = 0;
+    }
 }
