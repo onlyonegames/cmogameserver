@@ -42,11 +42,12 @@ public class WorldBossLeaderboardService {
 
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
         if(worldBossRanking == null) {
-            worldBossRanking = WorldBossRanking.builder().useridUser(userId).userGameName(user.getUserGameName()).totalDamage(totalDamage).build();
+            worldBossRanking = WorldBossRanking.builder().useridUser(userId).userGameName(user.getUserGameName()).totalDamage(totalDamage).bestDamage(totalDamage).build();
             worldBossRanking = worldBossRankingRepository.save(worldBossRanking);
         }
         else {
             worldBossRanking.refresh(totalDamage);
+            worldBossRanking.ResetBestDamage(totalDamage);
         }
         if(!user.isDummyUser()) {
             WorldBossRedisRanking worldBossRedisRanking = worldBossRedisRankingRepository.findById(userId).orElse(null);
