@@ -33,7 +33,7 @@ public class WorldBossLeaderboardService {
 
     private final WorldBossRankingRepository worldBossRankingRepository;
 
-    public WorldBossRanking setScore(Long userId, Long totalDamage) {
+    public WorldBossRanking setScore(Long userId, Long totalDamage, Long baseDamage) {
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
@@ -42,12 +42,12 @@ public class WorldBossLeaderboardService {
 
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
         if(worldBossRanking == null) {
-            worldBossRanking = WorldBossRanking.builder().useridUser(userId).userGameName(user.getUserGameName()).totalDamage(totalDamage).bestDamage(totalDamage).build();
+            worldBossRanking = WorldBossRanking.builder().useridUser(userId).userGameName(user.getUserGameName()).totalDamage(totalDamage).bestDamage(baseDamage).build();
             worldBossRanking = worldBossRankingRepository.save(worldBossRanking);
         }
         else {
             worldBossRanking.refresh(totalDamage);
-            worldBossRanking.ResetBestDamage(totalDamage);
+            worldBossRanking.ResetBestDamage(baseDamage);
         }
         if(!user.isDummyUser()) {
             WorldBossRedisRanking worldBossRedisRanking = worldBossRedisRankingRepository.findById(userId).orElse(null);

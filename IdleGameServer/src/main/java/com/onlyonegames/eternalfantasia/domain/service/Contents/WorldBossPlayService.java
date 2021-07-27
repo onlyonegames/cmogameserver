@@ -77,7 +77,7 @@ public class WorldBossPlayService {
 
         damage = MathHelper.Clamp(damage, 0, Long.MAX_VALUE);
 
-        WorldBossRanking saveRanking = worldBossLeaderboardService.setScore(userId, damage);
+        WorldBossRanking saveRanking = worldBossLeaderboardService.setScore(userId, damage, totalDamage);
         Long changeRanking = worldBossLeaderboardService.getRank(saveRanking.getUseridUser());
         saveRanking.ResetRanking(changeRanking);
 
