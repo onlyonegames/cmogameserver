@@ -19,8 +19,19 @@ public class WorldBossRanking extends BaseTimeEntity {
     Long useridUser;
     String userGameName;
     Long totalDamage;
+    Long bestDamage;
+    int ranking;
 
     public void refresh(Long totalDamage) {
         this.totalDamage = totalDamage;
+    }
+
+    public void ResetBestDamage(Long bestDamage) {
+        if(this.bestDamage < bestDamage)
+            this.bestDamage = bestDamage;
+    }
+
+    public void ResetRanking(Long ranking) {
+        this.ranking = ranking.intValue();
     }
 }
