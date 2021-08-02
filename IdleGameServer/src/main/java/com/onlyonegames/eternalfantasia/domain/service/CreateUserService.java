@@ -27,6 +27,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyEquipmentI
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.UUID;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
 
@@ -73,6 +74,10 @@ public class CreateUserService
         if (role == null) {
             errorLoggingService.SetErrorLog(userCreateDto.getId(), ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User Role not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User Role not find.", ResponseErrorCode.NOT_FIND_DATA);
+        }
+
+        if(userCreateDto.getSocialId().equals("") || userCreateDto.getSocialId() == null) {
+            userCreateDto.setSocialId(UUID.randomUUID().toString());
         }
         roles.add(role);
         userCreateDto.setRoles(roles);
@@ -126,6 +131,7 @@ public class CreateUserService
         MyDungeonInfo myDungeonInfo = createMyDungeonInfo(userid);
         myDungeonInfoRepository.save(myDungeonInfo);
 
+        //TODO Test code 생명의 정수 추가 서비스때 삭제 요망
         List<MyBelongingInventory> myBelongingInventoryList = createMyBelongingInventory(userid);
         myBelongingInventoryRepository.saveAll(myBelongingInventoryList);
 
@@ -211,6 +217,7 @@ public class CreateUserService
         return myDungeonInfoDto.ToEntity();
     }
 
+    //TODO Test code 생명의 정수 추가 서비스때 삭제 요망
     private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
         List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
         MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code("item_008").count(10000).slotNo(0).slotPercent(0).build();
