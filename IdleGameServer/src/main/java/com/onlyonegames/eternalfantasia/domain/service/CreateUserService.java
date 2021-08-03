@@ -162,7 +162,7 @@ public class CreateUserService
                 String[] codeSplit = temp.getCode().split("_");
                 if(codeSplit[1].equals("000")){
                     MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 1, 1);
+                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 0, 1);
                     myEquipmentInventoryList.add(myEquipmentInventoryDto.ToEntity());
                 }
             }
@@ -219,8 +219,24 @@ public class CreateUserService
     //TODO Test code 생명의 정수 추가 서비스때 삭제 요망
     private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
         List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
-        MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code("item_008").count(10000).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code("item_008").count(50).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(myBelongingInventory);
+        MyBelongingInventory lowPotion = MyBelongingInventory.builder().useridUser(userId).code("item_000").count(100).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(lowPotion);
+        MyBelongingInventory sexChange = MyBelongingInventory.builder().useridUser(userId).code("item_010").count(1).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(sexChange);
+        MyBelongingInventory nameChange = MyBelongingInventory.builder().useridUser(userId).code("item_009").count(1).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(nameChange);
+        MyBelongingInventory itemBooster = MyBelongingInventory.builder().useridUser(userId).code("item_011").count(5).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(itemBooster);
+        MyBelongingInventory expBooster = MyBelongingInventory.builder().useridUser(userId).code("item_012").count(5).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(expBooster);
+        MyBelongingInventory goldBooster = MyBelongingInventory.builder().useridUser(userId).code("item_013").count(5).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(goldBooster);
+        MyBelongingInventory soulStoneBooster = MyBelongingInventory.builder().useridUser(userId).code("item_014").count(5).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(soulStoneBooster);
+        MyBelongingInventory speedBooster = MyBelongingInventory.builder().useridUser(userId).code("item_015").count(5).slotNo(0).slotPercent(0).build();
+        myBelongingInventoryList.add(speedBooster);
         return myBelongingInventoryList;
     }
 }

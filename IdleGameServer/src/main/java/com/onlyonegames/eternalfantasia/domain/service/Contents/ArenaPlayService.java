@@ -43,7 +43,7 @@ public class ArenaPlayService {
             //TODO ErrorCode add
         }
         if(!myArenaPlayData.SpendPlayableCount()){
-            if(!user.SpendDiamond(100)) {
+            if(!user.SpendDiamond(150)) {
                 //TODO ErrorCode add
             }
         }
@@ -64,6 +64,11 @@ public class ArenaPlayService {
         if(myArenaPlayData == null) {
             //TODO ErrorCode add
         }
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            //TODO ErrorCode add
+        }
+        user.AddArenaCoin(100L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
@@ -80,6 +85,7 @@ public class ArenaPlayService {
 
         map.put("myArenaPlayData", myArenaPlayData);
         map.put("arenaRanking", saveRanking);
+        map.put("arenaCoin", user.getArenaCoin());
 
         return map;
     }
@@ -89,6 +95,11 @@ public class ArenaPlayService {
         if(myArenaPlayData == null) {
             //TODO ErrorCode add
         }
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            //TODO ErrorCode add
+        }
+        user.AddArenaCoin(50L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
@@ -105,6 +116,7 @@ public class ArenaPlayService {
 
         map.put("myArenaPlayData", myArenaPlayData);
         map.put("arenaRanking", saveRanking);
+        map.put("arenaCoin", user.getArenaCoin());
 
         return map;
     }

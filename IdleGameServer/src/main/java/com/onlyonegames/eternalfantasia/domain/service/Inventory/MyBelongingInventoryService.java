@@ -48,11 +48,7 @@ public class MyBelongingInventoryService {
     }
 
     public Map<String, Object> ChangeGameName(Long userId, String gameName, Map<String, Object> map) {
-        MyBelongingInventory myBelongingInventory = myBelongingInventoryRepository.findByUseridUserAndCode(userId, "item_009").orElse(null);
-        if(myBelongingInventory == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyBelongingInventory not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: MyBelongingInventory not find.", ResponseErrorCode.NOT_FIND_DATA);
-        }
+
         User findByUserGameName = userRepository.findByuserGameName(gameName).orElse(null);
         if(findByUserGameName != null) { //TODO Error Code 추가 필요
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.AREADY_EXIST_USERNAME.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -63,9 +59,18 @@ public class MyBelongingInventoryService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        myBelongingInventory.SpendItem(1);
+        if(user.isNew_user())
+            user.SetNew_User();
+        else {
+            MyBelongingInventory myBelongingInventory = myBelongingInventoryRepository.findByUseridUserAndCode(userId, "item_009").orElse(null);
+            if(myBelongingInventory == null) {
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyBelongingInventory not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("Fail! -> Cause: MyBelongingInventory not find.", ResponseErrorCode.NOT_FIND_DATA);
+            }
+            myBelongingInventory.SpendItem(1);
+            map.put("count", myBelongingInventory.getCount());
+        }
         user.SetUserName(gameName);
-        map.put("count", myBelongingInventory.getCount());
         map.put("userGameName", user.getUserGameName());
         return map;
     }

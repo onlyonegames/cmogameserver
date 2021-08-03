@@ -54,6 +54,7 @@ public class User {
     Long dungeonTicket;
     String battleStatus;
     boolean dummyUser;
+    boolean new_user;
 
 
     @CreatedDate
@@ -77,7 +78,7 @@ public class User {
         this.diamond = 0L;
         this.soulStone = "0";
         this.skillPoint = 0;
-        this.moveStone = 10000; //TODO 라이브때 0으로 설정해야함 !!!!!
+        this.moveStone = 100; //TODO 라이브때 0으로 설정해야함 !!!!!
         this.arenaCoin = 0L;
         this.level = 1;
         this.exp = 0;
@@ -86,6 +87,7 @@ public class User {
         this.battleStatus = "";
         this.dungeonTicket = 0L;
         this.dummyUser = false;
+        this.new_user = true;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -135,6 +137,10 @@ public class User {
         this.userGameName = userGameName;
     }
 
+    public void SetNew_User() {
+        this.new_user = false;
+    }
+
     public void AddSkillPoint(int addSkillPoint) {
         this.skillPoint += addSkillPoint;
     }
@@ -145,6 +151,10 @@ public class User {
             return true;
         }
         return false;
+    }
+
+    public void AddArenaCoin(Long addArenaCoin) {
+        this.arenaCoin += addArenaCoin;
     }
 
     public void SetLastSettingTime() {
