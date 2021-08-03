@@ -14,6 +14,7 @@ public class ActiveSkillDataJsonDto {
         public int maxLevel;
         public boolean open;
         public List<Boolean> optionOpenList;
+        public int awakeningLevel;
 
         public void LevelUp() {
             this.level++;

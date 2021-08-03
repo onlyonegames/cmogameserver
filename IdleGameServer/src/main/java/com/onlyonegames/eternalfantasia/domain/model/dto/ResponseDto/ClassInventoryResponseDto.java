@@ -8,12 +8,10 @@ public class ClassInventoryResponseDto {
     String code;
     int level;
     int count;
-    int awakeningLevel;
 
     public void InitFromDB(MyClassInventory dbData) {
         this.code = dbData.getCode();
         this.level = dbData.getLevel();
         this.count = dbData.getCount();
-        this.awakeningLevel = dbData.getAwakeningLevel();
     }
 }

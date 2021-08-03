@@ -748,7 +748,7 @@ public class GetterService {
                                     MyClassInventory myClassInventory = myClassInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if( myClassInventory == null) {
                                         MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
-                                        myClassInventoryDto.SetMyClassInventoryDto(userId, classInventoryResponseDto.getCode(), classInventoryResponseDto.getLevel(), classInventoryResponseDto.getCount(), classInventoryResponseDto.getAwakeningLevel());
+                                        myClassInventoryDto.SetMyClassInventoryDto(userId, classInventoryResponseDto.getCode(), classInventoryResponseDto.getLevel(), classInventoryResponseDto.getCount());
                                         myClassInventory = myClassInventoryRepository.save(myClassInventoryDto.ToEntity());
                                         myClassInventoryList.add(myClassInventory);
                                     }else {
