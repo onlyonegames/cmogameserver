@@ -47,6 +47,7 @@ public class GetterService {
     private final MyPassiveSkillDataRepository myPassiveSkillDataRepository;
     private final MyContentsInfoRepository myContentsInfoRepository;
     private final MyDungeonInfoRepository myDungeonInfoRepository;
+    private final MyGachaInfoRepository myGachaInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
@@ -63,6 +64,7 @@ public class GetterService {
         MyPassiveSkillData myPassiveSkillData = null;
         MyContentsInfo myContentsInfo = null;
         MyDungeonInfo myDungeonInfo = null;
+        MyGachaInfo myGachaInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -252,6 +254,14 @@ public class GetterService {
                             if(myDungeonInfo == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                    case "gachaInfo":
+                        if (myGachaInfo == null) {
+                            myGachaInfo = myGachaInfoRepository.findByUseridUser(userId).orElse(null);
+                            if(myGachaInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyGachaInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyGachaInfo", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                 }
@@ -647,6 +657,12 @@ public class GetterService {
                                     element.SetValue((field.get(myDungeonInfo).toString()));
                                 }
                                 break;
+                            case "gachaInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myGachaInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue((field.get(myGachaInfo).toString()));
+                                }
+                                break;
                         }
                     }
                     break;
@@ -860,6 +876,14 @@ public class GetterService {
                                         field.set(myDungeonInfo, Integer.parseInt(element.getValue()));
                                     else if(elementType.getTypeName().equals("java.time.LocalDateTime"))
                                         field.set(myDungeonInfo, LocalDateTime.parse(element.getValue()));
+                                }
+                                break;
+                            case "gachaInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myGachaInfo.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if(elementType.getTypeName().equals("int"))
+                                        field.set(myGachaInfo, Integer.parseInt(element.getValue()));
                                 }
                                 break;
                         }

@@ -65,6 +65,8 @@ public class CreateUserService
 
     private final MyBelongingInventoryRepository myBelongingInventoryRepository;
 
+    private final MyGachaInfoRepository myGachaInfoRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -134,6 +136,9 @@ public class CreateUserService
         //TODO Test code 생명의 정수 추가 서비스때 삭제 요망
         List<MyBelongingInventory> myBelongingInventoryList = createMyBelongingInventory(userid);
         myBelongingInventoryRepository.saveAll(myBelongingInventoryList);
+
+        MyGachaInfo myGachaInfo = createMyGachaInfo(userid);
+        myGachaInfoRepository.save(myGachaInfo);
 
         return map;
     }
@@ -238,5 +243,9 @@ public class CreateUserService
         MyBelongingInventory speedBooster = MyBelongingInventory.builder().useridUser(userId).code("item_015").count(5).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(speedBooster);
         return myBelongingInventoryList;
+    }
+
+    private MyGachaInfo createMyGachaInfo(Long userId) {
+        return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).accessoryLevel(0).accessoryExp(0).build();
     }
 }
