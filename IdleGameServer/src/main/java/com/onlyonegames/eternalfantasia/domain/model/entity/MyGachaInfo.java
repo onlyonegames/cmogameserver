@@ -19,6 +19,6 @@ public class MyGachaInfo extends BaseTimeEntity {
     public Long useridUser;
     public int weaponLevel;
     public int weaponExp;
-    public int accessoryLevel;
-    public int accessoryExp;
+    public int classLevel;
+    public int classExp;
 }

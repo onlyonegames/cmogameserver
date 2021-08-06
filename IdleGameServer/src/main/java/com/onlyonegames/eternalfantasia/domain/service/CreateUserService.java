@@ -246,6 +246,6 @@ public class CreateUserService
     }
 
     private MyGachaInfo createMyGachaInfo(Long userId) {
-        return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).accessoryLevel(0).accessoryExp(0).build();
+        return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).classLevel(0).classExp(0).build();
     }
 }
