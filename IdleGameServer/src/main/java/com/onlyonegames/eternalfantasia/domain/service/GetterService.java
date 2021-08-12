@@ -49,7 +49,7 @@ public class GetterService {
     private final MyDungeonInfoRepository myDungeonInfoRepository;
     private final MyGachaInfoRepository myGachaInfoRepository;
     private final MyCollectionInfoRepository myCollectionInfoRepository;
-//    private final MyQuickMissionDataRepository myQuickMissionDataRepository;
+    private final MyQuickMissionDataRepository myQuickMissionDataRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         MyPixieInfoData myPixieInfoData = null;
@@ -68,7 +68,7 @@ public class GetterService {
         MyDungeonInfo myDungeonInfo = null;
         MyGachaInfo myGachaInfo = null;
         MyCollectionInfo myCollectionInfo = null;
-//        MyQuickMissionData myQuickMissionData = null;
+        MyQuickMissionData myQuickMissionData = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -279,15 +279,15 @@ public class GetterService {
                             }
                         }
                         break;
-//                    case "quickMissionInfo":
-//                        if(myQuickMissionData == null) {
-//                            myQuickMissionData = myQuickMissionDataRepository.findByUseridUser(userId).orElse(null);
-//                            if(myQuickMissionData == null) {
-//                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyQuickMissionData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//                                throw new MyCustomException("Not Found MyQuickMissionData", ResponseErrorCode.NOT_FIND_DATA);
-//                            }
-//                        }
-//                        break;
+                    case "quickMissionInfo":
+                        if(myQuickMissionData == null) {
+                            myQuickMissionData = myQuickMissionDataRepository.findByUseridUser(userId).orElse(null);
+                            if(myQuickMissionData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyQuickMissionData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyQuickMissionData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -693,12 +693,12 @@ public class GetterService {
                                     element.SetValue(field.get(myCollectionInfo).toString());
                                 }
                                 break;
-//                            case "quickMissionData":
-//                                for (ElementDto element : container.elements) {
-//                                    Field field = myQuickMissionData.getClass().getDeclaredField(element.getElement());
-//                                    element.SetValue(field.get(myQuickMissionData).toString());
-//                                }
-//                                break;
+                            case "quickMissionInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myQuickMissionData.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myQuickMissionData).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -928,12 +928,12 @@ public class GetterService {
                                     field.set(myCollectionInfo, element.getValue());
                                 }
                                 break;
-//                            case "quickMissionInfo":
-//                                for(ElementDto element : container.elements) {
-//                                    Field field = myQuickMissionData.getClass().getDeclaredField(element.getElement());
-//                                    field.set(myQuickMissionData, element.getValue());
-//                                }
-//                                break;
+                            case "quickMissionInfo":
+                                for(ElementDto element : container.elements) {
+                                    Field field = myQuickMissionData.getClass().getDeclaredField(element.getElement());
+                                    field.set(myQuickMissionData, element.getValue());
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();
