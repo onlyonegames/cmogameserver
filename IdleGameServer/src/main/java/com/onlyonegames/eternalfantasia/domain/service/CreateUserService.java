@@ -67,6 +67,10 @@ public class CreateUserService
 
     private final MyGachaInfoRepository myGachaInfoRepository;
 
+    private final MyCollectionInfoRepository myCollectionInfoRepository;
+
+//    private final MyQuickMissionDataRepository myQuickMissionDataRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -139,6 +143,12 @@ public class CreateUserService
 
         MyGachaInfo myGachaInfo = createMyGachaInfo(userid);
         myGachaInfoRepository.save(myGachaInfo);
+
+        MyCollectionInfo myCollectionInfo = createMyCollectionInfo(userid);
+        myCollectionInfoRepository.save(myCollectionInfo);
+
+//        MyQuickMissionData myQuickMissionData = createMyQuickMissionData(userid);
+//        myQuickMissionDataRepository.save(myQuickMissionData);
 
         return map;
     }
@@ -248,4 +258,13 @@ public class CreateUserService
     private MyGachaInfo createMyGachaInfo(Long userId) {
         return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).classLevel(0).classExp(0).build();
     }
+
+    private MyCollectionInfo createMyCollectionInfo(Long userId) {
+        List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
+        return MyCollectionInfo.builder().useridUser(userId).json_weaponCollectionInfo(forFirstUsers.get(2).getInitJson()).json_classCollectionInfo(forFirstUsers.get(3).getInitJson()).json_monsterCollectionInfo(forFirstUsers.get(4).getInitJson()).build();
+    }
+
+//    private MyQuickMissionData createMyQuickMissionData(Long userId) {
+//        return MyQuickMissionData.builder().useridUser(userId).json_saveDataValue("").build();
+//    }
 }
