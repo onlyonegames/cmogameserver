@@ -20,4 +20,5 @@ public class PreviousArenaRanking extends BaseTimeEntity {
     String userGameName;
     int point;
     int ranking;
+    boolean receivable;
 }

@@ -12,6 +12,7 @@ public class PreviousWorldBossRankingDto {
     Long totalDamage;
     Long bestDamage;
     int ranking;
+    boolean receivable;
 
     public void InitFromPreviousDB(WorldBossRanking dbData) {
         this.useridUser = dbData.getUseridUser();
@@ -21,8 +22,11 @@ public class PreviousWorldBossRankingDto {
         this.ranking = dbData.getRanking();
     }
 
+    /**
+     * 최초 생성시에만 사용해야함
+     * receivable 무조건 true 세팅*/
     public PreviousWorldBossRanking ToEntity() {
         return PreviousWorldBossRanking.builder().useridUser(useridUser).userGameName(userGameName).totalDamage(totalDamage)
-                .bestDamage(bestDamage).ranking(ranking).build();
+                .bestDamage(bestDamage).ranking(ranking).receivable(true).build();
     }
 }

@@ -21,4 +21,5 @@ public class PreviousWorldBossRanking extends BaseTimeEntity {
     Long totalDamage;
     Long bestDamage;
     int ranking;
+    boolean receivable;
 }
