@@ -13,10 +13,12 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyClassInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyEquipmentInventoryDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Mail.MyMailBoxJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyClassInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyEquipmentInventory;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailBox;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.EquipmentTable;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.HeroClassInfoTable;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.InitJsonDatasForFirstUser;
@@ -24,6 +26,8 @@ import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyClassInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyEquipmentInventoryRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Mail.MyMailBoxRepository;
+import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -70,6 +74,8 @@ public class CreateUserService
     private final MyCollectionInfoRepository myCollectionInfoRepository;
 
     private final MyQuickMissionDataRepository myQuickMissionDataRepository;
+
+    private final MyMailBoxRepository myMailBoxRepository;
 
     private final ErrorLoggingService errorLoggingService;
 
@@ -149,6 +155,9 @@ public class CreateUserService
 
         MyQuickMissionData myQuickMissionData = createMyQuickMissionData(userid);
         myQuickMissionDataRepository.save(myQuickMissionData);
+
+        MyMailBox myMailBox = createMyMailBox(userid);
+        myMailBoxRepository.save(myMailBox);
 
         return map;
     }
@@ -231,7 +240,6 @@ public class CreateUserService
         return myDungeonInfoDto.ToEntity();
     }
 
-    //TODO Test code 생명의 정수 추가 서비스때 삭제 요망
     private List<MyBelongingInventory> createMyBelongingInventory(Long userId) {
         List<MyBelongingInventory> myBelongingInventoryList = new ArrayList<>();
         MyBelongingInventory myBelongingInventory = MyBelongingInventory.builder().useridUser(userId).code("item_008").count(50).slotNo(0).slotPercent(0).build();
@@ -267,5 +275,13 @@ public class CreateUserService
     private MyQuickMissionData createMyQuickMissionData(Long userId) {
         List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
         return MyQuickMissionData.builder().useridUser(userId).json_saveDataValue(forFirstUsers.get(5).getInitJson()).build();
+    }
+
+    private MyMailBox createMyMailBox(Long userId) {
+        MyMailBoxJsonDto myMailBoxJsonDto = new MyMailBoxJsonDto();
+        myMailBoxJsonDto.mailBoxInfoList = new ArrayList<>();
+        String json_myMailBoxInfo = JsonStringHerlper.WriteValueAsStringFromData(myMailBoxJsonDto);
+
+        return MyMailBox.builder().useridUser(userId).json_myMailBoxInfo(json_myMailBoxInfo).build();
     }
 }
