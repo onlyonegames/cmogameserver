@@ -3,16 +3,16 @@ package com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto;
 import lombok.Data;
 
 @Data
-public class WorldBossRankingInfoDto {
+public class StageRankingInfoDto {
     Long useridUser;
     String userGameName;
     int ranking;
-    Long totalDamage;
+    int point;
 
-    public void SetWorldBossRankingInfoDto(Long useridUser, String userGameName, int ranking, Long totalDamage) {
+    public void SetStageRankingInfoDto(Long useridUser, String userGameName, int ranking, int point) {
         this.useridUser = useridUser;
         this.userGameName = userGameName;
         this.ranking = ranking;
-        this.totalDamage = totalDamage;
+        this.point = point;
     }
 }

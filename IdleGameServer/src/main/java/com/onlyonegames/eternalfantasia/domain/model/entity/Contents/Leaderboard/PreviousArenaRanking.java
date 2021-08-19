@@ -21,4 +21,8 @@ public class PreviousArenaRanking extends BaseTimeEntity {
     int point;
     int ranking;
     boolean receivable;
+
+    public void ReceiveReward() {
+        this.receivable = false;
+    }
 }

@@ -11,19 +11,15 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Entity
 @Builder
-public class PreviousWorldBossRanking extends BaseTimeEntity {
+public class BattlePowerRanking extends BaseTimeEntity {
     @Id
     @TableGenerator(name = "hibernate_sequence")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    String userGameName;
-    Long totalDamage;
-    Long bestDamage;
-    int ranking;
-    boolean receivable;
+    Long battlePower;
 
-    public void ReceiveReward() {
-        this.receivable = false;
+    public void refresh(Long battlePower) {
+        this.battlePower = battlePower;
     }
 }

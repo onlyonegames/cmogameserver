@@ -87,9 +87,13 @@ public class StandardTimeResetService {
         List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
         previousWorldBossRankingRepository.deleteAll();
         for(WorldBossRanking temp : worldBossRankingList) {
+            if (temp.getTotalDamage() == 0L)
+                continue;
             PreviousWorldBossRankingDto previousWorldBossRankingDto = new PreviousWorldBossRankingDto();
             previousWorldBossRankingDto.InitFromPreviousDB(temp);
             Long ranking = worldBossLeaderboardService.getRank(temp.getUseridUser());
+            if (ranking == 0L)
+                continue;
             previousWorldBossRankingDto.setRanking(ranking.intValue());
             previousWorldBossRankingRepository.save(previousWorldBossRankingDto.ToEntity());
             temp.ResetZero();

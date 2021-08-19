@@ -1,5 +1,7 @@
 package com.onlyonegames.eternalfantasia.domain.service.Contents;
 
+import com.onlyonegames.eternalfantasia.domain.MyCustomException;
+import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Map;
 
+import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -28,7 +32,8 @@ public class ArenaPlayService {
     public Map<String, Object> ArenaPlayTimeSet(Long userId, Map<String, Object> map) {
         MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
         if(myArenaPlayData == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyArenaPlayData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyArenaPlayData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         return map;
     }
@@ -36,11 +41,13 @@ public class ArenaPlayService {
     public Map<String, Object> ArenaPlay(Long userId, Map<String, Object> map) {
         MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
         if(myArenaPlayData == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyArenaPlayData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyArenaPlayData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         if(!myArenaPlayData.SpendPlayableCount()){
             if(!user.SpendDiamond(150)) {
@@ -62,11 +69,13 @@ public class ArenaPlayService {
     public Map<String, Object> ArenaWin(Long userId, Map<String, Object> map) {
         MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
         if(myArenaPlayData == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyArenaPlayData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyArenaPlayData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         user.AddArenaCoin(100L);
         myArenaPlayData.ResetReMatchingAbleCount();
@@ -93,11 +102,13 @@ public class ArenaPlayService {
     public Map<String, Object> ArenaFail(Long userId, Map<String, Object> map) {
         MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
         if(myArenaPlayData == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyArenaPlayData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyArenaPlayData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
-            //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         user.AddArenaCoin(50L);
         myArenaPlayData.ResetReMatchingAbleCount();

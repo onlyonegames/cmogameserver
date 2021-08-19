@@ -10,15 +10,15 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@RedisHash("stageredisranking")
-public class StageRedisRanking implements Serializable {
-    private static final long serialVersionUID = 6813167271764910721L;
+@RedisHash("battlepowerredisranking")
+public class BattlePowerRedisRanking implements Serializable {
+    private static final long serialVersionUID = -5610996611176272198L;
     @Id
     Long id; //유저 아이디
     String userGameName;
-    int point;
+    Long battlePower;
 
-    public void refresh(int point) {
-        this.point = point;
+    public void refresh(Long battlePower) {
+        this.battlePower = battlePower;
     }
 }

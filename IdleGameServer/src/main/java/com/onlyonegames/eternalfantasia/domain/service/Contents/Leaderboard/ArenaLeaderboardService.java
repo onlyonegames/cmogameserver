@@ -97,6 +97,14 @@ public class ArenaLeaderboardService {
             list.add(arenaRankingInfoDto);
             ranking++;
         }
+        ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
+        ArenaRankingInfoDto myRankingInfo = new ArenaRankingInfoDto();
+        if(arenaRanking != null)
+            myRankingInfo.SetArenaRankingInfoDto(userId, getRank(userId).intValue(), arenaRanking.getPoint());
+        else
+            myRankingInfo.SetArenaRankingInfoDto(userId, 0, 0);
+        map.put("myRankingInfo", myRankingInfo);
+        map.put("ranking", list);
         return map;
     }
 }

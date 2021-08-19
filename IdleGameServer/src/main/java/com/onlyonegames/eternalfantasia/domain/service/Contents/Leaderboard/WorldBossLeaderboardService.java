@@ -65,13 +65,13 @@ public class WorldBossLeaderboardService {
     public Long getRank(Long userId) {
         Long myRank = redisLongTemplate.opsForZSet().reverseRank(WORLD_BOSS_RANKING_LEADERBOARD, userId);
         if(myRank == null)
-            myRank = 0L;
+           return 0L;
         myRank = myRank + 1L;
         return myRank;
     }
 
-    public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottem, long top, Map<String, Object> map) {
-        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(WORLD_BOSS_RANKING_LEADERBOARD, bottem, top)).orElse(Collections.emptySet());
+    public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
+        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(WORLD_BOSS_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<WorldBossRankingInfoDto> list = new ArrayList<>();
         int ranking = 1;
         Long tempTotalDamage = 0L;
@@ -87,7 +87,7 @@ public class WorldBossLeaderboardService {
             }
 
             WorldBossRankingInfoDto worldBossRankingInfoDto = new WorldBossRankingInfoDto();
-            worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, tempRanking, tempTotalDamage);
+            worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, value.getUserGameName(), tempRanking, tempTotalDamage);
             list.add(worldBossRankingInfoDto);
             ranking++;
         }
@@ -95,9 +95,15 @@ public class WorldBossLeaderboardService {
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
         WorldBossRankingInfoDto myRankingInfo = new WorldBossRankingInfoDto();
         if(worldBossRanking != null)
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, getRank(userId).intValue(), worldBossRanking.getTotalDamage());
-        else
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, 0, 0L);
+            myRankingInfo.SetWorldBossRankingInfoDto(userId, worldBossRanking.getUserGameName(), getRank(userId).intValue(), worldBossRanking.getTotalDamage());
+        else {
+            User user = userRepository.findById(userId).orElse(null);
+            if(user == null) {
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+            }
+            myRankingInfo.SetWorldBossRankingInfoDto(userId, user.getUserGameName(), 0, 0L);
+        }
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;
