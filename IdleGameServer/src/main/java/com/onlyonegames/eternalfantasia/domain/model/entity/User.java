@@ -50,6 +50,7 @@ public class User {
     int skillPoint;
     int moveStone;
     Long arenaCoin;
+    Long dragonCoin;
     int fieldIndex;
     Long dungeonTicket;
     String battleStatus;
@@ -80,6 +81,7 @@ public class User {
         this.skillPoint = 0;
         this.moveStone = 100; //TODO 라이브때 0으로 설정해야함 !!!!!
         this.arenaCoin = 0L;
+        this.dragonCoin = 0L;
         this.level = 1;
         this.exp = 0;
         this.sexType = 0;
@@ -207,5 +209,9 @@ public class User {
 
     public void SetArenaCoin(String element) {
         this.arenaCoin = Long.parseLong(element);
+    }
+
+    public void SetDragonCoin(String element) {
+        this.dragonCoin = Long.parseLong(element);
     }
 }

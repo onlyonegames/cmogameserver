@@ -330,6 +330,9 @@ public class GetterService {
                                         case "arenaCoin":
                                             element.SetValue(user.getArenaCoin());
                                             break;
+                                        case "dragonCoin":
+                                            element.SetValue(user.getDragonCoin());
+                                            break;
                                     }
                                 }
                                 break;
@@ -737,6 +740,9 @@ public class GetterService {
                                             break;
                                         case "arenaCoin":
                                             user.SetArenaCoin(element.getValue());
+                                            break;
+                                        case "dragonCoin":
+                                            user.SetDragonCoin(element.getValue());
                                             break;
                                     }
                                 }
