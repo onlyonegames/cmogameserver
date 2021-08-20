@@ -100,14 +100,7 @@ public class CreateUserService
         long userid = createdUser.getId();
 
         /* UpgradeStatus */
-        MyStatusInfoDto myStatusInfoDto = new MyStatusInfoDto();
-        myStatusInfoDto.setUseridUser(userid);
-        myStatusInfoDto.setPhysicalAttackPowerLevel(1); // 물리공격력
-        myStatusInfoDto.setMagicAttackPowerLevel(1); // 마법공격력
-        myStatusInfoDto.setMaxHealthPointLevel(1); // 최대 생명력 (int)
-        myStatusInfoDto.setMaxManaPointLevel(1); // 최대 마나 (int)
-        myStatusInfoDto.setCriticalChanceLevel(1); // 치명확률
-        myStatusInfoDto.setCriticalPercentLevel(1); // 치명데미지
+        MyStatusInfoDto myStatusInfoDto = new MyStatusInfoDto(userid);
         myStatusInfoRepository.save(myStatusInfoDto.ToEntity());
 
         //최초 유저 기본 클래스 생성

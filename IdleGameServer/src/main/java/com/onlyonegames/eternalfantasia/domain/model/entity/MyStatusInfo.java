@@ -24,21 +24,20 @@ public class MyStatusInfo extends BaseTimeEntity
     Long useridUser;
 
     public int physicalAttackPowerLevel; // 물리공격력
-    public int magicAttackPowerLevel;// 마법공격력
     public int maxHealthPointLevel; // 최대 생명력 (int)
     public int maxManaPointLevel; // 최대 마나 (int)
     public int criticalChanceLevel; // 치명확률
     public int criticalPercentLevel; // 치명데미지
+    public int damageUPPercentLevel;
+    public int damageDownPercentLevel;
+    public int criticalResistanceLevel;
+    public int badEffectResistanceLevel;
 
     public void AddStatus(STATUS_TYPE status_type, int addLevel, String previousPrice) {
         switch(status_type){
             case PHYSICAL_ATTACK_POWER:
                 this.physicalAttackPowerLevel += addLevel;
 //                this.physicalAttackPowerPreviousPrice = previousPrice;
-                break;
-            case MAGIC_ATTACK_POWER:
-                this.magicAttackPowerLevel += addLevel;
-//                this.magicAttackPowerPreviousPrice = previousPrice;
                 break;
             case MAX_HEALTH_POINT:
                 this.maxHealthPointLevel += addLevel;
@@ -81,8 +80,6 @@ public class MyStatusInfo extends BaseTimeEntity
         switch(status_type){
             case PHYSICAL_ATTACK_POWER:
                 return physicalAttackPowerLevel;
-            case MAGIC_ATTACK_POWER:
-                return magicAttackPowerLevel;
             case MAX_HEALTH_POINT:
                 return maxHealthPointLevel;
             case MAX_MANA_POINT:
