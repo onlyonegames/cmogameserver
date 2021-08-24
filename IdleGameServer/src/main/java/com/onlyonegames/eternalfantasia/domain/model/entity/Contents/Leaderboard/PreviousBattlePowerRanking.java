@@ -17,6 +17,12 @@ public class PreviousBattlePowerRanking extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
+    String userGameName;
     Long battlePower;
     int ranking;
+    boolean receivable;
+
+    public void ReceiveReward() {
+        this.receivable = false;
+    }
 }

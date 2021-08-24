@@ -34,7 +34,7 @@ public class ArenaLeaderboardService {
     public ArenaRanking setScore(Long userId, int point) {
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: userId Can't find. userId => " + userId, ResponseErrorCode.NOT_FIND_DATA);
         }
 
@@ -93,16 +93,21 @@ public class ArenaLeaderboardService {
             }
 
             ArenaRankingInfoDto arenaRankingInfoDto = new ArenaRankingInfoDto();
-            arenaRankingInfoDto.SetArenaRankingInfoDto(id, tempRanking, tempPoint);
+            arenaRankingInfoDto.SetArenaRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint);
             list.add(arenaRankingInfoDto);
             ranking++;
         }
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
         ArenaRankingInfoDto myRankingInfo = new ArenaRankingInfoDto();
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+        }
         if(arenaRanking != null)
-            myRankingInfo.SetArenaRankingInfoDto(userId, getRank(userId).intValue(), arenaRanking.getPoint());
+            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), arenaRanking.getPoint());
         else
-            myRankingInfo.SetArenaRankingInfoDto(userId, 0, 0);
+            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), 0, 0);
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;

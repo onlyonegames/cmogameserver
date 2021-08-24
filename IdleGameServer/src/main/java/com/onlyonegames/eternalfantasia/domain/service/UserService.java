@@ -32,6 +32,7 @@ public class UserService {
     private final ErrorLoggingService errorLoggingService;
     private final GameDataTableService gameDataTableService;
     private final StandardTimeRepository standardTimeRepository;
+    private final ServerStatusInfoRepository serverStatusInfoRepository;
 
 
 
@@ -41,7 +42,10 @@ public class UserService {
     private final OnlyoneSessionRepository sessionRepository;
 
     public Map<String, Object> login(Long userId, String jwt, Map<String, Object> map) {
-
+        ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
+        if (serverStatusInfo.getServerStatus() == 1) {
+            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
+        }
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);

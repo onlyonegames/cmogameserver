@@ -1,8 +1,12 @@
 package com.onlyonegames.eternalfantasia.domain.service;
 
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousArenaRankingDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousBattlePowerRankingDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousStageRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousWorldBossRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
@@ -12,6 +16,8 @@ import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.repository.MyContentsInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.StandardTimeRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -37,6 +43,12 @@ public class StandardTimeResetService {
     private final WorldBossLeaderboardService worldBossLeaderboardService;
     private final RedisTemplate<String, Long> redisLongTemplate;
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
+    private final StageRankingRepository stageRankingRepository;
+    private final PreviousStageRankingRepository previousStageRankingRepository;
+    private final StageLeaderboardService stageLeaderboardService;
+    private final BattlePowerLeaderboardService battlePowerLeaderboardService;
+    private final BattlePowerRankingRepository battlePowerRankingRepository;
+    private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> CheckTime(Map<String, Object> map) {
@@ -56,6 +68,8 @@ public class StandardTimeResetService {
         if(standardTime.getBaseWeekTime().isBefore(now)){
             //TODO 주별 컨텐츠 업데이트 코드 또는 서비스 추가
             SetPreviousArenaRanking();
+            SetPreviousStageRanking();
+            SetPreviousBattlePowerRanking();
             ResetChallengeTower(standardTime);
             standardTime.SetBaseWeekTime();
         }
@@ -114,6 +128,30 @@ public class StandardTimeResetService {
             Long ranking = arenaLeaderboardService.getRank(temp.getUseridUser());
             previousArenaRankingDto.setRanking(ranking.intValue());
             previousArenaRankingRepository.save(previousArenaRankingDto.ToEntity());
+        }
+    }
+
+    private void SetPreviousStageRanking() {
+        List<StageRanking> stageRankingList = stageRankingRepository.findAll();
+        previousStageRankingRepository.deleteAll();
+        for (StageRanking temp : stageRankingList) {
+            PreviousStageRankingDto previousStageRankingDto = new PreviousStageRankingDto();
+            previousStageRankingDto.InitDB(temp);
+            Long ranking = stageLeaderboardService.getRank(temp.getUseridUser());
+            previousStageRankingDto.setRanking(ranking.intValue());
+            previousStageRankingRepository.save(previousStageRankingDto.ToEntity());
+        }
+    }
+
+    private void SetPreviousBattlePowerRanking() {
+        List<BattlePowerRanking> battlePowerRankingList = battlePowerRankingRepository.findAll();
+        previousBattlePowerRankingRepository.deleteAll();
+        for (BattlePowerRanking temp : battlePowerRankingList) {
+            PreviousBattlePowerRankingDto previousBattlePowerRankingDto = new PreviousBattlePowerRankingDto();
+            previousBattlePowerRankingDto.InitFromPreviousDb(temp);
+            Long ranking = battlePowerLeaderboardService.getRank(temp.getUseridUser());
+            previousBattlePowerRankingDto.setRanking(ranking.intValue());
+            previousBattlePowerRankingRepository.save(previousBattlePowerRankingDto.ToEntity());
         }
     }
 }

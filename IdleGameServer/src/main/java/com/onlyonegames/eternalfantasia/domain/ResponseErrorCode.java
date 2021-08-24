@@ -9,6 +9,7 @@ public enum ResponseErrorCode {
     AREADY_EXIST_USERNAME(-2, "AREADY_EXIST_USERNAME"),
     INVAILD_JSON_STRING_TO_DATA(-3, "INVAILD_JSON_STRING_TO_DATA"),
     INVAILD_DATA_TO_JSON_STRING(-4, "INVAILD_DATA_TO_JSON_STRING"),
+    SERVER_CHECK(-5, "SERVER_CHECK"),
     NOT_FIND_DATA(-100, "NOT_FOUND")/*해당 테이블에 데이터가 존재하지 않음.*/,
     NOT_EXIST_CODE(-101, "NOT_EXIST_CODE"),/*특정 프로세스에서 조건에 맞는 코드를 갖는 아이템이 존재하지 않음. 혹은 잘못된 코드*/
     INVAILD_EVENTNO(-102,"INVAILD_EVENTNO"),/*이벤트 스크립트 번호가 순서에 맞지 않음.*/

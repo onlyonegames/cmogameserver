@@ -3,6 +3,7 @@ package com.onlyonegames.eternalfantasia.domain.controller.Leaderboard;
 import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class LeaderboardController {
     private final WorldBossLeaderboardService worldBossLeaderboardService;
     private final ArenaLeaderboardService arenaLeaderboardService;
     private final StageLeaderboardService stageLeaderboardService;
+    private final BattlePowerLeaderboardService battlePowerLeaderboardService;
 
     @GetMapping("/api/Contents/WorldBoss/GetAllLeaderboard")
     public ResponseDTO<Map<String, Object>> GetWorldBossLeaderboard() {
@@ -42,6 +44,14 @@ public class LeaderboardController {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Map<String, Object> response = stageLeaderboardService.GetLeaderboardForAllUser(userId, 0, 100, map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @GetMapping("/api/Contents/BattlePower/GetAllLeaderboard")
+    public ResponseDTO<Map<String, Object>> GetBattlePowerLeaderboard() {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = battlePowerLeaderboardService.GetLeaderboardForAllUser(userId, 0, 100, map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }

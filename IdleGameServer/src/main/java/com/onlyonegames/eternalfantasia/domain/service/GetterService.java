@@ -13,8 +13,11 @@ import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.*;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.AccessoryTable;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.EquipmentTable;
+import com.onlyonegames.eternalfantasia.domain.model.gamedatas.ServerStatusInfo;
+import com.onlyonegames.eternalfantasia.domain.model.gamedatas.ServerStatusInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,8 +53,11 @@ public class GetterService {
     private final MyGachaInfoRepository myGachaInfoRepository;
     private final MyCollectionInfoRepository myCollectionInfoRepository;
     private final MyQuickMissionDataRepository myQuickMissionDataRepository;
+    private final ServerStatusInfoRepository serverStatusInfoRepository;
+    private final BattlePowerLeaderboardService battlePowerLeaderboardService;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
+        ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
         MyPixieInfoData myPixieInfoData = null;
         MyRuneLevelInfoData myRuneLevelInfoData = null;
         List<MyRuneInventory> myRuneInventoryList = null;
@@ -702,6 +708,16 @@ public class GetterService {
                                     element.SetValue(field.get(myQuickMissionData).toString());
                                 }
                                 break;
+                            case "serverStatus":
+                                for(ElementDto element : container.elements) {
+                                    element.SetValue(serverStatusInfo.getServerStatus());
+                                }
+                                break;
+                            case "battlePower":
+                                for (ElementDto element : container.elements) {
+                                    if (element.getElement().equals("battlePower"))
+                                        element.SetValue(user.getBattlePower());
+                                }
                         }
                     }
                     break;
@@ -940,6 +956,13 @@ public class GetterService {
                                     field.set(myQuickMissionData, element.getValue());
                                 }
                                 break;
+                            case "battlePower":
+                                for (ElementDto elementDto : container.elements) {
+                                    if (elementDto.getElement().equals("battlePower")){
+                                        user.SetBattlePower(elementDto.getValue());
+                                        battlePowerLeaderboardService.setScore(userId, Long.parseLong(elementDto.getValue()));
+                                    }
+                                }
                         }
                     }
                     user.SetLastSettingTime();

@@ -56,6 +56,8 @@ public class User {
     String battleStatus;
     boolean dummyUser;
     boolean new_user;
+    int userType;
+    Long battlePower;
 
 
     @CreatedDate
@@ -90,6 +92,8 @@ public class User {
         this.dungeonTicket = 0L;
         this.dummyUser = false;
         this.new_user = true;
+        this.userType = 1;
+        this.battlePower = 0L;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -213,5 +217,9 @@ public class User {
 
     public void SetDragonCoin(String element) {
         this.dragonCoin = Long.parseLong(element);
+    }
+
+    public void SetBattlePower(String element) {
+        this.battlePower = Long.parseLong(element);
     }
 }

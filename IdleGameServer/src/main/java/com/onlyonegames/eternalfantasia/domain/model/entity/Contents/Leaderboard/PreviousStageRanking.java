@@ -17,7 +17,8 @@ public class PreviousStageRanking extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    int stageNo;
+    String userGameName;
+    int point;
     int ranking;
     boolean receivable;
 

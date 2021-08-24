@@ -41,6 +41,14 @@ public class PreviousLeaderboardController {
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 
+    @GetMapping("/api/Contents/BattlePower/PreviousRanking")
+    public ResponseDTO<Map<String, Object>> GetPreviousBattlePowerRanking() {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = previousRankingService.GetPreviousBattleRanking(userId, map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
     @GetMapping("/api/Test/Contents/WorldBoss/PreviousRanking")
     public ResponseDTO<Map<String, Object>> TestGetPreviousStageRanking() {
         Map<String, Object> map = new HashMap<>();

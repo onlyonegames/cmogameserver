@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
@@ -28,15 +30,17 @@ public class StageRewardService {
     public Map<String, Object> GetStageReward(Long userId, Map<String, Object> map) {
         PreviousStageRanking previousStageRanking = previousStageRankingRepository.findByUseridUser(userId).orElse(null);
         if(previousStageRanking == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: PreviousStageRanking not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: PreviousStageRanking not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: PreviousStageRanking not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
 
         if(!previousStageRanking.isReceivable()) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.ALREADY_RECEIVED_REWARD.getIntegerValue(), "Fail! -> Cause: Already Received Reward.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.ALREADY_RECEIVED_REWARD.getIntegerValue(), "Fail! -> Cause: Already Received Reward.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: Already Received Reward.", ResponseErrorCode.ALREADY_RECEIVED_REWARD);
         }
 
+        List<String> gettingItemList = new ArrayList<>();
+        gettingItemList.add("diamond");
         String gettingItemCount;
 
         int myRanking = previousStageRanking.getRanking();
@@ -75,18 +79,20 @@ public class StageRewardService {
 
 
         LocalDateTime now = LocalDateTime.now();
-        MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
-        mailSendRequestDto.setTitle("모험 "+ myRanking + "등 보상 지급");
-        mailSendRequestDto.setToId(userId);
-        mailSendRequestDto.setGettingItem("diamond");
-        mailSendRequestDto.setGettingItemCount(gettingItemCount);
-        mailSendRequestDto.setSendDate(now);
-        mailSendRequestDto.setMailType(1);
-        mailSendRequestDto.setExpireDate(now.plusDays(30));
+        for (String temp : gettingItemList) {
+            MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+            mailSendRequestDto.setTitle("모험 "+ myRanking + "등 보상 지급");
+            mailSendRequestDto.setToId(userId);
+            mailSendRequestDto.setGettingItem(temp);
+            mailSendRequestDto.setGettingItemCount(gettingItemCount);
+            mailSendRequestDto.setSendDate(now);
+            mailSendRequestDto.setMailType(0);
+            mailSendRequestDto.setExpireDate(now.plusDays(30));
 
-        Map<String, Object> fakeMap = new HashMap<>();
-        myMailBoxService.SendMail(mailSendRequestDto, fakeMap);
-
+            Map<String, Object> fakeMap = new HashMap<>();
+            myMailBoxService.SendMail(mailSendRequestDto, fakeMap);
+        }
+        previousStageRanking.ReceiveReward();
         return map;
     }
 }

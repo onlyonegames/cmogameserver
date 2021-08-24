@@ -17,9 +17,14 @@ public class BattlePowerRanking extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
+    String userGameName;
     Long battlePower;
+    int ranking;
 
     public void refresh(Long battlePower) {
         this.battlePower = battlePower;
+    }
+    public void SetRanking(int ranking) {
+        this.ranking = ranking;
     }
 }
