@@ -1,6 +1,7 @@
 package com.onlyonegames.eternalfantasia.domain.model.entity.Inventory;
 
 import com.onlyonegames.eternalfantasia.domain.BaseTimeEntity;
+import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.RuneInventoryResponseDto;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,8 +18,9 @@ public class MyRuneInventory extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    int type_Id;
+    String code;
     int count;
+    int level;
 
 //    public boolean RuneEvolution() {
 //        if(rune_Id != 30 || count >= 2){
@@ -46,5 +48,10 @@ public class MyRuneInventory extends BaseTimeEntity {
 
     public void SetCount(int count) {
         this.count = count;
+    }
+
+    public void SetRuneInventory(RuneInventoryResponseDto dto) {
+        this.count = dto.getCount();
+        this.level = dto.getLevel();
     }
 }

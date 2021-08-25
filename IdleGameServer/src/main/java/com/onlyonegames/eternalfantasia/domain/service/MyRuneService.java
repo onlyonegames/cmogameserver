@@ -11,6 +11,7 @@ import com.onlyonegames.eternalfantasia.domain.model.entity.MyRuneLevelInfoData;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyRuneInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyRuneLevelInfoDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
+import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,23 +54,42 @@ public class MyRuneService {
     }
 
     public Map<String, Object> GettingRune(Long userId, List<GettingRuneRequestDto.GettingRuneInfo> gettingRuneInfoList, Map<String, Object> map) { //TODO
-//        User user = userRepository.findById(userId).orElse(null);
-//        if(user == null) {
-//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found IdleUser", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//            throw new MyCustomException("Not Found IdleUser", ResponseErrorCode.NOT_FIND_DATA);
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found IdleUser", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found IdleUser", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        MyRuneLevelInfoData myRuneLevelInfoData = myRuneLevelInfoDataRepository.findByUseridUser(userId).orElse(null);
+        if(myRuneLevelInfoData == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneLevelInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found MyRuneLevelInfoData", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        //TODO Rune 생성 확률
+        double runeType = MathHelper.Range(0, 6);
+        int runeType_id = 0;
+//        if(0<=runeType && 0.2>runeType) {
+//            runeType =
 //        }
-//        MyRuneLevelInfoData myRuneLevelInfoData = myRuneLevelInfoDataRepository.findByUseridUser(userId).orElse(null);
-//        if(myRuneLevelInfoData == null) {
-//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneLevelInfoData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//            throw new MyCustomException("Not Found MyRuneLevelInfoData", ResponseErrorCode.NOT_FIND_DATA);
+//        else if(0.2<=runeType && 0.4>runeType) {
+//
 //        }
-//        List<MyRuneInventory> myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
-//        int addLevel = 0;
+//        else if(0.4<=runeType && 0.6>runeType) {
+//
+//        }
+//        else if(0.6<=runeType && 0.8>runeType) {
+//
+//        }
+//        else if(0.8<=runeType && 1>=runeType) {
+//
+//        }
+
+        List<MyRuneInventory> myRuneInventoryList = myRuneInventoryRepository.findAllByUseridUser(userId);
+        int addLevel = 0;
 //        for(GettingRuneRequestDto.GettingRuneInfo temp : gettingRuneInfoList) {
-//            MyRuneInventory selectedRune = myRuneInventoryList.stream().filter(i -> i.getRune_Id() == temp.rune_id && i.getGrade() == temp.grade && i.getItemClassValue() == temp.itemClassValue).findAny().orElse(null);
+//            MyRuneInventory selectedRune = myRuneInventoryList.stream().filter(i -> i.getType_Id() == temp.rune_id).findAny().orElse(null);
 //            if(selectedRune == null) {
 //                MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
-//                myRuneInventoryDto.SetMyRuneInventoryDto(userId, temp.rune_id, temp.itemClassValue, temp.grade, temp.count);
+//                myRuneInventoryDto.SetMyRuneInventoryDto(userId, temp.rune_id, temp.count);
 //                selectedRune = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
 //                myRuneInventoryList.add(selectedRune);
 //                addLevel += temp.count;
@@ -78,17 +98,17 @@ public class MyRuneService {
 //            selectedRune.AddCount(temp.count);
 //            addLevel += temp.count;
 //        }
-//        myRuneLevelInfoData.LevelUp(addLevel);
-//        MyRuneLevelInfoDataDto myRuneLevelInfoDataDto = new MyRuneLevelInfoDataDto();
-//        myRuneLevelInfoDataDto.InitFromDBData(myRuneLevelInfoData);
-//        List<MyRuneInventoryDto> myRuneInventoryDtoList = new ArrayList<>();
-//        for(MyRuneInventory temp : myRuneInventoryList) {
-//            MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
-//            myRuneInventoryDto.InitFromDBData(temp);
-//            myRuneInventoryDtoList.add(myRuneInventoryDto);
-//        }
-//        map.put("myRuneLevelInfo", myRuneLevelInfoDataDto);
-//        map.put("myRuneInventory", myRuneInventoryDtoList);
+        myRuneLevelInfoData.LevelUp(addLevel);
+        MyRuneLevelInfoDataDto myRuneLevelInfoDataDto = new MyRuneLevelInfoDataDto();
+        myRuneLevelInfoDataDto.InitFromDBData(myRuneLevelInfoData);
+        List<MyRuneInventoryDto> myRuneInventoryDtoList = new ArrayList<>();
+        for(MyRuneInventory temp : myRuneInventoryList) {
+            MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
+            myRuneInventoryDto.InitFromDBData(temp);
+            myRuneInventoryDtoList.add(myRuneInventoryDto);
+        }
+        map.put("myRuneLevelInfo", myRuneLevelInfoDataDto);
+        map.put("myRuneInventory", myRuneInventoryDtoList);
         return map;
     }
 

@@ -363,22 +363,28 @@ public class GetterService {
                             case "runeInventory":
                                 List<ElementDto> runeInventoryElementDtoList = new ArrayList<>();
                                 boolean flag = false;
-                                for (ElementDto temp : container.elements) {
-                                    if(temp.getElement().equals("all")) {
-                                        for(MyRuneInventory j : myRuneInventoryList){
-                                            ElementDto inventory = new ElementDto();
-                                            inventory.SetElement(Integer.toString(j.getType_Id()), Integer.toString(j.getCount()));
-                                            runeInventoryElementDtoList.add(inventory);
+                                for (ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(MyRuneInventory myRuneInventory : myRuneInventoryList){
+                                            RuneInventoryResponseDto runeInventoryResponseDto = new RuneInventoryResponseDto();
+                                            runeInventoryResponseDto.SetRuneInventoryResponseDto(myRuneInventory);
+                                            String rune_Json = JsonStringHerlper.WriteValueAsStringFromData(runeInventoryResponseDto);
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(myRuneInventory.getCode(), rune_Json);
+                                            runeInventoryElementDtoList.add(elementDto);
                                         }
                                         flag = true;
                                         break;
                                     }
-                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(temp.getElement())).findAny().orElse(null);
+                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if (myRuneInventory == null) {
                                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyRuneInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                         throw new MyCustomException("Not Found MyRuneInventory", ResponseErrorCode.NOT_FIND_DATA);
                                     }
-                                    temp.SetValue(myRuneInventory.getCount());
+                                    RuneInventoryResponseDto runeInventoryResponseDto = new RuneInventoryResponseDto();
+                                    runeInventoryResponseDto.SetRuneInventoryResponseDto(myRuneInventory);
+                                    String rune_Json = JsonStringHerlper.WriteValueAsStringFromData(runeInventoryResponseDto);
+                                    element.SetValue(rune_Json);
                                 }
                                 if(flag){
                                     container.elements = runeInventoryElementDtoList;
@@ -780,14 +786,17 @@ public class GetterService {
                                 break;
                             case "runeInventory":
                                 for (ElementDto element : container.elements) {
-                                    MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getType_Id() == Integer.parseInt(element.getElement())).findAny().orElse(null);
-                                    if (myRuneInventory == null) {
-                                        MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
-                                        myRuneInventoryDto.SetMyRuneInventoryDto(userId, element.getElement(), element.getValue());
-                                        myRuneInventory = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
-                                        myRuneInventoryList.add(myRuneInventory);
-                                    } else {
-                                        myRuneInventory.SetCount(element.getValue());
+                                    {
+                                        RuneInventoryResponseDto runeInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), RuneInventoryResponseDto.class);
+                                        MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getCode().equals(runeInventoryResponseDto.getCode())).findAny().orElse(null);
+                                        if (myRuneInventory == null) {
+                                            MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
+                                            myRuneInventoryDto.SetMyRuneInventoryDto(userId, runeInventoryResponseDto.getCode(), runeInventoryResponseDto.getCount(), runeInventoryResponseDto.getLevel());
+                                            myRuneInventory = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
+                                            myRuneInventoryList.add(myRuneInventory);
+                                        } else {
+                                            myRuneInventory.SetRuneInventory(runeInventoryResponseDto);
+                                        }
                                     }
                                 }
                                 break;

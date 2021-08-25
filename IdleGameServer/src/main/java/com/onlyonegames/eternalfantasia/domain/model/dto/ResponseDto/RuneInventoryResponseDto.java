@@ -1,11 +1,17 @@
 package com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto;
 
-public class RuneInventoryResponseDto {
-    String element;
-    String value;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyRuneInventory;
+import lombok.Data;
 
-    public void SetRuneInventoryResponseDto(String element, String value) {
-        this.element = element;
-        this.value = value;
+@Data
+public class RuneInventoryResponseDto {
+    String code;
+    int level;
+    int count;
+
+    public void SetRuneInventoryResponseDto(MyRuneInventory dbData) {
+        this.code = dbData.getCode();
+        this.level = dbData.getLevel();
+        this.count = dbData.getCount();
     }
 }
