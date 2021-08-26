@@ -8,10 +8,12 @@ public class ClassInventoryResponseDto {
     String code;
     int level;
     int count;
+    int promotionPercent;
 
     public void InitFromDB(MyClassInventory dbData) {
         this.code = dbData.getCode();
         this.level = dbData.getLevel();
         this.count = dbData.getCount();
+        this.promotionPercent = dbData.getPromotionPercent();
     }
 }

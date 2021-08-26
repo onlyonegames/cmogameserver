@@ -165,6 +165,7 @@ public class CreateUserService
                 myClassInventoryDto.setCount(0);
                 myClassInventoryDto.setLevel(1);
                 myClassInventoryDto.setUseridUser(userId);
+                myClassInventoryDto.setPromotionPercent(0);
                 myClassInventoryList.add(myClassInventoryDto.ToEntity());
             }
         }

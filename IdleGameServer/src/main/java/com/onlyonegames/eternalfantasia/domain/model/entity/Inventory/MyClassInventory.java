@@ -21,6 +21,7 @@ public class MyClassInventory extends BaseTimeEntity {
     String code;
     int level;
     int count;
+    int promotionPercent;
 
     public void AddCount(int addCount) {
         this.count += addCount;
@@ -41,5 +42,6 @@ public class MyClassInventory extends BaseTimeEntity {
     public void SetMyClassInventory(ClassInventoryResponseDto dto) {
         this.level = dto.getLevel();
         this.count = dto.getCount();
+        this.promotionPercent = dto.getPromotionPercent();
     }
 }
