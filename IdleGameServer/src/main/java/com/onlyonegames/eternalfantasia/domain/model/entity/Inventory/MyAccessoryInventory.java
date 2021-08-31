@@ -5,6 +5,7 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.AccessoryIn
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @ToString
@@ -21,7 +22,7 @@ public class MyAccessoryInventory extends BaseTimeEntity {
     String code;
     int count;
     int level;
-    int[] optionLockList;
+    Integer[] optionLockList;
     String options;
 
     public void SetMyAccessoryInventory(AccessoryInventoryResponseDto dto) {
@@ -29,6 +30,12 @@ public class MyAccessoryInventory extends BaseTimeEntity {
         this.level = dto.getLevel();
         this.optionLockList = dto.getOptionLockList();
         this.options = dto.getOptions();
+    }
+
+    public void SetterMyAccessoryInventory(AccessoryInventoryResponseDto dto) {
+        this.count = dto.getCount();
+        this.level = dto.getLevel();
+        this.optionLockList = dto.getOptionLockList();
     }
 
     public void Reset_Options(String options) {
@@ -41,5 +48,9 @@ public class MyAccessoryInventory extends BaseTimeEntity {
 
     public void SpendAccessory() {
         this.count -= 1;
+    }
+
+    public void SetOptionLockList(List<Integer> optionLockList) {
+        this.optionLockList = optionLockList.toArray(new Integer[0]);
     }
 }

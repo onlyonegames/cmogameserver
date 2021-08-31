@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -53,8 +54,21 @@ public class MyAccessoryInventoryService {
             map.put("myAccessoryInventory", accessoryInventoryResponseDto);
             return map;
         }
+
         myAccessoryInventory.SpendAccessory();
         myAccessoryInventory.AccessoryLevelUp();
+        int level = myAccessoryInventory.getLevel();
+        if (level == 2 || level == 5 || level == 10){
+            AccessoryOptionJsonDto accessoryOptionJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptions(), AccessoryOptionJsonDto.class);
+            AccessoryOptionJsonDto.OptionInfo optionInfo = new AccessoryOptionJsonDto.OptionInfo();
+            optionInfo.SetOptionInfo(0, (int)(Math.random() *6));
+            accessoryOptionJsonDto.options.add(optionInfo);
+            String json_Option = JsonStringHerlper.WriteValueAsStringFromData(accessoryOptionJsonDto);
+            myAccessoryInventory.Reset_Options(json_Option);
+            List<Integer> optionLockList = new ArrayList<>(Arrays.asList(myAccessoryInventory.getOptionLockList()));
+            optionLockList.add(0);
+            myAccessoryInventory.SetOptionLockList(optionLockList);
+        }
         accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);
         map.put("myAccessoryInventory", accessoryInventoryResponseDto);
         return map;

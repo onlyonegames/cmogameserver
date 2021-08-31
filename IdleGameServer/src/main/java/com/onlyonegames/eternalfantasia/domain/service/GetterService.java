@@ -55,6 +55,7 @@ public class GetterService {
     private final MyQuickMissionDataRepository myQuickMissionDataRepository;
     private final ServerStatusInfoRepository serverStatusInfoRepository;
     private final BattlePowerLeaderboardService battlePowerLeaderboardService;
+    private final MyPassDataRepository myPassDataRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -75,6 +76,7 @@ public class GetterService {
         MyGachaInfo myGachaInfo = null;
         MyCollectionInfo myCollectionInfo = null;
         MyQuickMissionData myQuickMissionData = null;
+        MyPassData myPassData = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -291,6 +293,15 @@ public class GetterService {
                             if(myQuickMissionData == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyQuickMissionData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyQuickMissionData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "passInfo":
+                        if (myPassData == null) {
+                            myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
+                            if(myPassData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPassData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyPassData", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                         break;
@@ -724,6 +735,12 @@ public class GetterService {
                                     if (element.getElement().equals("battlePower"))
                                         element.SetValue(user.getBattlePower());
                                 }
+                            case "passInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myPassData.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myPassData).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -898,7 +915,7 @@ public class GetterService {
                                         myAccessoryInventory = myAccessoryInventoryRepository.save(myAccessoryInventoryDto.ToEntity());
                                         myAccessoryInventoryList.add(myAccessoryInventory);
                                     }else {
-                                        myAccessoryInventory.SetMyAccessoryInventory(accessoryInventoryResponseDto);
+                                        myAccessoryInventory.SetterMyAccessoryInventory(accessoryInventoryResponseDto);
                                     }
                                 }
                                 break;
@@ -966,12 +983,23 @@ public class GetterService {
                                 }
                                 break;
                             case "battlePower":
-                                for (ElementDto elementDto : container.elements) {
-                                    if (elementDto.getElement().equals("battlePower")){
-                                        user.SetBattlePower(elementDto.getValue());
-                                        battlePowerLeaderboardService.setScore(userId, Long.parseLong(elementDto.getValue()));
+                                for (ElementDto element : container.elements) {
+                                    if (element.getElement().equals("battlePower")){
+                                        user.SetBattlePower(element.getValue());
+                                        battlePowerLeaderboardService.setScore(userId, Long.parseLong(element.getValue()));
                                     }
                                 }
+                                break;
+                            case "passInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myPassData.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if (elementType.getTypeName().equals("java.time.LocalDateTime"))
+                                        field.set(myPassData, LocalDateTime.parse(element.getValue()));
+                                    else
+                                        field.set(myPassData, element.getValue());
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();

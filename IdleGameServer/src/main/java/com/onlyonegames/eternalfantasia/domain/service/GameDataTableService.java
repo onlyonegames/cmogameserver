@@ -21,6 +21,14 @@ public class GameDataTableService
     private List<SkillUpgradeInfoTable> skillUpgradeInfoTableList = null;
     private List<AccessoryTable> accessoryTableList = null;
     private List<PassiveSkillTable> passiveSkillTableList = null;
+    private List<DayFreePassTable> dayFreePassTableList = null;
+    private List<DayADPassTable> dayADPassTableList = null;
+    private List<AttendanceFreePassTable> attendanceFreePassTableList = null;
+    private List<AttendanceBuyPassTable> attendanceBuyPassTableList = null;
+    private List<LevelBuyPassTable> levelBuyPassTableList = null;
+    private List<LevelFreePassTable> levelFreePassTableList = null;
+    private List<AdventureStageBuyPassTable> adventureStageBuyPassTableList = null;
+    private List<AdventureStageFreePassTable> adventureStageFreePassTableList = null;
 
     @Autowired
     private UpgradeStatusBuyInfoTableRepository upgradeStatusBuyInfoTableRepository;  // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -41,6 +49,22 @@ public class GameDataTableService
     private AccessoryTableRepository accessoryTableRepository;
     @Autowired
     private PassiveSkillTableRepository passiveSkillTableRepository;
+    @Autowired
+    private DayFreePassTableRepository dayFreePassTableRepository;
+    @Autowired
+    private DayADPassTableRepository dayADPassTableRepository;
+    @Autowired
+    private AttendanceFreePassTableRepository attendanceFreePassTableRepository;
+    @Autowired
+    private AttendanceBuyPassTableRepository attendanceBuyPassTableRepository;
+    @Autowired
+    private LevelBuyPassTableRepository levelBuyPassTableRepository;
+    @Autowired
+    private LevelFreePassTableRepository levelFreePassTableRepository;
+    @Autowired
+    private AdventureStageBuyPassTableRepository adventureStageBuyPassTableRepository;
+    @Autowired
+    private AdventureStageFreePassTableRepository adventureStageFreePassTableRepository;
 
     /**/
     // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -90,6 +114,46 @@ public class GameDataTableService
         return passiveSkillTableList;
     }
 
+    public List<DayFreePassTable> DayFreePassTable() {
+        dayFreePassTableList = dayFreePassTableList == null ? dayFreePassTableRepository.findAll() : dayFreePassTableList;
+        return dayFreePassTableList;
+    }
+
+    public List<DayADPassTable> DayADPassTable() {
+        dayADPassTableList = dayADPassTableList == null ? dayADPassTableRepository.findAll() : dayADPassTableList;
+        return dayADPassTableList;
+    }
+
+    public List<AttendanceFreePassTable> AttendanceFreePassTable() {
+        attendanceFreePassTableList = attendanceFreePassTableList == null ? attendanceFreePassTableRepository.findAll() : attendanceFreePassTableList;
+        return attendanceFreePassTableList;
+    }
+
+    public List<AttendanceBuyPassTable> AttendanceBuyPassTable() {
+        attendanceBuyPassTableList = attendanceBuyPassTableList == null ? attendanceBuyPassTableRepository.findAll() : attendanceBuyPassTableList;
+        return attendanceBuyPassTableList;
+    }
+
+    public List<LevelFreePassTable> LevelFreePassTable() {
+        levelFreePassTableList = levelFreePassTableList == null ? levelFreePassTableRepository.findAll() : levelFreePassTableList;
+        return levelFreePassTableList;
+    }
+
+    public List<LevelBuyPassTable> LevelBuyPassTable() {
+        levelBuyPassTableList = levelBuyPassTableList == null ? levelBuyPassTableRepository.findAll() : levelBuyPassTableList;
+        return levelBuyPassTableList;
+    }
+
+    public List<AdventureStageBuyPassTable> AdventureStageBuyPassTable() {
+        adventureStageBuyPassTableList = adventureStageBuyPassTableList == null ? adventureStageBuyPassTableRepository.findAll() : adventureStageBuyPassTableList;
+        return adventureStageBuyPassTableList;
+    }
+
+    public List<AdventureStageFreePassTable> AdventureStageFreePassTable() {
+        adventureStageFreePassTableList = adventureStageFreePassTableList == null ? adventureStageFreePassTableRepository.findAll() : adventureStageFreePassTableList;
+        return adventureStageFreePassTableList;
+    }
+
     public Map<String, Object> ResetGameDataTable(Map<String, Object> map)
     {
         upgradeStatusBuyInfoTableList = null;
@@ -103,6 +167,14 @@ public class GameDataTableService
         skillUpgradeInfoTableList = null;
         accessoryTableList = null;
         passiveSkillTableList = null;
+        dayFreePassTableList = null;
+        dayADPassTableList = null;
+        attendanceFreePassTableList = null;
+        attendanceBuyPassTableList = null;
+        levelFreePassTableList = null;
+        levelBuyPassTableList = null;
+        adventureStageFreePassTableList = null;
+        adventureStageBuyPassTableList = null;
 
         UpgradeStatusBuyInfoTableList();
 
@@ -115,6 +187,14 @@ public class GameDataTableService
         SkillUpgradeInfoTable();
         AccessoryTable();
         PassiveSkillTable();
+        DayFreePassTable();
+        DayADPassTable();
+        AttendanceFreePassTable();
+        AttendanceBuyPassTable();
+        LevelFreePassTable();
+        LevelBuyPassTable();
+        AdventureStageFreePassTable();
+        AdventureStageBuyPassTable();
 
         /*idle game*/
         map.put("heroClassInfoTable", heroClassInfoTableList);
@@ -125,6 +205,14 @@ public class GameDataTableService
         map.put("skillUpgradeInfoTable", skillUpgradeInfoTableList);
         map.put("accessoryTable", accessoryTableList);
         map.put("passiveSkillTable", passiveSkillTableList);
+        map.put("dayFreePassTable", dayFreePassTableList);
+        map.put("dayADPassTable", dayADPassTableList);
+        map.put("attendanceFreePassTable", attendanceFreePassTableList);
+        map.put("attendanceBuyPassTable", attendanceBuyPassTableList);
+        map.put("levelFreePassTable", levelFreePassTableList);
+        map.put("levelBuyPassTable", levelBuyPassTableList);
+        map.put("adventureStageFreePassTable", adventureStageFreePassTableList);
+        map.put("adventureStageBuyPassTable", adventureStageBuyPassTableList);
         return map;
     }
 }
