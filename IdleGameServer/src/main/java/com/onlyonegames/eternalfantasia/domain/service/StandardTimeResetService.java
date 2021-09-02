@@ -4,6 +4,8 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousArenaR
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousBattlePowerRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousStageRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousWorldBossRankingDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRanking;
@@ -11,22 +13,28 @@ import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyContentsInfo;
+import com.onlyonegames.eternalfantasia.domain.model.entity.MyPassData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.StandardTime;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.repository.MyContentsInfoRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.MyPassDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.StandardTimeRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
+import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -49,6 +57,7 @@ public class StandardTimeResetService {
     private final BattlePowerLeaderboardService battlePowerLeaderboardService;
     private final BattlePowerRankingRepository battlePowerRankingRepository;
     private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
+    private final MyPassDataRepository myPassDataRepository;
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> CheckTime(Map<String, Object> map) {
@@ -63,6 +72,7 @@ public class StandardTimeResetService {
             //TODO 일별 컨텐츠 업데이트 코드 또는 서비스 추가
             ResetWorldBossRanking();
             ResetArenaForDay();
+            ResetDayPass();
             standardTime.SetBaseDayTime();
         }
         if(standardTime.getBaseWeekTime().isBefore(now)){
@@ -145,6 +155,7 @@ public class StandardTimeResetService {
 
     private void SetPreviousBattlePowerRanking() {
         List<BattlePowerRanking> battlePowerRankingList = battlePowerRankingRepository.findAll();
+//        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD));
         previousBattlePowerRankingRepository.deleteAll();
         for (BattlePowerRanking temp : battlePowerRankingList) {
             PreviousBattlePowerRankingDto previousBattlePowerRankingDto = new PreviousBattlePowerRankingDto();
@@ -152,6 +163,16 @@ public class StandardTimeResetService {
             Long ranking = battlePowerLeaderboardService.getRank(temp.getUseridUser());
             previousBattlePowerRankingDto.setRanking(ranking.intValue());
             previousBattlePowerRankingRepository.save(previousBattlePowerRankingDto.ToEntity());
+        }
+    }
+
+    private void ResetDayPass() {
+        List<MyPassData> myPassDataList = myPassDataRepository.findAll();
+        for (MyPassData temp : myPassDataList) {
+            MyDayRewardDataJsonDto myDayRewardDataJsonDto = JsonStringHerlper.ReadValueFromJson(temp.getJson_daySaveData(), MyDayRewardDataJsonDto.class);
+            myDayRewardDataJsonDto.Init();
+            String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
+            temp.ResetDayJsonData(json_day);
         }
     }
 }

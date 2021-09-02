@@ -2,6 +2,7 @@ package com.onlyonegames.eternalfantasia.domain.controller;
 
 import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
+import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.PassPurchaseRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.PassRewardRequestDto;
 import com.onlyonegames.eternalfantasia.domain.service.RewardReceiveService;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,14 @@ public class RewardReceiveController {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Map<String, Object> response = rewardReceiveService.GetReward(userId, dto.getRewardType(), dto.isPassReward(), dto.getLevelIndex(), dto.getIndex(), map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @PostMapping("/api/Pass/Purchase")
+    public ResponseDTO<Map<String, Object>> Purchase(@RequestBody PassPurchaseRequestDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = rewardReceiveService.Purchase(userId, dto.getPassType(), dto.getLevelIndex(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }

@@ -3,6 +3,8 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.onlyonegames.eternalfantasia.Interceptor.OnlyoneSession;
@@ -13,6 +15,7 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.MyAdventureStageDataJso
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyLevelRewardDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
@@ -101,6 +104,42 @@ public class UserService {
         MyAttendanceDataJsonDto myAttendanceDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_saveData, MyAttendanceDataJsonDto.class);
         if (CheckAttendance(myPassData, myAttendanceDataJsonDto)) {
             //TODO 남은 보상 메일로 보상처리 보상 테이블 확인 필요
+            Map<String, Object> tempMap = new HashMap<>();
+            LocalDateTime now = LocalDateTime.now();
+            List<AttendanceFreePassTable> attendanceFreePassTableList = gameDataTableService.AttendanceFreePassTable();
+            List<AttendanceBuyPassTable> attendanceBuyPassTableList = gameDataTableService.AttendanceBuyPassTable();
+            for (int i = 0; i <31; i++) {
+                if (!myAttendanceDataJsonDto.getRewardList().get(i)) {
+                    AttendanceFreePassTable attendanceFreePassTable = attendanceFreePassTableList.get(i);
+                    MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+                    mailSendRequestDto.setToId(userId);
+                    mailSendRequestDto.setSendDate(now);
+                    mailSendRequestDto.setMailType(0);
+                    mailSendRequestDto.setExpireDate(now.plusDays(30));
+                    mailSendRequestDto.setTitle("미획득 출석보상 지급");
+                    mailSendRequestDto.setGettingItem(attendanceFreePassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
+                    mailSendRequestDto.setGettingItemCount(attendanceFreePassTable.getRewardCount());
+                    myMailBoxService.SendMail(mailSendRequestDto, tempMap);
+                }
+                else
+                    myAttendanceDataJsonDto.rewardList.set(i, false);
+                if (myAttendanceDataJsonDto.isPassPurchase()) {
+                    if (!myAttendanceDataJsonDto.getPassRewardList().get(i)) {
+                        AttendanceBuyPassTable attendanceBuyPassTable = attendanceBuyPassTableList.get(i);
+                        MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+                        mailSendRequestDto.setToId(userId);
+                        mailSendRequestDto.setSendDate(now);
+                        mailSendRequestDto.setMailType(0);
+                        mailSendRequestDto.setExpireDate(now.plusDays(30));
+                        mailSendRequestDto.setTitle("미획득 구매 출석보상 지급");
+                        mailSendRequestDto.setGettingItem(attendanceBuyPassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
+                        mailSendRequestDto.setGettingItemCount(attendanceBuyPassTable.getRewardCount());
+                        myMailBoxService.SendMail(mailSendRequestDto, tempMap);
+                    }
+                    else
+                        myAttendanceDataJsonDto.passRewardList.set(i, false);
+                }
+            }
         }
         json_saveData = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
         myPassData.ResetAttendanceJsonData(json_saveData);
@@ -158,7 +197,7 @@ public class UserService {
     }
 
     private boolean PlusCount(MyAttendanceDataJsonDto dto) {
-        if(dto.gettingCount == 28) {
+        if(dto.gettingCount == 31) {
             dto.gettingCount = 1;
             return true;
         }

@@ -77,6 +77,8 @@ public class CreateUserService
 
     private final MyMailBoxRepository myMailBoxRepository;
 
+    private final MyMissionInfoRepository myMissionInfoRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -151,6 +153,9 @@ public class CreateUserService
 
         MyMailBox myMailBox = createMyMailBox(userid);
         myMailBoxRepository.save(myMailBox);
+
+        MyMissionInfo myMissionInfo = createMyMissionInfo(userid);
+        myMissionInfoRepository.save(myMissionInfo);
 
         return map;
     }
@@ -277,5 +282,10 @@ public class CreateUserService
         String json_myMailBoxInfo = JsonStringHerlper.WriteValueAsStringFromData(myMailBoxJsonDto);
 
         return MyMailBox.builder().useridUser(userId).json_myMailBoxInfo(json_myMailBoxInfo).build();
+    }
+
+    private MyMissionInfo createMyMissionInfo(Long userId) {
+        List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
+        return MyMissionInfo.builder().useridUser(userId).json_saveData(forFirstUsers.get(6).getInitJson()).build();
     }
 }

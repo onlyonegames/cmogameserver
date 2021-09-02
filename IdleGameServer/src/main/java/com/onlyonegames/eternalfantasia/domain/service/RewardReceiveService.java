@@ -191,6 +191,63 @@ public class RewardReceiveService {
         return map;
     }
 
+    public Map<String, Object> Purchase(Long userId, int passType, int levelIndex, Map<String, Object> map){
+        MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
+        if(myPassData == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyAttendanceData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyAttendanceData Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        String mailTitle = "";
+        String gettingItemCount = "";
+        switch(passType) {
+            case 2: //출석보상
+                String json_attendance = myPassData.getJson_attendanceSaveData();
+                MyAttendanceDataJsonDto myAttendanceDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_attendance, MyAttendanceDataJsonDto.class);
+                myAttendanceDataJsonDto.setPassPurchase(true);
+                json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
+                myPassData.ResetAttendanceJsonData(json_attendance);
+                mailTitle = "출석 패스 구매 다이아 지급";
+                gettingItemCount = "10000";
+                break;
+            case 3: //레벨 보상
+                String json_level = myPassData.getJson_levelSaveData();
+                MyLevelRewardDataJsonDto myLevelRewardDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_level, MyLevelRewardDataJsonDto.class);
+
+                MyLevelRewardDataJsonDto.LevelReward previousLevelReward = null;
+                MyLevelRewardDataJsonDto.LevelReward levelReward = null;
+                if (levelIndex>0) {
+                    previousLevelReward = myLevelRewardDataJsonDto.levelRewardList.get(levelIndex-1);
+                    levelReward = myLevelRewardDataJsonDto.levelRewardList.get(levelIndex);
+                    if (!previousLevelReward.passPurchase) {
+                        //TODO Error
+                    }
+                    else
+                        levelReward.PurchasePass();
+                }
+                else {
+                    levelReward = myLevelRewardDataJsonDto.levelRewardList.get(levelIndex);
+                    levelReward.PurchasePass();
+                }
+                json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
+                myPassData.ResetLevelJsonData(json_level);
+                mailTitle = "레벨 패스 구매 다이아 지급";
+                gettingItemCount = "10000";
+                break;
+            case 4: //스테이지 보상
+                String json_stage = myPassData.getJson_stageSaveData();
+                MyAdventureStageDataJsonDto myAdventureStageDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_stage, MyAdventureStageDataJsonDto.class);
+                myAdventureStageDataJsonDto.setPassPurchase(true);
+                json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
+                myPassData.ResetStageSaveData(json_stage);
+                mailTitle = "스테이지 패스 구매 다이아 지급";
+                gettingItemCount = "10000";
+                break;
+        }
+        Map<String, Object> tempMap = new HashMap<>();
+        SendMail(userId, mailTitle, "diamond", gettingItemCount, tempMap);
+        return map;
+    }
+
     private void SendMail(Long userId, String title, String gettingItem, String gettingItemCount, Map<String, Object> tempMap) {
         LocalDateTime now = LocalDateTime.now();
         MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();

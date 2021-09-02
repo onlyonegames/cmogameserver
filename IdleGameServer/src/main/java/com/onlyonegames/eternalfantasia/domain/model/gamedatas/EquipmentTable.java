@@ -13,4 +13,5 @@ public class EquipmentTable {
     String code;
     String name;
     String grade;
+    int gradeValue;
 }

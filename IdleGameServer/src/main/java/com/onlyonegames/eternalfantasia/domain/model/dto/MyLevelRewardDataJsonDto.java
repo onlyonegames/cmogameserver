@@ -39,6 +39,10 @@ public class MyLevelRewardDataJsonDto {
             this.passRewardList = tempList;
             this.passPurchase = false;
         }
+
+        public void PurchasePass() {
+            this.passPurchase = true;
+        }
     }
 
     public List<LevelReward> levelRewardList;

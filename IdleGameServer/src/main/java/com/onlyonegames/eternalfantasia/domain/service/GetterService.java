@@ -56,6 +56,7 @@ public class GetterService {
     private final ServerStatusInfoRepository serverStatusInfoRepository;
     private final BattlePowerLeaderboardService battlePowerLeaderboardService;
     private final MyPassDataRepository myPassDataRepository;
+    private final MyMissionInfoRepository myMissionInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -77,6 +78,7 @@ public class GetterService {
         MyCollectionInfo myCollectionInfo = null;
         MyQuickMissionData myQuickMissionData = null;
         MyPassData myPassData = null;
+        MyMissionInfo myMissionInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -302,6 +304,15 @@ public class GetterService {
                             if(myPassData == null) {
                                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPassData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                 throw new MyCustomException("Not Found MyPassData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "missionInfo":
+                        if (myMissionInfo == null) {
+                            myMissionInfo = myMissionInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myMissionInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyMissionInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyMissionInfo", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                         break;
@@ -741,6 +752,12 @@ public class GetterService {
                                     element.SetValue(field.get(myPassData).toString());
                                 }
                                 break;
+                            case "missionInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myMissionInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myMissionInfo).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -998,6 +1015,12 @@ public class GetterService {
                                         field.set(myPassData, LocalDateTime.parse(element.getValue()));
                                     else
                                         field.set(myPassData, element.getValue());
+                                }
+                                break;
+                            case "missionInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myMissionInfo.getClass().getDeclaredField(element.getElement());
+                                    field.set(myMissionInfo, element.getValue());
                                 }
                                 break;
                         }
