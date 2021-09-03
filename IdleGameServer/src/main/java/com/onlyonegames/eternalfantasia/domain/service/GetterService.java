@@ -57,6 +57,7 @@ public class GetterService {
     private final BattlePowerLeaderboardService battlePowerLeaderboardService;
     private final MyPassDataRepository myPassDataRepository;
     private final MyMissionInfoRepository myMissionInfoRepository;
+    private final MyChatBlockInfoRepository myChatBlockInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -79,6 +80,7 @@ public class GetterService {
         MyQuickMissionData myQuickMissionData = null;
         MyPassData myPassData = null;
         MyMissionInfo myMissionInfo = null;
+        MyChatBlockInfo myChatBlockInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -316,6 +318,14 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "chatBlockInfo":
+                        if (myChatBlockInfo == null) {
+                            myChatBlockInfo = myChatBlockInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myChatBlockInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyChatBlockInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyChatBlockInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
                 }
             }
         }
@@ -758,6 +768,12 @@ public class GetterService {
                                     element.SetValue(field.get(myMissionInfo).toString());
                                 }
                                 break;
+                            case "chatBlockInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myChatBlockInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myChatBlockInfo).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -1021,6 +1037,12 @@ public class GetterService {
                                 for (ElementDto element : container.elements) {
                                     Field field = myMissionInfo.getClass().getDeclaredField(element.getElement());
                                     field.set(myMissionInfo, element.getValue());
+                                }
+                                break;
+                            case "chatBlockInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myChatBlockInfo.getClass().getDeclaredField(element.getElement());
+                                    field.set(myChatBlockInfo, element.getValue());
                                 }
                                 break;
                         }

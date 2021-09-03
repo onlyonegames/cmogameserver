@@ -31,7 +31,7 @@ public class MyAdventureStageDataJsonDto {
 
     public void Init () {
         List<Boolean> tempList = new ArrayList<>();
-        for(int i = 0; i < 140; i++) {
+        for(int i = 0; i < 84; i++) {
             tempList.add(false);
         }
         this.rewardList = tempList;

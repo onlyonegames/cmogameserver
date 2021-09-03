@@ -79,6 +79,8 @@ public class CreateUserService
 
     private final MyMissionInfoRepository myMissionInfoRepository;
 
+    private final MyChatBlockInfoRepository myChatBlockInfoRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -156,6 +158,9 @@ public class CreateUserService
 
         MyMissionInfo myMissionInfo = createMyMissionInfo(userid);
         myMissionInfoRepository.save(myMissionInfo);
+
+        MyChatBlockInfo myChatBlockInfo = createMyChatBlockInfo(userid);
+        myChatBlockInfoRepository.save(myChatBlockInfo);
 
         return map;
     }
@@ -287,5 +292,9 @@ public class CreateUserService
     private MyMissionInfo createMyMissionInfo(Long userId) {
         List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
         return MyMissionInfo.builder().useridUser(userId).json_saveData(forFirstUsers.get(6).getInitJson()).build();
+    }
+
+    private MyChatBlockInfo createMyChatBlockInfo(Long userId) {
+        return MyChatBlockInfo.builder().useridUser(userId).json_saveData("").build();
     }
 }
