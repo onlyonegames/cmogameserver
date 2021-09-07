@@ -254,15 +254,15 @@ public class CreateUserService
         myBelongingInventoryList.add(sexChange);
         MyBelongingInventory nameChange = MyBelongingInventory.builder().useridUser(userId).code("item_009").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(nameChange);
-        MyBelongingInventory itemBooster = MyBelongingInventory.builder().useridUser(userId).code("item_011").count(5).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory itemBooster = MyBelongingInventory.builder().useridUser(userId).code("item_011").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(itemBooster);
-        MyBelongingInventory expBooster = MyBelongingInventory.builder().useridUser(userId).code("item_012").count(5).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory expBooster = MyBelongingInventory.builder().useridUser(userId).code("item_012").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(expBooster);
-        MyBelongingInventory goldBooster = MyBelongingInventory.builder().useridUser(userId).code("item_013").count(5).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory goldBooster = MyBelongingInventory.builder().useridUser(userId).code("item_013").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(goldBooster);
-        MyBelongingInventory soulStoneBooster = MyBelongingInventory.builder().useridUser(userId).code("item_014").count(5).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory soulStoneBooster = MyBelongingInventory.builder().useridUser(userId).code("item_014").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(soulStoneBooster);
-        MyBelongingInventory speedBooster = MyBelongingInventory.builder().useridUser(userId).code("item_015").count(5).slotNo(0).slotPercent(0).build();
+        MyBelongingInventory speedBooster = MyBelongingInventory.builder().useridUser(userId).code("item_015").count(1).slotNo(0).slotPercent(0).build();
         myBelongingInventoryList.add(speedBooster);
         return myBelongingInventoryList;
     }
@@ -295,6 +295,7 @@ public class CreateUserService
     }
 
     private MyChatBlockInfo createMyChatBlockInfo(Long userId) {
-        return MyChatBlockInfo.builder().useridUser(userId).json_saveData("").build();
+        List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
+        return MyChatBlockInfo.builder().useridUser(userId).json_saveData(forFirstUsers.get(7).getInitJson()).build();
     }
 }

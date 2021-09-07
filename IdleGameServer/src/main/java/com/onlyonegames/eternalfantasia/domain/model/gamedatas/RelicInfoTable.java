@@ -9,6 +9,6 @@ import javax.persistence.Id;
 @Entity(name = "relicinfotable")
 public class RelicInfoTable {
     @Id
-    int index;
+    int id;
     String name;
 }
