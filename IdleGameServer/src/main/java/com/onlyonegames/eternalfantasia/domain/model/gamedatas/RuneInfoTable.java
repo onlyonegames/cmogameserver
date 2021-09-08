@@ -10,8 +10,9 @@ import javax.persistence.Id;
 public class RuneInfoTable {
     @Id
     int id;
+    String code;
     String runeName;
-    int qualityNo;
+    int runeKind; // 1: ,2: ,3:, 4:, 5:, 6:
     int gradeNo;
-    int rune_Id; // 1: ,2: ,3:, 4:, 5:, 6:
+    int qualityNo;
 }
