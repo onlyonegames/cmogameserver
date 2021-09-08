@@ -29,6 +29,7 @@ public class GameDataTableService
     private List<LevelFreePassTable> levelFreePassTableList = null;
     private List<AdventureStageBuyPassTable> adventureStageBuyPassTableList = null;
     private List<AdventureStageFreePassTable> adventureStageFreePassTableList = null;
+    private List<ShopRewardTable> shopRewardTableList = null;
 
     @Autowired
     private UpgradeStatusBuyInfoTableRepository upgradeStatusBuyInfoTableRepository;  // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -65,6 +66,8 @@ public class GameDataTableService
     private AdventureStageBuyPassTableRepository adventureStageBuyPassTableRepository;
     @Autowired
     private AdventureStageFreePassTableRepository adventureStageFreePassTableRepository;
+    @Autowired
+    private ShopRewardTableRepository shopRewardTableRepository;
 
     /**/
     // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -154,6 +157,11 @@ public class GameDataTableService
         return adventureStageFreePassTableList;
     }
 
+    public List<ShopRewardTable> ShopRewardTable() {
+        shopRewardTableList = shopRewardTableList == null ? shopRewardTableRepository.findAll() : shopRewardTableList;
+        return shopRewardTableList;
+    }
+
     public Map<String, Object> ResetGameDataTable(Map<String, Object> map)
     {
         upgradeStatusBuyInfoTableList = null;
@@ -175,6 +183,7 @@ public class GameDataTableService
         levelBuyPassTableList = null;
         adventureStageFreePassTableList = null;
         adventureStageBuyPassTableList = null;
+        shopRewardTableList = null;
 
         UpgradeStatusBuyInfoTableList();
 
@@ -195,6 +204,7 @@ public class GameDataTableService
         LevelBuyPassTable();
         AdventureStageFreePassTable();
         AdventureStageBuyPassTable();
+        ShopRewardTable();
 
         /*idle game*/
         map.put("heroClassInfoTable", heroClassInfoTableList);
@@ -213,6 +223,7 @@ public class GameDataTableService
         map.put("levelBuyPassTable", levelBuyPassTableList);
         map.put("adventureStageFreePassTable", adventureStageFreePassTableList);
         map.put("adventureStageBuyPassTable", adventureStageBuyPassTableList);
+        map.put("shopRewardTable", shopRewardTableList);
         return map;
     }
 }

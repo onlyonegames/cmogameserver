@@ -58,6 +58,7 @@ public class User {
     boolean new_user;
     int userType;
     Long battlePower;
+    int mileage;
 
 
     @CreatedDate
@@ -94,6 +95,7 @@ public class User {
         this.new_user = true;
         this.userType = 1;
         this.battlePower = 0L;
+        this.mileage = 0;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -132,6 +134,20 @@ public class User {
         if(spendDiamond>this.diamond)
             return false;
         this.diamond -= spendDiamond;
+        return true;
+    }
+
+    public boolean SpendArenaCoin(Long spendArenaCoin) {
+        if (spendArenaCoin > this.arenaCoin)
+            return false;
+        this.arenaCoin -= spendArenaCoin;
+        return true;
+    }
+
+    public boolean SpendDragonCoin(Long spendDragonCoin) {
+        if (spendDragonCoin > this.dragonCoin)
+            return false;
+        this.dragonCoin -= spendDragonCoin;
         return true;
     }
 
@@ -221,5 +237,9 @@ public class User {
 
     public void SetBattlePower(String element) {
         this.battlePower = Long.parseLong(element);
+    }
+
+    public void SetMileage(String element) {
+        this.mileage = Integer.parseInt(element);
     }
 }

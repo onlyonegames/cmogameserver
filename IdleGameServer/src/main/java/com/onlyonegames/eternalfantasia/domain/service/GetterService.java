@@ -109,6 +109,7 @@ public class GetterService {
                                 case "battleStatus":
                                 case "dungeonTicket":
                                 case "arenaCoin":
+                                case "mileage":
 //                                    if (user == null) {
 //                                        user = userRepository.findById(userId).orElse(null);
 //                                        if (user == null) {
@@ -370,6 +371,9 @@ public class GetterService {
                                             break;
                                         case "dragonCoin":
                                             element.SetValue(user.getDragonCoin());
+                                            break;
+                                        case "mileage":
+                                            element.SetValue(user.getMileage());
                                             break;
                                     }
                                 }
@@ -815,6 +819,9 @@ public class GetterService {
                                             break;
                                         case "dragonCoin":
                                             user.SetDragonCoin(element.getValue());
+                                            break;
+                                        case "mileage":
+                                            user.SetMileage(element.getValue());
                                             break;
                                     }
                                 }
