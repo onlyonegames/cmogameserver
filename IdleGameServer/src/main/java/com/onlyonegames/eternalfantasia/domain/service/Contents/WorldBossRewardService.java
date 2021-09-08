@@ -40,53 +40,102 @@ public class WorldBossRewardService {
         }
 
         //TODO 랭킹 구간에 따른 차등 보상
-        List<String> gettingItemList = new ArrayList<>();
-        gettingItemList.add("diamond");
-        gettingItemList.add("dragonCoin");
+        List<GettingItem> gettingItemList = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            GettingItem gettingItem = new GettingItem();
+            gettingItemList.add(gettingItem);
+        }
+        gettingItemList.get(0).setGettingItem("diamond");
+        gettingItemList.get(1).setGettingItem("dragonCoin");
         String gettingItemCount;
 
         int myRanking = previousWorldBossRanking.getRanking();
         if (myRanking == 1) {
-            gettingItemCount = "500";
+            for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("5000");
+                else
+                    temp.setGettingItemCount("500");
+            }
         }
         else if (myRanking == 2) {
-            gettingItemCount = "400";
+            for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("2500");
+                else
+                    temp.setGettingItemCount("250");
+            }
         }
         else if (myRanking == 3) {
-            gettingItemCount = "300";
+            for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("1500");
+                else
+                    temp.setGettingItemCount("150");
+            }
         }
         else {
             long totalCount = previousWorldBossRankingRepository.count();
 
             int myPercent = Math.round(myRanking *100f / totalCount);
             if (myPercent <= 10) {
-                gettingItemCount = "100";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("500");
+                else
+                    temp.setGettingItemCount("50");
+            }
             }
             else if (myPercent <= 30) {
-                gettingItemCount = "80";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("450");
+                else
+                    temp.setGettingItemCount("45");
+            }
             }
             else if (myPercent <= 50) {
-                gettingItemCount = "70";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("400");
+                else
+                    temp.setGettingItemCount("40");
+            }
             }
             else if (myPercent <= 70) {
-                gettingItemCount = "60";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("350");
+                else
+                    temp.setGettingItemCount("35");
+            }
             }
             else if (myPercent <= 90) {
-                gettingItemCount = "50";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("300");
+                else
+                    temp.setGettingItemCount("30");
+            }
             }
             else {
-                gettingItemCount = "40";
+                for (GettingItem temp : gettingItemList) {
+                if (temp.gettingItem.equals("diamond"))
+                    temp.setGettingItemCount("250");
+                else
+                    temp.setGettingItemCount("25");
+            }
             }
         }
 
 
         LocalDateTime now = LocalDateTime.now();
-        for(String temp : gettingItemList){
+        for(GettingItem temp : gettingItemList){
             MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
             mailSendRequestDto.setTitle("월드 보스 " + previousWorldBossRanking.getRanking() + "등 보상 지급");
             mailSendRequestDto.setToId(userId);
-            mailSendRequestDto.setGettingItem(temp);
-            mailSendRequestDto.setGettingItemCount(gettingItemCount);
+            mailSendRequestDto.setGettingItem(temp.gettingItem);
+            mailSendRequestDto.setGettingItemCount(temp.gettingItemCount);
             mailSendRequestDto.setSendDate(now);
             mailSendRequestDto.setMailType(0);
             mailSendRequestDto.setExpireDate(now.plusDays(30));
@@ -96,5 +145,23 @@ public class WorldBossRewardService {
         }
         previousWorldBossRanking.ReceiveReward();
         return map;
+    }
+
+    private static class GettingItem{
+        String gettingItem;
+        String gettingItemCount;
+
+        void SetGettingItem(String gettingItem, String gettingItemCount) {
+            this.gettingItem = gettingItem;
+            this.gettingItemCount = gettingItemCount;
+        }
+
+        void setGettingItem(String gettingItem) {
+            this.gettingItem = gettingItem;
+        }
+
+        void setGettingItemCount(String gettingItemCount) {
+            this.gettingItemCount = gettingItemCount;
+        }
     }
 }

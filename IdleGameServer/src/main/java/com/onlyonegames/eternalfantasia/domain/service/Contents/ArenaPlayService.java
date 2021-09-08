@@ -77,14 +77,14 @@ public class ArenaPlayService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        user.AddArenaCoin(100L);
+        user.AddArenaCoin(50L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
         if(arenaRanking != null)
             userScore = arenaRanking.getPoint();
 
-        userScore += 10;
+        userScore += 100;
 
         userScore = MathHelper.Clamp(userScore, 0, Integer.MAX_VALUE);
 
@@ -110,14 +110,14 @@ public class ArenaPlayService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        user.AddArenaCoin(50L);
+        user.AddArenaCoin(5L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
         if(arenaRanking != null)
             userScore = arenaRanking.getPoint();
 
-        userScore += 3;
+        userScore += 10;
 
         userScore = MathHelper.Clamp(userScore, 0, Integer.MAX_VALUE);
 
