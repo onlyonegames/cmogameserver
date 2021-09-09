@@ -34,11 +34,11 @@ public class MyShopService {
     private final UserRepository userRepository;
 
     public Map<String, Object> ShopBuy(Long userId, boolean purchase, int itemIndex, Map<String, Object> map) {
-//        MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
-//        if (myShopInfo == null) {
-//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyShopInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//            throw new MyCustomException("Fail! -> Cause: MyShopInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
-//        }
+        MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myShopInfo == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyShopInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyShopInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -47,6 +47,80 @@ public class MyShopService {
         List<ShopRewardTable> shopRewardTableList = gameDataTableService.ShopRewardTable();
         ShopRewardTable shopRewardTable = shopRewardTableList.get(itemIndex);
         String[] rewardList = shopRewardTable.getRewardList().split(",");
+        switch (shopRewardTable.getItemName()) {
+            case "무료 다이아":
+                if (!myShopInfo.BuyFreeDiamond()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "오늘의 패키지":
+                if (!myShopInfo.BuyTodayPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "스타트 성장 패키지":
+                if (!myShopInfo.BuyStartPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "전사 패키지":
+                if (!myShopInfo.BuyWarriorPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "도둑 패키지":
+                if (!myShopInfo.BuyThiefPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "기사 패키지":
+                if (!myShopInfo.BuyKnightPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "궁수 패키지":
+                if (!myShopInfo.BuyArcherPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "마법사 패키지":
+                if (!myShopInfo.BuyMagicianPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "영혼석 패키지":
+                if (!myShopInfo.BuySoulStonePackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "주간 패키지":
+                if (!myShopInfo.BuyWeeklyPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "월간 패키지":
+                if (!myShopInfo.BuyMonthlyPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "광고제거 패키지":
+                if (!myShopInfo.BuyAdRemovePackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+        }
         Map<String, Object> tempMap = new HashMap<>();
         for (String s : rewardList) {
             String[] reward = s.split(":");
@@ -106,6 +180,7 @@ public class MyShopService {
             }
         }
         SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice());
+        map.put("myShopInfo", myShopInfo);
         map.put("userInfo", user);
         return map;
     }
@@ -199,6 +274,10 @@ public class MyShopService {
             case "cash":
                 break;
             case "mileage":
+                if (!user.SpendMileage(price)) {
+                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
+                }
                 break;
         }
     }

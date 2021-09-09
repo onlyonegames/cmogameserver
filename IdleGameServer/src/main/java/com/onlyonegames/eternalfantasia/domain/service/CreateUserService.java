@@ -81,6 +81,8 @@ public class CreateUserService
 
     private final MyChatBlockInfoRepository myChatBlockInfoRepository;
 
+    private final MyShopInfoRepository myShopInfoRepository;
+
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
@@ -161,6 +163,9 @@ public class CreateUserService
 
         MyChatBlockInfo myChatBlockInfo = createMyChatBlockInfo(userid);
         myChatBlockInfoRepository.save(myChatBlockInfo);
+
+        MyShopInfo myShopInfo = createMyShopInfo(userid);
+        myShopInfoRepository.save(myShopInfo);
 
         return map;
     }
@@ -297,5 +302,11 @@ public class CreateUserService
     private MyChatBlockInfo createMyChatBlockInfo(Long userId) {
         List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
         return MyChatBlockInfo.builder().useridUser(userId).json_saveData(forFirstUsers.get(7).getInitJson()).build();
+    }
+
+    private MyShopInfo createMyShopInfo(Long userId) {
+        MyShopInfoDto myShopInfoDto = new MyShopInfoDto();
+        myShopInfoDto.setUseridUser(userId);
+        return myShopInfoDto.ToEntity();
     }
 }

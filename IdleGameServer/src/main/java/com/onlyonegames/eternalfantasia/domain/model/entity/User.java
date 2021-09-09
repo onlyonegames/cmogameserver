@@ -151,6 +151,13 @@ public class User {
         return true;
     }
 
+    public boolean SpendMileage(int spendMileage) {
+        if (spendMileage > this.mileage)
+            return false;
+        this.mileage -= spendMileage;
+        return true;
+    }
+
     public void SetLastLoginDate() {
         this.lastloginDate = LocalDateTime.now();
     }

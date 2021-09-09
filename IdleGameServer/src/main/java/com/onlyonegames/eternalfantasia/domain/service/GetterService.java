@@ -58,6 +58,7 @@ public class GetterService {
     private final MyPassDataRepository myPassDataRepository;
     private final MyMissionInfoRepository myMissionInfoRepository;
     private final MyChatBlockInfoRepository myChatBlockInfoRepository;
+    private final MyShopInfoRepository myShopInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -81,6 +82,7 @@ public class GetterService {
         MyPassData myPassData = null;
         MyMissionInfo myMissionInfo = null;
         MyChatBlockInfo myChatBlockInfo = null;
+        MyShopInfo myShopInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -327,6 +329,16 @@ public class GetterService {
                                 throw new MyCustomException("Not Found MyChatBlockInfo", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
+                        break;
+                    case "myShopInfo":
+                        if (myShopInfo == null) {
+                            myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myShopInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyShopInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyShopInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -776,6 +788,12 @@ public class GetterService {
                                 for (ElementDto element : container.elements) {
                                     Field field = myChatBlockInfo.getClass().getDeclaredField(element.getElement());
                                     element.SetValue(field.get(myChatBlockInfo).toString());
+                                }
+                                break;
+                            case "myShopInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myShopInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myShopInfo).toString());
                                 }
                                 break;
                         }

@@ -14,10 +14,12 @@ import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlay
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyContentsInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyPassData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.StandardTime;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.repository.MyContentsInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyPassDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.StandardTimeRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
@@ -58,6 +60,7 @@ public class StandardTimeResetService {
     private final BattlePowerRankingRepository battlePowerRankingRepository;
     private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
     private final MyPassDataRepository myPassDataRepository;
+    private final MyShopInfoRepository myShopInfoRepository;
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> CheckTime(Map<String, Object> map) {
@@ -67,6 +70,9 @@ public class StandardTimeResetService {
         }
 
         LocalDateTime now = LocalDateTime.now();
+        boolean day = false;
+        boolean week = false;
+        boolean month = false;
 
         if(standardTime.getBaseDayTime().isBefore(now)){
             //TODO 일별 컨텐츠 업데이트 코드 또는 서비스 추가
@@ -74,6 +80,7 @@ public class StandardTimeResetService {
             ResetArenaForDay();
             ResetDayPass();
             standardTime.SetBaseDayTime();
+            day = true;
         }
         if(standardTime.getBaseWeekTime().isBefore(now)){
             //TODO 주별 컨텐츠 업데이트 코드 또는 서비스 추가
@@ -82,11 +89,15 @@ public class StandardTimeResetService {
             SetPreviousBattlePowerRanking();
             ResetChallengeTower(standardTime);
             standardTime.SetBaseWeekTime();
+            week = true;
         }
         if(standardTime.getBaseMonthTime().isBefore(now)){
             //TODO 월별 컨텐츠 업데이트 코드 또는 서비스 추가
             standardTime.SetBaseMonthTime();
+            month = true;
         }
+        if (day || week || month)
+            ResetShopPurchaseCount(day, week, month);
         return map;
     }
 
@@ -173,6 +184,17 @@ public class StandardTimeResetService {
             myDayRewardDataJsonDto.Init();
             String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
             temp.ResetDayJsonData(json_day);
+        }
+    }
+    private void ResetShopPurchaseCount(boolean day, boolean week, boolean month) {
+        List<MyShopInfo> myShopInfoList = myShopInfoRepository.findAll();
+        for (MyShopInfo temp : myShopInfoList) {
+            if (day)
+                temp.RechargeDay();
+            if (week)
+                temp.RechargeWeek();
+            if (month)
+                temp.RechargeMonth();
         }
     }
 }
