@@ -110,7 +110,7 @@ public class MyShopInfo extends BaseTimeEntity {
     }
 
     public void RechargeWeek() {
-        this.weeklyPackage = 2;
+        this.weeklyPackage = 3;
     }
 
     public void RechargeMonth() {

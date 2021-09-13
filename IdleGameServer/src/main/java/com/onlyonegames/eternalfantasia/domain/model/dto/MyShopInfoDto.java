@@ -37,7 +37,7 @@ public class MyShopInfoDto {
         this.archerPackage = 1;
         this.magicianPackage = 1;
         this.soulStonePackage = 1;
-        this.weeklyPackage = 2;
+        this.weeklyPackage = 3;
         this.monthlyPackage = 2;
         this.adRemovePackage = 1;
     }
