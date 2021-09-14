@@ -6,21 +6,15 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousStageR
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousWorldBossRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
-import com.onlyonegames.eternalfantasia.domain.model.entity.MyContentsInfo;
-import com.onlyonegames.eternalfantasia.domain.model.entity.MyPassData;
-import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
-import com.onlyonegames.eternalfantasia.domain.model.entity.StandardTime;
+import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
-import com.onlyonegames.eternalfantasia.domain.repository.MyContentsInfoRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.MyPassDataRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
-import com.onlyonegames.eternalfantasia.domain.repository.StandardTimeRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
@@ -61,6 +55,7 @@ public class StandardTimeResetService {
     private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
     private final MyPassDataRepository myPassDataRepository;
     private final MyShopInfoRepository myShopInfoRepository;
+    private final MyGachaInfoRepository myGachaInfoRepository;
     private final ErrorLoggingService errorLoggingService;
 
     public Map<String, Object> CheckTime(Map<String, Object> map) {
@@ -79,6 +74,7 @@ public class StandardTimeResetService {
             ResetWorldBossRanking();
             ResetArenaForDay();
             ResetDayPass();
+            ResetMyGachaInfo();
             standardTime.SetBaseDayTime();
             day = true;
         }
@@ -195,6 +191,12 @@ public class StandardTimeResetService {
                 temp.RechargeWeek();
             if (month)
                 temp.RechargeMonth();
+        }
+    }
+    private void ResetMyGachaInfo() {
+        List<MyGachaInfo> myGachaInfoList = myGachaInfoRepository.findAll();
+        for (MyGachaInfo temp : myGachaInfoList) {
+            temp.ResetADCount();
         }
     }
 }

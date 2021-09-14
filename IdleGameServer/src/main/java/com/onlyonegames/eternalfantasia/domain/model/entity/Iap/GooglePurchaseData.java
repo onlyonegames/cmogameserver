@@ -24,4 +24,8 @@ public class GooglePurchaseData extends BaseTimeEntity {
     String signature;
     String orderId;
     boolean consume;
+
+    public void Consume() {
+        this.consume = true;
+    }
 }

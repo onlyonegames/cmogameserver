@@ -29,7 +29,9 @@ public enum ResponseErrorCode {
     NEED_MORE_RUNE(-300, "NEED_MORE_RUNE"),
     NEED_MORE_LEVEL(-301, "NEED_MORE_LEVEL"),
     NEED_MORE_RELIC(-302, "NEED_MORE_RELIC"),
-    /*400 부터 장비 인벤토리 관련 프로세스 오류*/
+    /*400 부터 결제 관련 프로세스 오류*/
+    ALREADY_RECEIVED_ITEM(-400, "ALREADY_RECEIVED_ITEM"),
+    NOT_VERIFIED_PURCHASE(-401, "NOT_VERIFIED_PURCHASE"),
     /*-1200부터 상점 관련 프로세스 오류*/
     SHOP_CANT_FIND_SHOPID(-1200, "SHOP_CANT_FIND_SHOPID"),
     ALREADY_BOUGHT(-1201, "ALREADY_BOUGHT"), //이미 구매함.

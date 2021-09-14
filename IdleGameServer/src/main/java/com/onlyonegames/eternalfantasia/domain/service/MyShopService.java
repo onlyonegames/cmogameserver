@@ -129,6 +129,36 @@ public class MyShopService {
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
+            case "골드 획득 부스터":
+                if (!myShopInfo.BuyGoldAD()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "영혼석 획득 부스터":
+                if (!myShopInfo.BuySoulStoneAD()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "경험치 상승 부스터":
+                if (!myShopInfo.BuyExpAD()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "아이템 드랍 부스터":
+                if (!myShopInfo.BuyItemAD()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "공속/이속 부스터":
+                if (!myShopInfo.BuySpeedAD()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
         }
         Map<String, Object> tempMap = new HashMap<>();
         boolean purchase = shopRewardTable.getCurrencyType().equals("cash");
@@ -188,6 +218,8 @@ public class MyShopService {
                     user.ADRemove();
                     break;
                 default:
+                    if (reward[0].contains("Booster"))
+                        break;
                     SendMail(userId, purchase, shopRewardTable.getItemName(), reward[0], reward[1], tempMap);
                     break;
             }
@@ -299,12 +331,17 @@ public class MyShopService {
                             .consume(false).orderId(json.getOrderId()).useridUser(user.getId()).build();
                     googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
                 }
+                if (googlePurchaseData.isConsume()) {
+                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
+                }
 
                 if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
-                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
+                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
                 }
                 //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
+                googlePurchaseData.Consume();
                 break;
             case "mileage":
                 if (!user.SpendMileage(price)) {

@@ -202,13 +202,22 @@ public class RewardReceiveService {
         String signature = payload.getSignature();
         String signedData = payload.getJson();
         IapResponseDto.SignedData json = JsonStringHerlper.ReadValueFromJson(signedData, IapResponseDto.SignedData.class);
-        GooglePurchaseData googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
-                .consume(false).orderId(json.getOrderId()).useridUser(userId).build();
-        googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
-//        if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
-//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//            throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
-//        }
+        GooglePurchaseData googlePurchaseData = googlePurchaseDataRepository.findByOrderId(json.getOrderId()).orElse(null);
+        if (googlePurchaseData == null) {
+            googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
+                    .consume(false).orderId(json.getOrderId()).useridUser(userId).build();
+            googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
+        }
+        if (googlePurchaseData.isConsume()) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
+        }
+
+        if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
+        }
+        googlePurchaseData.Consume();
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
         if(myPassData == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyAttendanceData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
