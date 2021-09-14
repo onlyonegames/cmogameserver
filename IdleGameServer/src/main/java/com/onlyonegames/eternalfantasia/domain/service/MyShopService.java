@@ -325,23 +325,23 @@ public class MyShopService {
                 String signedData = payload.getJson();
                 IapResponseDto.SignedData json = JsonStringHerlper.ReadValueFromJson(signedData, IapResponseDto.SignedData.class);
 
-                GooglePurchaseData googlePurchaseData = googlePurchaseDataRepository.findByOrderId(json.getOrderId()).orElse(null);
-                if (googlePurchaseData == null) {
-                    googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
-                            .consume(false).orderId(json.getOrderId()).useridUser(user.getId()).build();
-                    googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
-                }
-                if (googlePurchaseData.isConsume()) {
-                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
-                }
-
-                if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
-                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
-                }
-                //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
-                googlePurchaseData.Consume();
+//                GooglePurchaseData googlePurchaseData = googlePurchaseDataRepository.findByOrderId(json.getOrderId()).orElse(null);
+//                if (googlePurchaseData == null) {
+//                    googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
+//                            .consume(false).orderId(json.getOrderId()).useridUser(user.getId()).build();
+//                    googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
+//                }
+//                if (googlePurchaseData.isConsume()) {
+//                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                    throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
+//                }
+//
+//                if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+//                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//                    throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
+//                }
+//                //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
+//                googlePurchaseData.Consume();
                 break;
             case "mileage":
                 if (!user.SpendMileage(price)) {
