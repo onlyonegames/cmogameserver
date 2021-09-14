@@ -14,8 +14,6 @@ package com.onlyonegames.eternalfantasia.domain.service.Iap;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import android.text.TextUtils;
-//import android.util.Base64;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
