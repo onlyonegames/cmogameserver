@@ -23,11 +23,11 @@ public class MyGachaInfo extends BaseTimeEntity {
     public int classExp;
     public int weaponAD;
     public int classAD;
-    public int accessoryAD;
+    public int artifactAD;
 
     public void ResetADCount() {
         this.weaponAD = 5;
         this.classAD = 5;
-        this.accessoryAD = 5;
+        this.artifactAD = 5;
     }
 }
