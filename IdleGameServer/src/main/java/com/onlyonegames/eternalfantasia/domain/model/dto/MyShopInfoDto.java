@@ -18,13 +18,19 @@ public class MyShopInfoDto {
     int weeklyPackage;
     int monthlyPackage;
     int adRemovePackage;
+    int itemAD;
+    int expAD;
+    int goldAD;
+    int soulStoneAD;
+    int speedAD;
     Long useridUser;
 
     public MyShopInfo ToEntity() {
         Init();
         return MyShopInfo.builder().freeDiamond(freeDiamond).todayPackage(todayPackage).startPackage(startPackage).warriorPackage(warriorPackage)
                 .thiefPackage(thiefPackage).knightPackage(knightPackage).archerPackage(archerPackage).magicianPackage(magicianPackage)
-                .soulStonePackage(soulStonePackage).weeklyPackage(weeklyPackage).monthlyPackage(monthlyPackage).adRemovePackage(adRemovePackage).useridUser(useridUser).build();
+                .soulStonePackage(soulStonePackage).weeklyPackage(weeklyPackage).monthlyPackage(monthlyPackage).adRemovePackage(adRemovePackage)
+                .itemAD(itemAD).expAD(expAD).goldAD(goldAD).soulStoneAD(soulStoneAD).speedAD(speedAD).useridUser(useridUser).build();
     }
 
     void Init() {
@@ -40,5 +46,10 @@ public class MyShopInfoDto {
         this.weeklyPackage = 3;
         this.monthlyPackage = 2;
         this.adRemovePackage = 1;
+        this.itemAD = 5;
+        this.expAD = 5;
+        this.goldAD = 5;
+        this.soulStoneAD = 5;
+        this.speedAD = 5;
     }
 }

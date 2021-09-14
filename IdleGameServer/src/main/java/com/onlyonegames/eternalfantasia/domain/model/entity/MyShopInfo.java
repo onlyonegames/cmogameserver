@@ -28,6 +28,11 @@ public class MyShopInfo extends BaseTimeEntity {
     public int weeklyPackage;
     public int monthlyPackage;
     public int adRemovePackage;
+    public int itemAD;
+    public int expAD;
+    public int goldAD;
+    public int soulStoneAD;
+    public int speedAD;
     Long useridUser;
 
     public boolean BuyFreeDiamond() {
@@ -102,11 +107,46 @@ public class MyShopInfo extends BaseTimeEntity {
         this.adRemovePackage -= 1;
         return true;
     }
+    public boolean BuyItemAD() {
+        if (this.itemAD<1)
+            return false;
+        this.itemAD -= 1;
+        return true;
+    }
+    public boolean BuyExpAD() {
+        if (this.expAD<1)
+            return false;
+        this.expAD -= 1;
+        return true;
+    }
+    public boolean BuyGoldAD() {
+        if (this.goldAD<1)
+            return false;
+        this.goldAD -= 1;
+        return true;
+    }
+    public boolean BuySoulStoneAD() {
+        if (this.soulStoneAD<1)
+            return false;
+        this.soulStoneAD -= 1;
+        return true;
+    }
+    public boolean BuySpeedAD() {
+        if (this.speedAD<1)
+            return false;
+        this.speedAD -= 1;
+        return true;
+    }
 
     public void RechargeDay() {
         this.freeDiamond = 1;
         this.todayPackage = 1;
         this.soulStonePackage = 1;
+        this.itemAD = 5;
+        this.expAD = 5;
+        this.goldAD = 5;
+        this.soulStoneAD = 5;
+        this.speedAD = 5;
     }
 
     public void RechargeWeek() {
