@@ -405,6 +405,8 @@ public class GetterService {
                                         case "sexType":
                                             element.SetValue(user.getSexType());
                                             break;
+                                        case "adRemove":
+                                            element.SetValue(user.isAdRemove());
                                     }
                                 }
                                 break;

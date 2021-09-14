@@ -2,21 +2,22 @@ package com.onlyonegames.eternalfantasia.domain.service;
 
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyAdventureStageDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyLevelRewardDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyPassData;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyPassDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
+import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ public class RewardReceiveService {
     private final MyMailBoxService myMailBoxService;
     private final ErrorLoggingService errorLoggingService;
     private final GameDataTableService gameDataTableService;
+    private final GooglePurchaseDataRepository googlePurchaseDataRepository;
 
     public Map<String, Object> GetReward(Long userId, int rewardType, boolean passReward, int levelIndex, int index, Map<String, Object> map) {
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
@@ -58,7 +60,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayADPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: DayADPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "일일광고보상지급", dayADPassTable.getRewardType(), dayADPassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "일일광고보상지급", dayADPassTable.getRewardType(), dayADPassTable.getRewardCount(), tempMap);
                 }
                 else {
                     if (!myDayRewardDataJsonDto.ReceiveReward(index)) {
@@ -71,7 +73,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: DayFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "일일일보상지급", dayFreePassTable.getRewardType(), dayFreePassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "일일일보상지급", dayFreePassTable.getRewardType(), dayFreePassTable.getRewardCount(), tempMap);
                 }
                 json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
                 myPassData.ResetDayJsonData(json_day);
@@ -94,7 +96,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AttendanceBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "출석패스보상지급", "diamond", "1", tempMap);
+                    SendMail(userId, false, "출석패스보상지급", "diamond", "1", tempMap);
                 }
                 else {
                     if (!myAttendanceDataJsonDto.ReceiveReward(index)) {
@@ -107,7 +109,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AttendanceFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "출석보상지급", attendanceFreePassTable.getRewardType(), attendanceFreePassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "출석보상지급", attendanceFreePassTable.getRewardType(), attendanceFreePassTable.getRewardCount(), tempMap);
                 }
                 json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
                 myPassData.ResetAttendanceJsonData(json_attendance);
@@ -132,7 +134,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "레벨패스보상지급", levelBuyPassTable.getRewardType(), levelBuyPassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "레벨패스보상지급", levelBuyPassTable.getRewardType(), levelBuyPassTable.getRewardCount(), tempMap);
                 }
                 else {
                     if (!levelReward.ReceiveReward(index)) {
@@ -146,7 +148,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "레벨보상지급", levelFreePassTable.getRewardType(), levelFreePassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "레벨보상지급", levelFreePassTable.getRewardType(), levelFreePassTable.getRewardCount(), tempMap);
                 }
                 json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
                 myPassData.ResetLevelJsonData(json_level);
@@ -169,7 +171,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "스테이지패스보상지급", adventureStageBuyPassTable.getRewardType(), adventureStageBuyPassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "스테이지패스보상지급", adventureStageBuyPassTable.getRewardType(), adventureStageBuyPassTable.getRewardCount(), tempMap);
                 }
                 else {
                     if (!myAdventureStageDataJsonDto.ReceiveReward(index)) {
@@ -182,7 +184,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, "스테이지패스보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
+                    SendMail(userId, false, "스테이지패스보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
                 }
                 json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
                 myPassData.ResetStageSaveData(json_stage);
@@ -191,7 +193,22 @@ public class RewardReceiveService {
         return map;
     }
 
-    public Map<String, Object> Purchase(Long userId, int passType, int levelIndex, Map<String, Object> map){
+    public Map<String, Object> Purchase(Long userId, int passType, int levelIndex, String payLoad, Map<String, Object> map) throws IOException {
+        String test1 = payLoad.replace("Store", "store");
+        String test2 = test1.replace("TransactionID", "transactionID");
+        String test3 = test2.replace("Payload", "payload");
+        IapResponseDto iapResponseDto = JsonStringHerlper.ReadValueFromJson(test3, IapResponseDto.class);
+        IapResponseDto.PayLoad payload = JsonStringHerlper.ReadValueFromJson(iapResponseDto.getPayload(), IapResponseDto.PayLoad.class);
+        String signature = payload.getSignature();
+        String signedData = payload.getJson();
+        IapResponseDto.SignedData json = JsonStringHerlper.ReadValueFromJson(signedData, IapResponseDto.SignedData.class);
+        GooglePurchaseData googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
+                .consume(false).orderId(json.getOrderId()).useridUser(userId).build();
+        googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
+//        if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
+//        }
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
         if(myPassData == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyAttendanceData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -244,11 +261,11 @@ public class RewardReceiveService {
                 break;
         }
         Map<String, Object> tempMap = new HashMap<>();
-        SendMail(userId, mailTitle, "diamond", gettingItemCount, tempMap);
+        SendMail(userId, true, mailTitle, "diamond", gettingItemCount, tempMap);
         return map;
     }
 
-    private void SendMail(Long userId, String title, String gettingItem, String gettingItemCount, Map<String, Object> tempMap) {
+    private void SendMail(Long userId, boolean purchase, String title, String gettingItem, String gettingItemCount, Map<String, Object> tempMap) {
         LocalDateTime now = LocalDateTime.now();
         MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
         mailSendRequestDto.setToId(userId);

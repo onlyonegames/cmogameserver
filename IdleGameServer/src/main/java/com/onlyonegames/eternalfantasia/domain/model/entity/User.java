@@ -60,6 +60,8 @@ public class User {
     Long battlePower;
     int mileage;
 
+    boolean adRemove;
+
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -96,6 +98,7 @@ public class User {
         this.userType = 1;
         this.battlePower = 0L;
         this.mileage = 0;
+        this.adRemove = false;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -248,5 +251,13 @@ public class User {
 
     public void SetMileage(String element) {
         this.mileage = Integer.parseInt(element);
+    }
+
+    public void ADRemove() {
+        this.adRemove = true;
+    }
+
+    public int isAdRemove() {
+        return this.adRemove?1:0;
     }
 }

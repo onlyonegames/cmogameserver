@@ -6,4 +6,5 @@ import lombok.Data;
 public class PassPurchaseRequestDto {
     int passType;
     int levelIndex;
+    String payLoad;
 }

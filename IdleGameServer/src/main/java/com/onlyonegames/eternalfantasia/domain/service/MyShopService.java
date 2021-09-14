@@ -2,18 +2,25 @@ package com.onlyonegames.eternalfantasia.domain.service;
 
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
+import com.onlyonegames.eternalfantasia.domain.model.dto.IapResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
+import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
+import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,8 +39,9 @@ public class MyShopService {
     private final ErrorLoggingService errorLoggingService;
     private final MyMailBoxService myMailBoxService;
     private final UserRepository userRepository;
+    private final GooglePurchaseDataRepository googlePurchaseDataRepository;
 
-    public Map<String, Object> ShopBuy(Long userId, boolean purchase, int itemIndex, Map<String, Object> map) {
+    public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) throws IOException {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
         if (myShopInfo == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyShopInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -46,6 +54,7 @@ public class MyShopService {
         }
         List<ShopRewardTable> shopRewardTableList = gameDataTableService.ShopRewardTable();
         ShopRewardTable shopRewardTable = shopRewardTableList.get(itemIndex);
+        SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
         String[] rewardList = shopRewardTable.getRewardList().split(",");
         switch (shopRewardTable.getItemName()) {
             case "무료 다이아":
@@ -122,6 +131,7 @@ public class MyShopService {
                 break;
         }
         Map<String, Object> tempMap = new HashMap<>();
+        boolean purchase = shopRewardTable.getCurrencyType().equals("cash");
         for (String s : rewardList) {
             String[] reward = s.split(":");
             switch (reward[0]) {
@@ -174,12 +184,14 @@ public class MyShopService {
                         SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
                     }
                     break;
+                case "adRemove":
+                    user.ADRemove();
+                    break;
                 default:
                     SendMail(userId, purchase, shopRewardTable.getItemName(), reward[0], reward[1], tempMap);
                     break;
             }
         }
-        SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice());
         map.put("myShopInfo", myShopInfo);
         map.put("userInfo", user);
         return map;
@@ -257,7 +269,7 @@ public class MyShopService {
         myMailBoxService.SendMail(mailSendRequestDto, tempMap);
     }
 
-    private void SpendPrice(User user, String currencyType, int price) {
+    private void SpendPrice(User user, String currencyType, int price, String payLoad) throws IOException {
         switch (currencyType) {
             case "arenaCoin":
                 if (!user.SpendArenaCoin((long) price)) {
@@ -272,6 +284,27 @@ public class MyShopService {
                 }
                 break;
             case "cash":
+                String test1 = payLoad.replace("Store", "store");
+                String test2 = test1.replace("TransactionID", "transactionID");
+                String test3 = test2.replace("Payload", "payload");
+                IapResponseDto iapResponseDto = JsonStringHerlper.ReadValueFromJson(test3, IapResponseDto.class);
+                IapResponseDto.PayLoad payload = JsonStringHerlper.ReadValueFromJson(iapResponseDto.getPayload(), IapResponseDto.PayLoad.class);
+                String signature = payload.getSignature();
+                String signedData = payload.getJson();
+                IapResponseDto.SignedData json = JsonStringHerlper.ReadValueFromJson(signedData, IapResponseDto.SignedData.class);
+
+                GooglePurchaseData googlePurchaseData = googlePurchaseDataRepository.findByOrderId(json.getOrderId()).orElse(null);
+                if (googlePurchaseData == null) {
+                    googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
+                            .consume(false).orderId(json.getOrderId()).useridUser(user.getId()).build();
+                    googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
+                }
+
+                if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
+                }
+                //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
                 break;
             case "mileage":
                 if (!user.SpendMileage(price)) {

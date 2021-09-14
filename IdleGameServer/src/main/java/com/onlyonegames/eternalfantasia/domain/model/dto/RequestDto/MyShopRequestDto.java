@@ -4,7 +4,6 @@ import lombok.Data;
 
 @Data
 public class MyShopRequestDto {
-    boolean purchase;
     int itemIndex;
-
+    String payLoad;
 }

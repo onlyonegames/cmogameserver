@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,10 +21,10 @@ public class MyShopController {
     private final MyShopService myShopService;
 
     @PostMapping("/api/Shop/Buy")
-    public ResponseDTO<Map<String, Object>> ShopBuy(@RequestBody MyShopRequestDto dto) {
+    public ResponseDTO<Map<String, Object>> ShopBuy(@RequestBody MyShopRequestDto dto) throws IOException {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Map<String, Object> response = myShopService.ShopBuy(userId, dto.isPurchase(), dto.getItemIndex(), map);
+        Map<String, Object> response = myShopService.ShopBuy(userId, dto.getItemIndex(), dto.getPayLoad(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }
