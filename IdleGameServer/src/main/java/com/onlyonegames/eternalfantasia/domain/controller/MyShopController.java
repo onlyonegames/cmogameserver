@@ -4,6 +4,7 @@ import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MyShopRequestDto;
 import com.onlyonegames.eternalfantasia.domain.service.MyShopService;
+import com.onlyonegames.eternalfantasia.domain.service.TestShopService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,12 +20,21 @@ import java.util.Map;
 @AllArgsConstructor
 public class MyShopController {
     private final MyShopService myShopService;
+    private final TestShopService testShopService;
 
     @PostMapping("/api/Shop/Buy")
     public ResponseDTO<Map<String, Object>> ShopBuy(@RequestBody MyShopRequestDto dto) throws IOException {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Map<String, Object> response = myShopService.ShopBuy(userId, dto.getItemIndex(), dto.getPayLoad(), map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @PostMapping("/api/Shop/TestBuy")
+    public ResponseDTO<Map<String, Object>> TestShopBuy(@RequestBody MyShopRequestDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = testShopService.ShopBuy(userId, dto.getItemIndex(), dto.getPayLoad(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }

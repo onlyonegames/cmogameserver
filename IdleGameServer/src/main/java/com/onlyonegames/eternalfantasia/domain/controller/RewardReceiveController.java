@@ -36,4 +36,12 @@ public class RewardReceiveController {
         Map<String, Object> response = rewardReceiveService.Purchase(userId, dto.getPassType(), dto.getLevelIndex(), dto.getPayLoad(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
+
+    @PostMapping("/api/Pass/TestPurchase")
+    public ResponseDTO<Map<String, Object>> TestPurchase(@RequestBody PassPurchaseRequestDto dto) throws IOException {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = rewardReceiveService.PurchaseTest(userId, dto.getPassType(), dto.getLevelIndex(), dto.getPayLoad(), map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
 }

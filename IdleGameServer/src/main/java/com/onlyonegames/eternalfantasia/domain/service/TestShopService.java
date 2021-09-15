@@ -4,14 +4,12 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.IapResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
-import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import com.onlyonegames.util.MathHelper;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,7 +30,7 @@ import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIR
 @Service
 @Transactional
 @AllArgsConstructor
-public class MyShopService {
+public class TestShopService {
     private final MyShopInfoRepository myShopInfoRepository;
     private final GameDataTableService gameDataTableService;
     private final ErrorLoggingService errorLoggingService;
@@ -41,7 +38,7 @@ public class MyShopService {
     private final UserRepository userRepository;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
 
-    public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) throws IOException {
+    public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
         if (myShopInfo == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyShopInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -301,7 +298,7 @@ public class MyShopService {
         myMailBoxService.SendMail(mailSendRequestDto, tempMap);
     }
 
-    private void SpendPrice(User user, String currencyType, int price, String payLoad) throws IOException {
+    private void SpendPrice(User user, String currencyType, int price, String payLoad) {
         switch (currencyType) {
             case "arenaCoin":
                 if (!user.SpendArenaCoin((long) price)) {
@@ -316,32 +313,6 @@ public class MyShopService {
                 }
                 break;
             case "cash":
-                String test1 = payLoad.replace("Store", "store");
-                String test2 = test1.replace("TransactionID", "transactionID");
-                String test3 = test2.replace("Payload", "payload");
-                IapResponseDto iapResponseDto = JsonStringHerlper.ReadValueFromJson(test3, IapResponseDto.class);
-                IapResponseDto.PayLoad payload = JsonStringHerlper.ReadValueFromJson(iapResponseDto.getPayload(), IapResponseDto.PayLoad.class);
-                String signature = payload.getSignature();
-                String signedData = payload.getJson();
-                IapResponseDto.SignedData json = JsonStringHerlper.ReadValueFromJson(signedData, IapResponseDto.SignedData.class);
-
-                GooglePurchaseData googlePurchaseData = googlePurchaseDataRepository.findByOrderId(json.getOrderId()).orElse(null);
-                if (googlePurchaseData == null) {
-                    googlePurchaseData = GooglePurchaseData.builder().goodsId(json.getProductId()).signedData(signedData).signature(signature).transactionID(iapResponseDto.getTransactionID())
-                            .consume(false).orderId(json.getOrderId()).useridUser(user.getId()).build();
-                    googlePurchaseData = googlePurchaseDataRepository.save(googlePurchaseData);
-                }
-                if (googlePurchaseData.isConsume()) {
-                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
-                }
-
-                if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
-                    errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
-                }
-                //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
-                googlePurchaseData.Consume();
                 break;
             case "mileage":
                 if (!user.SpendMileage(price)) {

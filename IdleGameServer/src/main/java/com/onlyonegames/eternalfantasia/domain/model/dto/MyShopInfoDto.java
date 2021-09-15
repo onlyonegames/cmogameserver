@@ -46,10 +46,10 @@ public class MyShopInfoDto {
         this.weeklyPackage = 3;
         this.monthlyPackage = 2;
         this.adRemovePackage = 1;
-        this.itemAD = 5;
-        this.expAD = 5;
-        this.goldAD = 5;
-        this.soulStoneAD = 5;
-        this.speedAD = 5;
+        this.itemAD = 3;
+        this.expAD = 3;
+        this.goldAD = 3;
+        this.soulStoneAD = 3;
+        this.speedAD = 3;
     }
 }

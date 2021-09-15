@@ -59,8 +59,7 @@ public class User {
     int userType;
     Long battlePower;
     int mileage;
-
-    boolean adRemove;
+    boolean advertisement;
 
 
     @CreatedDate
@@ -98,7 +97,7 @@ public class User {
         this.userType = 1;
         this.battlePower = 0L;
         this.mileage = 0;
-        this.adRemove = false;
+        this.advertisement = false;
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -254,10 +253,10 @@ public class User {
     }
 
     public void ADRemove() {
-        this.adRemove = true;
+        this.advertisement = true;
     }
 
     public int isAdRemove() {
-        return this.adRemove?1:0;
+        return this.advertisement?1:0;
     }
 }
