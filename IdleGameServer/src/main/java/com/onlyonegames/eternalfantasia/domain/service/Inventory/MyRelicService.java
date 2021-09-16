@@ -43,7 +43,7 @@ public class MyRelicService {
         RelicInventoryResponseDto relicInventoryResponseDto = new RelicInventoryResponseDto();
         double rng = MathHelper.Range(0, 1);
         double baseRNG = 1-(0.02*(myRelicInventory.getLevel()-1));
-        baseRNG = Math.max(baseRNG, 0.02D);
+        baseRNG = Math.max(baseRNG, 0.05D);
         if(myRelicInventory.getLevel() == 0 || rng <= baseRNG)
             myRelicInventory.LevelUp();
 
