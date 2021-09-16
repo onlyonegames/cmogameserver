@@ -62,24 +62,28 @@ public class MyMailBoxService {
         mailList.removeAll(deleteExpireMailList);
 
         List<MyMailBoxJsonDto.MailBoxInfo> deleteExpireMyMailBoxList = new ArrayList<>();
-        for (MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
-            Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null);
-            if(mailInfo == null) {
-                deleteExpireMyMailBoxList.add(mailBoxInfo);
-                MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
-                myMailReadLogDto.setUseridUser(userId);
-                myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
-                myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
-                continue;
-            }
-            if (mailBoxInfo.hasRead) {
-                deleteExpireMyMailBoxList.add(mailBoxInfo);
-                MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
-                myMailReadLogDto.setUseridUser(userId);
-                myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
-                myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
-            }
-        }
+//        for (MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
+//            Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null); //TODO MailReadLog 위치 변경
+//            if(mailInfo == null) {
+//                deleteExpireMyMailBoxList.add(mailBoxInfo);
+//                MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
+//                myMailReadLogDto.setUseridUser(userId);
+//                myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
+////                myMailReadLogDto.setMailTitle(mailInfo.getTitle());
+//                myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
+//                continue;
+//            }
+//            if (mailBoxInfo.hasRead) {
+//                deleteExpireMyMailBoxList.add(mailBoxInfo);
+//                MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
+//                myMailReadLogDto.setUseridUser(userId);
+//                myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
+//                myMailReadLogDto.setMailTitle(mailInfo.getTitle());
+//                myMailReadLogDto.setGettingItem(mailInfo.getGettingItems());
+//                myMailReadLogDto.setGettingItemCount(mailInfo.getGettingItemCounts());
+//                myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
+//            }
+//        }
 
         for (MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
             Mail mail = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null);
@@ -243,6 +247,14 @@ public class MyMailBoxService {
 
         map.put("myMailBoxResponseDtoList", myMailBoxResponseDtoList);
 
+        MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
+        myMailReadLogDto.setUseridUser(userId);
+        myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
+        myMailReadLogDto.setMailTitle(mailInfo.getTitle());
+        myMailReadLogDto.setGettingItem(mailInfo.getGettingItems());
+        myMailReadLogDto.setGettingItemCount(mailInfo.getGettingItemCounts());
+        myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
+
         if(mailInfo.getToId().equals(userId))
             mailRepository.delete(mailInfo);
         return map;
@@ -312,6 +324,15 @@ public class MyMailBoxService {
             myMailBoxResponseDto.setHasRead(mailBoxInfo.hasRead);
             myMailBoxResponseDto.setReceived(mailBoxInfo.received);
             myMailBoxResponseDtoList.add(myMailBoxResponseDto);
+
+            MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
+            myMailReadLogDto.setUseridUser(userId);
+            myMailReadLogDto.setReadMailId(mailBoxInfo.mailId);
+            myMailReadLogDto.setMailTitle(mailInfo.getTitle());
+            myMailReadLogDto.setGettingItem(mailInfo.getGettingItems());
+            myMailReadLogDto.setGettingItemCount(mailInfo.getGettingItemCounts());
+            myMailReadLogRepository.save(myMailReadLogDto.ToEntity());
+
             if(mailInfo.getToId().equals(userId))
                 deleteExpireMailList.add(mailInfo);
         }

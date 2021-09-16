@@ -971,7 +971,7 @@ public class GetterService {
                                             throw new MyCustomException("Not Found AccessoryTable", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                         MyAccessoryInventoryDto myAccessoryInventoryDto = new MyAccessoryInventoryDto();
-                                        myAccessoryInventoryDto.SetMyAccessoryInventoryDto(userId, accessoryTable.getCode(), accessoryInventoryResponseDto.getCount(), accessoryInventoryResponseDto.getLevel(), accessoryInventoryResponseDto.getOptionLockList(), accessoryInventoryResponseDto.getOptions());
+                                        myAccessoryInventoryDto.SetMyAccessoryInventoryDto(userId, accessoryTable.getCode(), accessoryInventoryResponseDto.getCount(), 1, accessoryInventoryResponseDto.getOptionLockList(), accessoryInventoryResponseDto.getOptions());
                                         myAccessoryInventory = myAccessoryInventoryRepository.save(myAccessoryInventoryDto.ToEntity());
                                         myAccessoryInventoryList.add(myAccessoryInventory);
                                     }else {

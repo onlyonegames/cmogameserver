@@ -18,4 +18,7 @@ public class MyMailReadLog extends BaseTimeEntity {
     Long id;
     Long useridUser;
     Long readMailId;
+    String mailTitle;
+    String gettingItem;
+    String gettingItemCount;
 }

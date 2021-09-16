@@ -65,6 +65,7 @@ public class User {
     @CreatedDate
     private LocalDateTime createdDate;
     LocalDateTime lastloginDate;
+    LocalDateTime previousLoginDate;
     LocalDateTime lastSettingTime;
 
     @Builder
@@ -161,6 +162,10 @@ public class User {
     }
 
     public void SetLastLoginDate() {
+        if (this.lastloginDate == null)
+            this.previousLoginDate = LocalDateTime.now();
+        else
+            this.previousLoginDate = this.lastloginDate;
         this.lastloginDate = LocalDateTime.now();
     }
 

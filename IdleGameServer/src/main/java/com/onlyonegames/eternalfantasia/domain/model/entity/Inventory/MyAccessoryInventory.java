@@ -34,7 +34,7 @@ public class MyAccessoryInventory extends BaseTimeEntity {
 
     public void SetterMyAccessoryInventory(AccessoryInventoryResponseDto dto) {
         this.count = dto.getCount();
-        this.level = dto.getLevel();
+//        this.level = dto.getLevel();
         this.optionLockList = dto.getOptionLockList();
     }
 
