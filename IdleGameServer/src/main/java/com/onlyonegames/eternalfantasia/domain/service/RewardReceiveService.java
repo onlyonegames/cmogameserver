@@ -336,7 +336,7 @@ public class RewardReceiveService {
         MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
         mailSendRequestDto.setToId(userId);
         mailSendRequestDto.setSendDate(now);
-        mailSendRequestDto.setMailType(1);
+        mailSendRequestDto.setMailType(purchase?1:0);
         mailSendRequestDto.setExpireDate(now.plusDays(30));
         mailSendRequestDto.setTitle(title);
         mailSendRequestDto.setGettingItem(gettingItem); //TODO 보상 테이블에 있는 보상으로 지급
