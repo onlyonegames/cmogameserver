@@ -13,11 +13,12 @@ public class MyArenaPlayDataDto {
     int playableCount;
     int reMatchingAbleCount;
     boolean resetAbleMatchingUser;
+    Long arenaPlayLogId;
 
     public MyArenaPlayData ToEntity() {
         Init();
         return MyArenaPlayData.builder().useridUser(useridUser).matchedUserId(matchedUserId).playableCount(playableCount)
-                .resetAbleMatchingUser(resetAbleMatchingUser).reMatchingAbleCount(reMatchingAbleCount).build();
+                .resetAbleMatchingUser(resetAbleMatchingUser).reMatchingAbleCount(reMatchingAbleCount).arenaPlayLogId(arenaPlayLogId).build();
     }
 
     void Init() {
@@ -25,5 +26,6 @@ public class MyArenaPlayDataDto {
         this.playableCount = 5;
         this.reMatchingAbleCount = 3;
         this.resetAbleMatchingUser = false;
+        this.arenaPlayLogId = 0L;
     }
 }

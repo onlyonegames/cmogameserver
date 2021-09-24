@@ -8,13 +8,15 @@ public class MyWorldBossPlayDataDto {
     Long id;
     Long useridUser;
     int playableCount;
+    Long playLogId;
 
     public MyWorldBossPlayData ToEntity() {
         Init();
-        return MyWorldBossPlayData.builder().useridUser(useridUser).playableCount(playableCount).build();
+        return MyWorldBossPlayData.builder().useridUser(useridUser).playableCount(playableCount).playLogId(playLogId).build();
     }
 
     void Init() {
         this.playableCount = 3;
+        this.playLogId = 0L;
     }
 }

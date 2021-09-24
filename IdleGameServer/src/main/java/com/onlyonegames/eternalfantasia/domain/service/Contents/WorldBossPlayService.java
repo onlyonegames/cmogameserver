@@ -2,11 +2,14 @@ package com.onlyonegames.eternalfantasia.domain.service.Contents;
 
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.MyWorldBossPlayDataDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.WorldBossRankingDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.WorldBossPlayLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Logging.WorldBossPlayLog;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyWorldBossPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.WorldBossRankingRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.WorldBossPlayLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
@@ -26,6 +29,7 @@ public class WorldBossPlayService {
     private final WorldBossLeaderboardService worldBossLeaderboardService;
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
     private final UserRepository userRepository;
+    private final WorldBossPlayLogRepository worldBossPlayLogRepository;
 
     public Map<String, Object> GetMyInfo(Long userId, Map<String, Object> map) {
         MyWorldBossPlayData myWorldBossPlayData = myWorldBossPlayDataRepository.findByUseridUser(userId).orElse(null);
@@ -63,6 +67,11 @@ public class WorldBossPlayService {
             }
         }
         map.put("diamond", user.getDiamond());
+
+        WorldBossPlayLogDto worldBossPlayLogDto = new WorldBossPlayLogDto();
+        worldBossPlayLogDto.SetWorldBossPlayLogDto(userId);
+        WorldBossPlayLog worldBossPlayLog = worldBossPlayLogRepository.save(worldBossPlayLogDto.ToEntity());
+        myWorldBossPlayData.SetPlayLogId(worldBossPlayLog.getId());
         return map;
     }
 
@@ -82,6 +91,18 @@ public class WorldBossPlayService {
         saveRanking.ResetRanking(changeRanking);
 
         map.put("worldBossRanking", saveRanking);
+
+        MyWorldBossPlayData myWorldBossPlayData = myWorldBossPlayDataRepository.findByUseridUser(userId).orElse(null);
+        if(myWorldBossPlayData == null) {
+            //TODO ErrorCode
+        }
+
+        WorldBossPlayLog worldBossPlayLog = worldBossPlayLogRepository.findById(myWorldBossPlayData.getPlayLogId()).orElse(null);
+        if (worldBossPlayLog == null) {
+            //TODO ErrorCode
+        }
+        worldBossPlayLog.SetDamageAndTotalDamage(totalDamage, damage);
+
         return map;
     }
 }

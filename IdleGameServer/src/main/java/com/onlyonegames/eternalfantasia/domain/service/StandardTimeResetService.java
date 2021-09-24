@@ -107,7 +107,7 @@ public class StandardTimeResetService {
     }
 
     private void ResetArenaForDay() {
-        List<MyArenaPlayData> myArenaPlayDataList = myArenaPlayDataRepository.findAllByResetAbleMatchingUserOrReMatchingAbleCountNot(false, 3);
+        List<MyArenaPlayData> myArenaPlayDataList = myArenaPlayDataRepository.findAllByResetAbleMatchingUserOrReMatchingAbleCountNot(false, 5);
         for(MyArenaPlayData temp : myArenaPlayDataList) {
             temp.ResetReMatchingAbleCount();
             temp.ResetPlayableCount();

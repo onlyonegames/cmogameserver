@@ -3,12 +3,14 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.IapResponseDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.ShopPurchaseLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.ShopPurchaseLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
@@ -40,6 +42,7 @@ public class MyShopService {
     private final MyMailBoxService myMailBoxService;
     private final UserRepository userRepository;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
+    private final ShopPurchaseLogRepository shopPurchaseLogRepository;
 
     public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) throws IOException {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
@@ -54,7 +57,7 @@ public class MyShopService {
         }
         List<ShopRewardTable> shopRewardTableList = gameDataTableService.ShopRewardTable();
         ShopRewardTable shopRewardTable = shopRewardTableList.get(itemIndex);
-        SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
+        boolean log = SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
         String[] rewardList = shopRewardTable.getRewardList().split(",");
         switch (shopRewardTable.getItemName()) {
             case "무료 다이아":
@@ -224,6 +227,11 @@ public class MyShopService {
                     break;
             }
         }
+        if (log) {
+            ShopPurchaseLogDto shopPurchaseLogDto = new ShopPurchaseLogDto();
+            shopPurchaseLogDto.SetShopPurchaseLogDto(userId, shopRewardTable.getItemName(), shopRewardTable.getCurrencyType());
+            shopPurchaseLogRepository.save(shopPurchaseLogDto.ToEntity());
+        }
         map.put("myShopInfo", myShopInfo);
         map.put("userInfo", user);
         return map;
@@ -301,19 +309,22 @@ public class MyShopService {
         myMailBoxService.SendMail(mailSendRequestDto, tempMap);
     }
 
-    private void SpendPrice(User user, String currencyType, int price, String payLoad) throws IOException {
+    private boolean SpendPrice(User user, String currencyType, int price, String payLoad) throws IOException {
+        boolean log = false;
         switch (currencyType) {
             case "arenaCoin":
                 if (!user.SpendArenaCoin((long) price)) {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_ARENACOIN.getIntegerValue(), "Fail! -> Cause: Need More ArenaCoin.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More ArenaCoin.", ResponseErrorCode.NEED_MORE_ARENACOIN);
                 }
+                log = true;
                 break;
             case "dragonCoin":
                 if (!user.SpendDragonCoin((long) price)) {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_DRAGONCOIN.getIntegerValue(), "Fail! -> Cause: Need More DragonCoin.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More DragonCoin.", ResponseErrorCode.NEED_MORE_DRAGONCOIN);
                 }
+                log = true;
                 break;
             case "cash":
                 String test1 = payLoad.replace("Store", "store");
@@ -336,11 +347,10 @@ public class MyShopService {
                     throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
                 }
 
-                if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+                if (!IapService.verifyPurchase(signedData, signature)){
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
                 }
-                //TODO 이후 결제 프로세스 진행 ex) 켠슘, 데이터 저장
                 googlePurchaseData.Consume();
                 break;
             case "mileage":
@@ -348,7 +358,9 @@ public class MyShopService {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
                 }
+                log = true;
                 break;
         }
+        return log;
     }
 }

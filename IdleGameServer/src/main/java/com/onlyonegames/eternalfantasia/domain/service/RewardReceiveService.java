@@ -3,11 +3,15 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.PassReceiveLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Logging.PassReceiveLog;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyPassData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.PassReceiveLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyPassDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
@@ -36,6 +40,7 @@ public class RewardReceiveService {
     private final ErrorLoggingService errorLoggingService;
     private final GameDataTableService gameDataTableService;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
+    private final PassReceiveLogRepository passReceiveLogRepository;
 
     public Map<String, Object> GetReward(Long userId, int rewardType, boolean passReward, int levelIndex, int index, Map<String, Object> map) {
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
@@ -44,7 +49,8 @@ public class RewardReceiveService {
             throw new MyCustomException("Fail! -> Cause: MyAttendanceData Can't find", ResponseErrorCode.NOT_FIND_DATA);
         }
         Map<String, Object> tempMap = new HashMap<>();
-
+        String passName = "";
+        PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
         switch(rewardType) {
             case 1: //일일보상
                 String json_day = myPassData.getJson_daySaveData();
@@ -60,6 +66,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayADPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: DayADPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "일일광고보상지급";
                     SendMail(userId, false, "일일광고보상지급", dayADPassTable.getRewardType(), dayADPassTable.getRewardCount(), tempMap);
                 }
                 else {
@@ -73,7 +80,8 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: DayFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    SendMail(userId, false, "일일일보상지급", dayFreePassTable.getRewardType(), dayFreePassTable.getRewardCount(), tempMap);
+                    passName = "일일보상지급";
+                    SendMail(userId, false, "일일보상지급", dayFreePassTable.getRewardType(), dayFreePassTable.getRewardCount(), tempMap);
                 }
                 json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
                 myPassData.ResetDayJsonData(json_day);
@@ -96,6 +104,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AttendanceBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "출석패스보상지급";
                     SendMail(userId, false, "출석패스보상지급", "diamond", "1", tempMap);
                 }
                 else {
@@ -109,6 +118,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AttendanceFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "출석보상지급";
                     SendMail(userId, false, "출석보상지급", attendanceFreePassTable.getRewardType(), attendanceFreePassTable.getRewardCount(), tempMap);
                 }
                 json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
@@ -134,6 +144,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "레벨패스보상지급";
                     SendMail(userId, false, "레벨패스보상지급", levelBuyPassTable.getRewardType(), levelBuyPassTable.getRewardCount(), tempMap);
                 }
                 else {
@@ -148,6 +159,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "레벨보상지급";
                     SendMail(userId, false, "레벨보상지급", levelFreePassTable.getRewardType(), levelFreePassTable.getRewardCount(), tempMap);
                 }
                 json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
@@ -171,6 +183,7 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "스테이지패스보상지급";
                     SendMail(userId, false, "스테이지패스보상지급", adventureStageBuyPassTable.getRewardType(), adventureStageBuyPassTable.getRewardCount(), tempMap);
                 }
                 else {
@@ -184,12 +197,190 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
+                    passName = "스테이지패스보상지급";
                     SendMail(userId, false, "스테이지패스보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
                 }
                 json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
                 myPassData.ResetStageSaveData(json_stage);
                 break;
         }
+        passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, index);
+        passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+        return map;
+    }
+
+    public Map<String, Object> GetAllReward(Long userId, int rewardType, int passIndex, int levelIndex, int index, Map<String, Object> map) {
+        MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
+        if(myPassData == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyAttendanceData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyAttendanceData Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: userId Can't find. userId => " + userId, ResponseErrorCode.NOT_FIND_DATA);
+        }
+        Map<String, Object> tempMap = new HashMap<>();
+        String passName = "";
+
+        switch(rewardType) {
+            case 1: //일일보상
+                String json_day = myPassData.getJson_daySaveData();
+                MyDayRewardDataJsonDto myDayRewardDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_day, MyDayRewardDataJsonDto.class);
+                if (user.isAdRemove()==1) {
+                    for (int j = 0; j <= passIndex; j++) {
+                        if (!myDayRewardDataJsonDto.ReceiveADReward(passIndex))
+                            continue;
+                        List<DayADPassTable> dayADPassTableList = gameDataTableService.DayADPassTable();
+                        DayADPassTable dayADPassTable = dayADPassTableList.stream().filter(i -> i.getId() == passIndex).findAny().orElse(null);
+                        if(dayADPassTable == null) {
+                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayADPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                            throw new MyCustomException("Fail! -> Cause: DayADPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                        }
+                        passName = "일일광고보상지급";
+                        SendMail(userId, false, "일일광고보상지급", dayADPassTable.getRewardType(), dayADPassTable.getRewardCount(), tempMap);
+                        PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                        passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, passIndex);
+                        passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                    }
+                }
+                for (int j = 0; j <= index; j++) {
+                    if (!myDayRewardDataJsonDto.ReceiveReward(j))
+                        continue;
+                    List<DayFreePassTable> dayFreePassTableList = gameDataTableService.DayFreePassTable();
+                    DayFreePassTable dayFreePassTable = dayFreePassTableList.stream().filter(i -> i.getId() == index).findAny().orElse(null);
+                    if(dayFreePassTable == null) {
+                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: DayFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: DayFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                    }
+                    passName = "일일보상지급";
+                    SendMail(userId, false, "일일보상지급", dayFreePassTable.getRewardType(), dayFreePassTable.getRewardCount(), tempMap);
+                    PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                    passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, index);
+                    passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                }
+                json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
+                myPassData.ResetDayJsonData(json_day);
+                break;
+            case 2: //출석보상
+                String json_attendance = myPassData.getJson_attendanceSaveData();
+                MyAttendanceDataJsonDto myAttendanceDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_attendance, MyAttendanceDataJsonDto.class);
+                if (myAttendanceDataJsonDto.isPassPurchase()) {
+                    for (int j = 0; j <= passIndex; j++) {
+                        if (!myAttendanceDataJsonDto.ReceivePassReward(passIndex))
+                            continue;
+                        List<AttendanceBuyPassTable> attendanceBuyPassTableList = gameDataTableService.AttendanceBuyPassTable();
+                        AttendanceBuyPassTable attendanceBuyPassTable = attendanceBuyPassTableList.stream().filter(i -> i.getId() == passIndex).findAny().orElse(null);
+                        if (attendanceBuyPassTable == null) {
+                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                            throw new MyCustomException("Fail! -> Cause: AttendanceBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                        }
+                        passName = "출석패스보상지급";
+                        SendMail(userId, false, "출석패스보상지급", "diamond", "1", tempMap);
+                        PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                        passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, passIndex);
+                        passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                    }
+                }
+                for (int j = 0; j <= index; j++) {
+                    if (!myAttendanceDataJsonDto.ReceiveReward(index))
+                        continue;
+                    List<AttendanceFreePassTable> attendanceFreePassTableList = gameDataTableService.AttendanceFreePassTable();
+                    AttendanceFreePassTable attendanceFreePassTable = attendanceFreePassTableList.stream().filter(i -> i.getId() == index).findAny().orElse(null);
+                    if (attendanceFreePassTable == null) {
+                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AttendanceFreePassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: AttendanceFreePassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                    }
+                    passName = "출석보상지급";
+                    SendMail(userId, false, "출석보상지급", attendanceFreePassTable.getRewardType(), attendanceFreePassTable.getRewardCount(), tempMap);
+                    PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                    passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, index);
+                    passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                }
+                json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
+                myPassData.ResetAttendanceJsonData(json_attendance);
+                break;
+            case 3: //레벨 보상
+                String json_level = myPassData.getJson_levelSaveData();
+                MyLevelRewardDataJsonDto myLevelRewardDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_level, MyLevelRewardDataJsonDto.class);
+                MyLevelRewardDataJsonDto.LevelReward levelReward = myLevelRewardDataJsonDto.levelRewardList.get(levelIndex);
+                if (levelReward.passPurchase) {
+                    for (int j = 0; j <= passIndex; j++) {
+                        if (!levelReward.ReceivePassReward(passIndex))
+                            continue;
+                        List<LevelBuyPassTable> levelBuyPassTableList = gameDataTableService.LevelBuyPassTable();
+                        List<LevelBuyPassTable> levelBuyPassTableGroupList = levelBuyPassTableList.stream().filter(i -> i.getGroupIndex() == levelIndex).collect(Collectors.toList());
+                        LevelBuyPassTable levelBuyPassTable = levelBuyPassTableGroupList.stream().filter(i -> i.getGroupId() == passIndex).findAny().orElse(null);
+                        if (levelBuyPassTable == null) {
+                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                            throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                        }
+                        passName = "레벨패스보상지급";
+                        SendMail(userId, false, "레벨패스보상지급", levelBuyPassTable.getRewardType(), levelBuyPassTable.getRewardCount(), tempMap);
+                        PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                        passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, passIndex);
+                        passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                    }
+                }
+                for (int j = 0; j <= index; j++) {
+                    if (!levelReward.ReceiveReward(index))
+                        continue;
+                    List<LevelFreePassTable> levelFreePassTableList = gameDataTableService.LevelFreePassTable();
+                    List<LevelFreePassTable> levelFreePassTableGroupList = levelFreePassTableList.stream().filter(i -> i.getGroupIndex() == levelIndex).collect(Collectors.toList());
+                    LevelFreePassTable levelFreePassTable = levelFreePassTableGroupList.stream().filter(i -> i.getGroupId() == index).findAny().orElse(null);
+                    if (levelFreePassTable == null) {
+                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: LevelBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: LevelBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                    }
+                    passName = "레벨보상지급";
+                    SendMail(userId, false, "레벨보상지급", levelFreePassTable.getRewardType(), levelFreePassTable.getRewardCount(), tempMap);
+                    PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                    passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, index);
+                    passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                }
+                json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
+                myPassData.ResetLevelJsonData(json_level);
+                break;
+            case 4: //스테이지 보상
+                String json_stage = myPassData.getJson_stageSaveData();
+                MyAdventureStageDataJsonDto myAdventureStageDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_stage, MyAdventureStageDataJsonDto.class);
+                if (myAdventureStageDataJsonDto.isPassPurchase()) {
+                    for (int j = 0; j <= passIndex; j++) {
+                        if (!myAdventureStageDataJsonDto.ReceivePassReward(passIndex))
+                            continue;
+                        List<AdventureStageBuyPassTable> adventureStageBuyPassTableList = gameDataTableService.AdventureStageBuyPassTable();
+                        AdventureStageBuyPassTable adventureStageBuyPassTable = adventureStageBuyPassTableList.stream().filter(i -> i.getId() == passIndex).findAny().orElse(null);
+                        if (adventureStageBuyPassTable == null) {
+                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                            throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                        }
+                        passName = "스테이지패스보상지급";
+                        SendMail(userId, false, "스테이지패스보상지급", adventureStageBuyPassTable.getRewardType(), adventureStageBuyPassTable.getRewardCount(), tempMap);
+                        PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                        passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, passIndex);
+                        passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                    }
+                }
+                for (int j = 0; j <= index; j++) {
+                    if (!myAdventureStageDataJsonDto.ReceiveReward(index))
+                        continue;
+                    List<AdventureStageFreePassTable> adventureStageFreePassTableList = gameDataTableService.AdventureStageFreePassTable();
+                    AdventureStageFreePassTable adventureStageFreePassTable = adventureStageFreePassTableList.stream().filter(i -> i.getId() == index).findAny().orElse(null);
+                    if (adventureStageFreePassTable == null) {
+                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
+                    }
+                    passName = "스테이지패스보상지급";
+                    SendMail(userId, false, "스테이지패스보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
+                    PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
+                    passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, index);
+                    passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
+                }
+                json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
+                myPassData.ResetStageSaveData(json_stage);
+                break;
+        }
+
         return map;
     }
 
@@ -213,7 +404,7 @@ public class RewardReceiveService {
             throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
         }
 
-        if (!IapService.verifyPurchase(signedData, signature)){ //TODO ErrorCode add
+        if (!IapService.verifyPurchase(signedData, signature)){
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
         }
@@ -274,7 +465,7 @@ public class RewardReceiveService {
         return map;
     }
 
-    public Map<String, Object> PurchaseTest(Long userId, int passType, int levelIndex, String payLoad, Map<String, Object> map) {
+    public Map<String, Object> PurchaseTest(Long userId, int passType, int levelIndex, Map<String, Object> map) {
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
         if(myPassData == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyAttendanceData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);

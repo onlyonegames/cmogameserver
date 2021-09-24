@@ -18,6 +18,7 @@ public class MyWorldBossPlayData extends BaseTimeEntity {
     Long id;
     Long useridUser;
     int playableCount;
+    Long playLogId;
 
     public void ResetPlayableCount() {
         this.playableCount = 3;
@@ -28,5 +29,9 @@ public class MyWorldBossPlayData extends BaseTimeEntity {
             return false;
         playableCount -= 1;
         return true;
+    }
+
+    public void SetPlayLogId(Long playLogId) {
+        this.playLogId = playLogId;
     }
 }

@@ -22,6 +22,7 @@ public class MyArenaPlayData extends BaseTimeEntity {
     int playableCount;
     int reMatchingAbleCount;
     boolean resetAbleMatchingUser;
+    Long arenaPlayLogId;
 
     public void SetMatchedUserId(Long matchedUserId) {
         this.matchedUserId = matchedUserId;
@@ -55,5 +56,9 @@ public class MyArenaPlayData extends BaseTimeEntity {
             return false;
         reMatchingAbleCount -= 1;
         return true;
+    }
+
+    public void SetArenaPlayLogId(Long arenaPlayLogId) {
+        this.arenaPlayLogId = arenaPlayLogId;
     }
 }
