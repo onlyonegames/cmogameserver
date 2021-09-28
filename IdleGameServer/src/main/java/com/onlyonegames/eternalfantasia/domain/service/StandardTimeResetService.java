@@ -1,5 +1,7 @@
 package com.onlyonegames.eternalfantasia.domain.service;
 
+import com.onlyonegames.eternalfantasia.domain.MyCustomException;
+import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousArenaRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousBattlePowerRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousStageRankingDto;
@@ -32,6 +34,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -61,7 +65,8 @@ public class StandardTimeResetService {
     public Map<String, Object> CheckTime(Map<String, Object> map) {
         StandardTime standardTime = standardTimeRepository.findById(1).orElse(null);
         if(standardTime == null) {
-           //TODO ErrorCode add
+            errorLoggingService.SetErrorLog(0L, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found StandardTime", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found StandardTime", ResponseErrorCode.NOT_FIND_DATA);
         }
 
         LocalDateTime now = LocalDateTime.now();
@@ -180,6 +185,7 @@ public class StandardTimeResetService {
             myDayRewardDataJsonDto.Init();
             String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
             temp.ResetDayJsonData(json_day);
+            temp.SetGettingCount();
         }
     }
     private void ResetShopPurchaseCount(boolean day, boolean week, boolean month) {
