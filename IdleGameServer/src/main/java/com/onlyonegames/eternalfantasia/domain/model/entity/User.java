@@ -60,7 +60,7 @@ public class User {
     Long battlePower;
     int mileage;
     boolean advertisement;
-
+    boolean blackUser;
 
     @CreatedDate
     private LocalDateTime createdDate;

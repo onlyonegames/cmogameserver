@@ -48,13 +48,14 @@ public class UserService {
 
     public Map<String, Object> login(Long userId, String jwt, Map<String, Object> map) {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
-        if (serverStatusInfo.getServerStatus() == 1) {
-            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
-        }
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: userId Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (serverStatusInfo.getServerStatus() == 1 && user.getUserType() == 1) {
+
+            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
         }
 
         OnlyoneSession onlyoneSession = sessionRepository.findById(userId).orElse(null);
@@ -64,10 +65,10 @@ public class UserService {
         onlyoneSession = new OnlyoneSession(userId, jwt);
         sessionRepository.save(onlyoneSession);
 
-//        if(user.isBlackUser()) {
-//            errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.BLACK_USER.getIntegerValue(), "Black User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-//            throw new MyCustomException("Black User", ResponseErrorCode.BLACK_USER);
-//        }
+        if(user.isBlackUser()) {
+            errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.BLACK_USER.getIntegerValue(), "Black User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Black User", ResponseErrorCode.BLACK_USER);
+        }
 
         user.SetLastLoginDate();
         map.put("userInfo", user);

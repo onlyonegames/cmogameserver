@@ -90,6 +90,11 @@ public class GetterService {
             throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
         }
 
+        if (serverStatusInfo.getServerStatus() == 1 && user.getUserType() == 1) {
+
+            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
+        }
+
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
             for(ContainerDto containerDto : cmd.containers) {
