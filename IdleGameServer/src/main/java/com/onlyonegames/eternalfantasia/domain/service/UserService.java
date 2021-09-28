@@ -98,7 +98,9 @@ public class UserService {
             String json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
             LocalDateTime now = LocalDateTime.now();
             myPassData = MyPassData.builder().useridUser(userId).json_daySaveData(json_day)
-                    .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level).lastAttendanceDate(LocalDateTime.of(now.minusDays(1).toLocalDate(), LocalTime.of(0, 0, 0))).json_stageSaveData(json_stage).build();
+                    .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level)
+                    .lastAttendanceDate(LocalDateTime.of(now.minusDays(1).toLocalDate(), LocalTime.of(0, 0, 0)))
+                    .json_stageSaveData(json_stage).gettingCount(0L).build();
             myPassData = myPassDataRepository.save(myPassData);
         }
         String json_saveData = myPassData.getJson_attendanceSaveData();

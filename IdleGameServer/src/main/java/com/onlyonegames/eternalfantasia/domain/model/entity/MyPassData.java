@@ -20,6 +20,7 @@ public class MyPassData extends BaseTimeEntity {
     Long useridUser;
     public String json_attendanceSaveData;
     public String json_daySaveData;
+    public Long gettingCount;
     public String json_levelSaveData;
     public String json_stageSaveData;
     public LocalDateTime lastAttendanceDate;
@@ -42,5 +43,9 @@ public class MyPassData extends BaseTimeEntity {
 
     public void ResetLastAttendanceDate(LocalDateTime lastAttendanceDate) {
         this.lastAttendanceDate = lastAttendanceDate;
+    }
+
+    public void SetGettingCount() {
+        this.gettingCount = 0L;
     }
 }

@@ -1061,6 +1061,8 @@ public class GetterService {
                                     Class<?> elementType = field.getType();
                                     if (elementType.getTypeName().equals("java.time.LocalDateTime"))
                                         field.set(myPassData, LocalDateTime.parse(element.getValue()));
+                                    else if (elementType.getTypeName().equals("java.lang.Long"))
+                                        field.set(myPassData, Long.parseLong(element.getValue()));
                                     else
                                         field.set(myPassData, element.getValue());
                                 }

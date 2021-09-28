@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class MyDayRewardDataJsonDto {
-    int gettingCount;
     List<Boolean> rewardList;
     List<Boolean> adRewardList;
 
@@ -34,7 +33,6 @@ public class MyDayRewardDataJsonDto {
         for (int i = 0; i < 20; i++) {
             tempList.add(false);
         }
-        this.gettingCount = 0;
         this.rewardList = tempList;
         this.adRewardList = tempList;
     }
