@@ -28,7 +28,7 @@ public class MyBelongingInventoryService {
     public Map<String, Object> SpendItem(Long userId, String code, int count, Map<String, Object> map) {
         String[] codeSplit = code.split("_");
         int codeNo = Integer.parseInt(codeSplit[codeSplit.length-1]);
-        if(codeNo<8) { //TODO ErrorCode
+        if(codeNo<8) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyActiveSkillData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: MyActiveSkillData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
@@ -50,9 +50,9 @@ public class MyBelongingInventoryService {
     public Map<String, Object> ChangeGameName(Long userId, String gameName, Map<String, Object> map) {
 
         User findByUserGameName = userRepository.findByuserGameName(gameName).orElse(null);
-        if(findByUserGameName != null) { //TODO Error Code 추가 필요
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.AREADY_EXIST_USERNAME.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.AREADY_EXIST_USERNAME);
+        if(findByUserGameName != null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.ALREADY_EXIST_USERNAME.getIntegerValue(), "Fail! -> Cause: ALREADY_EXIST_USERNAME.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: ALREADY_EXIST_USERNAME.", ResponseErrorCode.ALREADY_EXIST_USERNAME);
         }
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {

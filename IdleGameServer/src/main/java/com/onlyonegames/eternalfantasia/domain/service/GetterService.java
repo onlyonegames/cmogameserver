@@ -1057,6 +1057,8 @@ public class GetterService {
                                 break;
                             case "passInfo":
                                 for (ElementDto element : container.elements) {
+                                    if (element.getElement().contains("json"))
+                                        continue;
                                     Field field = myPassData.getClass().getDeclaredField(element.getElement());
                                     Class<?> elementType = field.getType();
                                     if (elementType.getTypeName().equals("java.time.LocalDateTime"))
@@ -1086,6 +1088,7 @@ public class GetterService {
             }
         }
         map.put("cmdRequest", requestList.cmds);
+        map.put("lastSettingTime", user.getLastSettingTime());
         return map;
     }
 }

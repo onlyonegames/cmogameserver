@@ -35,14 +35,14 @@ public class MyShopInfoDto {
 
     void Init() {
         this.freeDiamond = 1;
-        this.todayPackage = 1;
+        this.todayPackage = 3;
         this.startPackage = 1;
         this.warriorPackage = 1;
         this.thiefPackage = 1;
         this.knightPackage = 1;
         this.archerPackage = 1;
         this.magicianPackage = 1;
-        this.soulStonePackage = 1;
+        this.soulStonePackage = 3;
         this.weeklyPackage = 3;
         this.monthlyPackage = 2;
         this.adRemovePackage = 1;

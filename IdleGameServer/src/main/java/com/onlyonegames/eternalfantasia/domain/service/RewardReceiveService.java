@@ -433,7 +433,7 @@ public class RewardReceiveService {
                 json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
                 myPassData.ResetAttendanceJsonData(json_attendance);
                 mailTitle = "출석 패스 구매 다이아 지급";
-                gettingItemCount = "10000";
+                gettingItemCount = "165000";
                 break;
             case 3: //레벨 보상
                 String json_level = myPassData.getJson_levelSaveData();
@@ -458,7 +458,7 @@ public class RewardReceiveService {
                 json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
                 myPassData.ResetLevelJsonData(json_level);
                 mailTitle = "레벨 패스 구매 다이아 지급";
-                gettingItemCount = "10000";
+                gettingItemCount = "55000";
                 break;
             case 4: //스테이지 보상
                 String json_stage = myPassData.getJson_stageSaveData();
@@ -467,7 +467,7 @@ public class RewardReceiveService {
                 json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
                 myPassData.ResetStageSaveData(json_stage);
                 mailTitle = "스테이지 패스 구매 다이아 지급";
-                gettingItemCount = "10000";
+                gettingItemCount = "165000";
                 break;
         }
         Map<String, Object> tempMap = new HashMap<>();

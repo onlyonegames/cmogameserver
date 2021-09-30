@@ -53,25 +53,25 @@ public class WorldBossRewardService {
         if (myRanking == 1) {
             for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("5000");
+                    temp.setGettingItemCount("15000");
                 else
-                    temp.setGettingItemCount("500");
+                    temp.setGettingItemCount("800");
             }
         }
         else if (myRanking == 2) {
             for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("2500");
+                    temp.setGettingItemCount("8000");
                 else
-                    temp.setGettingItemCount("250");
+                    temp.setGettingItemCount("700");
             }
         }
         else if (myRanking == 3) {
             for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("1500");
+                    temp.setGettingItemCount("6000");
                 else
-                    temp.setGettingItemCount("150");
+                    temp.setGettingItemCount("600");
             }
         }
         else {
@@ -81,49 +81,49 @@ public class WorldBossRewardService {
             if (myPercent <= 10) {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("500");
+                    temp.setGettingItemCount("4000");
                 else
-                    temp.setGettingItemCount("50");
+                    temp.setGettingItemCount("550");
             }
             }
             else if (myPercent <= 30) {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("450");
+                    temp.setGettingItemCount("3000");
                 else
-                    temp.setGettingItemCount("45");
+                    temp.setGettingItemCount("500");
             }
             }
             else if (myPercent <= 50) {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("400");
+                    temp.setGettingItemCount("2500");
                 else
-                    temp.setGettingItemCount("40");
+                    temp.setGettingItemCount("450");
             }
             }
             else if (myPercent <= 70) {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("350");
+                    temp.setGettingItemCount("2000");
                 else
-                    temp.setGettingItemCount("35");
+                    temp.setGettingItemCount("400");
             }
             }
             else if (myPercent <= 90) {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("300");
+                    temp.setGettingItemCount("1500");
                 else
-                    temp.setGettingItemCount("30");
+                    temp.setGettingItemCount("350");
             }
             }
             else {
                 for (GettingItem temp : gettingItemList) {
                 if (temp.gettingItem.equals("diamond"))
-                    temp.setGettingItemCount("250");
+                    temp.setGettingItemCount("1000");
                 else
-                    temp.setGettingItemCount("25");
+                    temp.setGettingItemCount("300");
             }
             }
         }

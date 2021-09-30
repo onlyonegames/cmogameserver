@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import com.onlyonegames.eternalfantasia.Interceptor.OnlyoneSession;
 import com.onlyonegames.eternalfantasia.Interceptor.OnlyoneSessionRepository;
@@ -162,6 +163,26 @@ public class UserService {
             throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
         }
         findUser.SetUserName(userName);
+        return map;
+    }
+
+    public Map<String, Object> AccountLink(Long userId, String socialId, String socialProvider, Map<String, Object> map) {
+        Pattern UUID_REGEX_PATTERN = Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: userId Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (userRepository.existsBySocialId(socialId)) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.ALREADY_LINKED_ACCOUNT.getIntegerValue(), "Fail! -> Cause: ALREADY_LINKED_ACCOUNT", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: ALREADY_LINKED_ACCOUNT", ResponseErrorCode.ALREADY_LINKED_ACCOUNT);
+        }
+        if (!UUID_REGEX_PATTERN.matcher(user.getSocialId()).matches() && user.getSocialProvider().equals("google")) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_EXIST_CODE.getIntegerValue(), "Fail! -> Cause: NOT_EXIST_CODE", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: NOT_EXIST_CODE", ResponseErrorCode.NOT_EXIST_CODE);
+        }
+        user.ExchangeSocial(socialId, socialProvider);
+        map.put("userInfo", user);
         return map;
     }
 

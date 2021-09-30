@@ -94,7 +94,7 @@ public class MyAccessoryInventoryService {
                 lockCount++;
         }
 
-        int spendDiamond = (30 * ((int)(Math.pow(lockCount, 2)) + 1));
+        int spendDiamond = (100 * ((int)(Math.pow(lockCount, 2)) + 1));
         user.SpendDiamond(spendDiamond);
 
         List<Double> probabilityList = new ArrayList<>();

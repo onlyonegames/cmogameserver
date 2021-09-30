@@ -40,42 +40,42 @@ public class ArenaRewardService {
             throw new MyCustomException("Fail! -> Cause: Already Received Reward.", ResponseErrorCode.ALREADY_RECEIVED_REWARD);
         }
 
-        //TODO 랭킹 구간에 따른 차등 보상
+        //랭킹 구간에 따른 차등 보상
         List<String> gettingItemList = new ArrayList<>();
         gettingItemList.add("diamond");
         String gettingItemCount;
 
         int myRanking = previousArenaRanking.getRanking();
         if (myRanking == 1) {
-            gettingItemCount = "10000";
+            gettingItemCount = "50000";
         }
         else if (myRanking == 2) {
-            gettingItemCount = "8000";
+            gettingItemCount = "30000";
         }
         else if (myRanking == 3) {
-            gettingItemCount = "6500";
+            gettingItemCount = "20000";
         }
         else {
             long totalCount = previousArenaRankingRepository.count();
 
             int myPercent = Math.round(myRanking *100f / totalCount);
             if (myPercent <= 10) {
-                gettingItemCount = "5000";
+                gettingItemCount = "10000";
             }
             else if (myPercent <= 30) {
-                gettingItemCount = "4500";
+                gettingItemCount = "8000";
             }
             else if (myPercent <= 50) {
-                gettingItemCount = "4000";
+                gettingItemCount = "6000";
             }
             else if (myPercent <= 70) {
-                gettingItemCount = "3500";
+                gettingItemCount = "5000";
             }
             else if (myPercent <= 90) {
-                gettingItemCount = "3000";
+                gettingItemCount = "4000";
             }
             else {
-                gettingItemCount = "2500";
+                gettingItemCount = "3000";
             }
         }
 

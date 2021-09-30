@@ -56,7 +56,7 @@ public class User {
     String battleStatus;
     boolean dummyUser;
     boolean new_user;
-    int userType;
+    int userType; // 1 : 일반 유저, other : 화이트 유저  // 정해야함
     Long battlePower;
     int mileage;
     boolean advertisement;
@@ -194,7 +194,7 @@ public class User {
     }
 
     public void SetLastSettingTime() {
-        this.lastSettingTime = LocalDateTime.now();
+        this.lastSettingTime = LocalDateTime.now().withNano(0);
     }
 
     public void SetSexType(int sexType) {
@@ -263,5 +263,10 @@ public class User {
 
     public int isAdRemove() {
         return this.advertisement?1:0;
+    }
+
+    public void ExchangeSocial(String socialId, String socialProvider) {
+        this.socialId = socialId;
+        this.socialProvider = socialProvider;
     }
 }

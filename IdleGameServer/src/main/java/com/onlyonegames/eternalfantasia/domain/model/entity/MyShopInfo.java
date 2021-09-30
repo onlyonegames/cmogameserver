@@ -140,8 +140,8 @@ public class MyShopInfo extends BaseTimeEntity {
 
     public void RechargeDay() {
         this.freeDiamond = 1;
-        this.todayPackage = 1;
-        this.soulStonePackage = 1;
+        this.todayPackage = 3;
+        this.soulStonePackage = 3;
         this.itemAD = 3;
         this.expAD = 3;
         this.goldAD = 3;

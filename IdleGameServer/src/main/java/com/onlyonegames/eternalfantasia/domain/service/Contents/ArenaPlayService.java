@@ -55,7 +55,8 @@ public class ArenaPlayService {
         }
         if(!myArenaPlayData.SpendPlayableCount()){
             if(!user.SpendDiamond(150)) {
-                //TODO ErrorCode add
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_DIAMOND.getIntegerValue(), "NEED_MORE_DIAMOND", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("NEED_MORE_DIAMOND", ResponseErrorCode.NEED_MORE_DIAMOND);
             }
         }
         map.put("diamond", user.getDiamond());
@@ -70,7 +71,7 @@ public class ArenaPlayService {
 //    public Map<String, Object> ArenaForcePlay(Long userId, Map<String, Object> map) {
 //        MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
 //        if(myArenaPlayData == null) {
-//            //TODO ErrorCode add
+//
 //        }
 //    }
 
@@ -85,7 +86,7 @@ public class ArenaPlayService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        user.AddArenaCoin(50L);
+        user.AddArenaCoin(100L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
@@ -124,7 +125,7 @@ public class ArenaPlayService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
-        user.AddArenaCoin(5L);
+        user.AddArenaCoin(50L);
         myArenaPlayData.ResetReMatchingAbleCount();
         int userScore = 0;
         ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
