@@ -54,7 +54,7 @@ public class ArenaPlayService {
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         if(!myArenaPlayData.SpendPlayableCount()){
-            if(!user.SpendDiamond(150)) {
+            if(!user.SpendDiamond(1000)) {
                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_DIAMOND.getIntegerValue(), "NEED_MORE_DIAMOND", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                 throw new MyCustomException("NEED_MORE_DIAMOND", ResponseErrorCode.NEED_MORE_DIAMOND);
             }

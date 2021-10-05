@@ -55,8 +55,7 @@ public class UserService {
             throw new MyCustomException("Fail! -> Cause: userId Can't find", ResponseErrorCode.NOT_FIND_DATA);
         }
         if (serverStatusInfo.getServerStatus() == 1 && user.getUserType() == 1) {
-
-            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
+            throw new MyCustomException("Server Check", ResponseErrorCode.SERVER_CHECK);
         }
 
         OnlyoneSession onlyoneSession = sessionRepository.findById(userId).orElse(null);

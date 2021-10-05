@@ -91,8 +91,7 @@ public class GetterService {
         }
 
         if (serverStatusInfo.getServerStatus() == 1 && user.getUserType() == 1) {
-
-            throw new MyCustomException("Server Check", ResponseErrorCode.UNDEFINED);
+            throw new MyCustomException("Server Check", ResponseErrorCode.SERVER_CHECK);
         }
 
         //Request에 따라 entity를 불러옴
