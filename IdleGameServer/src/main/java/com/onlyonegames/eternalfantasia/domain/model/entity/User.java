@@ -68,9 +68,6 @@ public class User {
     LocalDateTime previousLoginDate;
     LocalDateTime lastSettingTime;
 
-    @Version
-    int version;
-
     @Builder
     public User(String socialId, String password, String socialProvider, String userGameName, Set<Role> roles) {
         this.socialId = socialId;
