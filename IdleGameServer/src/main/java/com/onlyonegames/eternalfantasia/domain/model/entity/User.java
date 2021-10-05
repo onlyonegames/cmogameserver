@@ -56,7 +56,7 @@ public class User {
     String battleStatus;
     boolean dummyUser;
     boolean new_user;
-    int userType; // 1 : 일반 유저, other : 화이트 유저  // 정해야함
+    int userType; // 1 : 일반 유저, 0 : 화이트 유저 == 개발자  // 정해야함
     Long battlePower;
     int mileage;
     boolean advertisement;
@@ -67,6 +67,9 @@ public class User {
     LocalDateTime lastloginDate;
     LocalDateTime previousLoginDate;
     LocalDateTime lastSettingTime;
+
+    @Version
+    int version;
 
     @Builder
     public User(String socialId, String password, String socialProvider, String userGameName, Set<Role> roles) {
