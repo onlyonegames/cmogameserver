@@ -10,6 +10,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.Contents.ArenaRankingR
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.ArenaRedisRankingRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
+import com.onlyonegames.util.MathHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -69,6 +70,19 @@ public class ArenaLeaderboardService {
         return myRank;
     }
 
+    public double getPercent(Long userId) {
+        Long totalCount  = redisLongTemplate.opsForZSet().size(ARENA_RANKING_LEADERBOARD);
+        if (totalCount == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (totalCount == 0L) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        return MathHelper.Round2(getRank(userId) * 100d / totalCount);
+    }
+
     public Set<Long> getRangeOfMatch(Long userId) {
         Long myRank = redisLongTemplate.opsForZSet().reverseRank(ARENA_RANKING_LEADERBOARD, userId);
         if(myRank == null)
@@ -93,7 +107,7 @@ public class ArenaLeaderboardService {
             }
 
             ArenaRankingInfoDto arenaRankingInfoDto = new ArenaRankingInfoDto();
-            arenaRankingInfoDto.SetArenaRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint);
+            arenaRankingInfoDto.SetArenaRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(arenaRankingInfoDto);
             ranking++;
         }
@@ -105,9 +119,9 @@ public class ArenaLeaderboardService {
             throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
         }
         if(arenaRanking != null)
-            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), arenaRanking.getPoint());
+            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), arenaRanking.getPoint(), getPercent(userId));
         else
-            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), 0, 0);
+            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;

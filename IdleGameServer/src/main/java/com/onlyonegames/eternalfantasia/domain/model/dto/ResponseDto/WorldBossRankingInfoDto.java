@@ -8,11 +8,13 @@ public class WorldBossRankingInfoDto {
     String userGameName;
     int ranking;
     Long totalDamage;
+    double totalPercent;
 
-    public void SetWorldBossRankingInfoDto(Long useridUser, String userGameName, int ranking, Long totalDamage) {
+    public void SetWorldBossRankingInfoDto(Long useridUser, String userGameName, int ranking, Long totalDamage, double totalPercent) {
         this.useridUser = useridUser;
         this.userGameName = userGameName;
         this.ranking = ranking;
         this.totalDamage = totalDamage;
+        this.totalPercent = totalPercent;
     }
 }

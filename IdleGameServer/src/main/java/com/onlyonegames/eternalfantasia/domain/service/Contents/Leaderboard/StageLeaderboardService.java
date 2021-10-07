@@ -10,6 +10,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.Contents.StageRankingR
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.StageRedisRankingRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
+import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -68,6 +69,19 @@ public class StageLeaderboardService {
         return myRank;
     }
 
+    public double getPercent(Long userId) {
+        Long totalCount  = redisLongTemplate.opsForZSet().size(STAGE_RANKING_LEADERBOARD);
+        if (totalCount == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (totalCount == 0L) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        return MathHelper.Round2(getRank(userId) * 100d / totalCount);
+    }
+
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(STAGE_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<StageRankingInfoDto> list = new ArrayList<>();
@@ -85,7 +99,7 @@ public class StageLeaderboardService {
             }
 
             StageRankingInfoDto stageRankingInfoDto = new StageRankingInfoDto();
-            stageRankingInfoDto.SetStageRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint);
+            stageRankingInfoDto.SetStageRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(stageRankingInfoDto);
             ranking++;
         }
@@ -93,14 +107,14 @@ public class StageLeaderboardService {
         StageRanking stageRanking = stageRankingRepository.findByUseridUser(userId).orElse(null);
         StageRankingInfoDto myRankingInfo = new StageRankingInfoDto();
         if(stageRanking != null)
-            myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), getRank(userId).intValue(), stageRanking.getPoint());
+            myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), getRank(userId).intValue(), stageRanking.getPoint(), getPercent(userId));
         else {
             User user = userRepository.findById(userId).orElse(null);
             if(user == null) {
                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                 throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
             }
-            myRankingInfo.SetStageRankingInfoDto(userId, user.getUserGameName(), 0, 0);
+            myRankingInfo.SetStageRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
         }
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);

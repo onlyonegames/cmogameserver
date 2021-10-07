@@ -8,11 +8,13 @@ public class ArenaRankingInfoDto {
     String userGameName;
     int ranking;
     int point;
+    double totalPercent;
 
-    public void SetArenaRankingInfoDto(Long useridUser, String userGameName, int ranking, int point) {
+    public void SetArenaRankingInfoDto(Long useridUser, String userGameName, int ranking, int point, double totalPercent) {
         this.useridUser = useridUser;
         this.userGameName = userGameName;
         this.ranking = ranking;
         this.point = point;
+        this.totalPercent = totalPercent;
     }
 }

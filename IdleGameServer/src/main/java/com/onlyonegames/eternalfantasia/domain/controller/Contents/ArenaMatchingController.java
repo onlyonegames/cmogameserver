@@ -35,11 +35,4 @@ public class ArenaMatchingController {
         Map<String, Object> response = arenaMatchingService.ForceGetReadyVersus(userId, map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
-
-    @PostMapping("/api/Test/Arena/Matching")
-    public ResponseDTO<Map<String, Object>> TestGetReadyVersus(@RequestBody userIdDto dto) {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> response = arenaMatchingService.GetReadyVersus(dto.getUserid(), map);
-        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
-    }
 }

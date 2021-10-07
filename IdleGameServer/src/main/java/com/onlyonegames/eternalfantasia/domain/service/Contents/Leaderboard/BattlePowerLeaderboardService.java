@@ -10,6 +10,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.Contents.BattlePowerRa
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.BattlePowerRedisRankingRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
+import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -68,6 +69,19 @@ public class BattlePowerLeaderboardService {
         return myRank;
     }
 
+    public double getPercent(Long userId) {
+        Long totalCount  = redisLongTemplate.opsForZSet().size(BATTLE_POWER_LEADERBOARD);
+        if (totalCount == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (totalCount == 0L) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        return MathHelper.Round2(getRank(userId) * 100d / totalCount);
+    }
+
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(BATTLE_POWER_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<BattlePowerRankingInfoDto> list = new ArrayList<>();
@@ -85,7 +99,7 @@ public class BattlePowerLeaderboardService {
             }
 
             BattlePowerRankingInfoDto battlePowerRankingInfoDto = new BattlePowerRankingInfoDto();
-            battlePowerRankingInfoDto.SetBattlePowerRankingInfoDto(id, value.getUserGameName(), tempRanking, tempBattlePower);
+            battlePowerRankingInfoDto.SetBattlePowerRankingInfoDto(id, value.getUserGameName(), tempRanking, tempBattlePower, 0);
             list.add(battlePowerRankingInfoDto);
             ranking++;
         }
@@ -98,9 +112,9 @@ public class BattlePowerLeaderboardService {
             throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
         }
         if(battlePowerRanking != null)
-            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), battlePowerRanking.getBattlePower());
+            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), battlePowerRanking.getBattlePower(), getPercent(userId));
         else
-            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), 0, 0L);
+            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;

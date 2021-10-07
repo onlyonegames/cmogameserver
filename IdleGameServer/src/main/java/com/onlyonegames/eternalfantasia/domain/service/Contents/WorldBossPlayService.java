@@ -43,14 +43,15 @@ public class WorldBossPlayService {
             myWorldBossPlayData = myWorldBossPlayDataRepository.save(myWorldBossPlayDataDto.ToEntity());
         }
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
+        WorldBossRankingDto worldBossRankingDto = new WorldBossRankingDto();
         if(worldBossRanking == null) {
-            WorldBossRankingDto worldBossRankingDto = new WorldBossRankingDto();
             worldBossRankingDto.SetFirstUser();
             map.put("worldBossRanking", worldBossRankingDto);
         }
         else {
             worldBossRanking.ResetRanking(worldBossLeaderboardService.getRank(userId));
-            map.put("worldBossRanking", worldBossRanking);
+            worldBossRankingDto.InitDbData(worldBossRanking, worldBossLeaderboardService.getPercent(userId));
+            map.put("worldBossRanking", worldBossRankingDto);
         }
         map.put("myWorldBossPlayData", myWorldBossPlayData);
         return map;

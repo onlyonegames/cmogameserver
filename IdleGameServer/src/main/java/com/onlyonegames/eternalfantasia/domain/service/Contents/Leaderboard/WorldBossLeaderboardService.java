@@ -10,6 +10,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.Contents.WorldBossRank
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.WorldBossRedisRankingRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
+import com.onlyonegames.util.MathHelper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -70,6 +71,20 @@ public class WorldBossLeaderboardService {
         return myRank;
     }
 
+    public double getPercent(Long userId) {
+        Long totalCount  = redisLongTemplate.opsForZSet().size(WORLD_BOSS_RANKING_LEADERBOARD);
+        if (totalCount == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (totalCount == 0L) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: Redis Score Not Find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: Redis Score Not Find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+
+        return MathHelper.Round2(getRank(userId) * 100d / totalCount);
+    }
+
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(WORLD_BOSS_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<WorldBossRankingInfoDto> list = new ArrayList<>();
@@ -87,7 +102,7 @@ public class WorldBossLeaderboardService {
             }
 
             WorldBossRankingInfoDto worldBossRankingInfoDto = new WorldBossRankingInfoDto();
-            worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, value.getUserGameName(), tempRanking, tempTotalDamage);
+            worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, value.getUserGameName(), tempRanking, tempTotalDamage, 0);
             list.add(worldBossRankingInfoDto);
             ranking++;
         }
@@ -95,14 +110,14 @@ public class WorldBossLeaderboardService {
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
         WorldBossRankingInfoDto myRankingInfo = new WorldBossRankingInfoDto();
         if(worldBossRanking != null)
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, worldBossRanking.getUserGameName(), getRank(userId).intValue(), worldBossRanking.getTotalDamage());
+            myRankingInfo.SetWorldBossRankingInfoDto(userId, worldBossRanking.getUserGameName(), getRank(userId).intValue(), worldBossRanking.getTotalDamage(), getPercent(userId));
         else {
             User user = userRepository.findById(userId).orElse(null);
             if(user == null) {
                 errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                 throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
             }
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, user.getUserGameName(), 0, 0L);
+            myRankingInfo.SetWorldBossRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
         }
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
