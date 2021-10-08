@@ -94,6 +94,11 @@ public class GetterService {
             throw new MyCustomException("Server Check", ResponseErrorCode.SERVER_CHECK);
         }
 
+        if(user.isBlackUser()) {
+            errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.BLACK_USER.getIntegerValue(), "Black User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Black User", ResponseErrorCode.BLACK_USER);
+        }
+
         //Request에 따라 entity를 불러옴
         for (CommandDto cmd : requestList.cmds) {
             for(ContainerDto containerDto : cmd.containers) {

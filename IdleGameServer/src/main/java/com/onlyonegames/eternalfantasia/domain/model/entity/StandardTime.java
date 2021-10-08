@@ -1,5 +1,6 @@
 package com.onlyonegames.eternalfantasia.domain.model.entity;
 
+import com.onlyonegames.eternalfantasia.domain.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class StandardTime {
+public class StandardTime extends BaseTimeEntity {
     @Id
     @TableGenerator(name = "hibernate_sequence")
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
