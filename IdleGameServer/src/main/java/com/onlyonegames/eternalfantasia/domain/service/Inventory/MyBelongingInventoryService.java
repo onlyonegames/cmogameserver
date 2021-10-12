@@ -4,8 +4,11 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyBelongingInventoryDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.BelongingInventoryJsonData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRedisRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
+import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
@@ -24,6 +27,18 @@ public class MyBelongingInventoryService {
     private final MyBelongingInventoryRepository myBelongingInventoryRepository;
     private final UserRepository userRepository;
     private final ErrorLoggingService errorLoggingService;
+    private final ArenaRankingRepository arenaRankingRepository;
+    private final ArenaRedisRankingRepository arenaRedisRankingRepository;
+    private final PreviousArenaRankingRepository previousArenaRankingRepository;
+    private final BattlePowerRankingRepository battlePowerRankingRepository;
+    private final BattlePowerRedisRankingRepository battlePowerRedisRankingRepository;
+    private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
+    private final StageRankingRepository stageRankingRepository;
+    private final StageRedisRankingRepository stageRedisRankingRepository;
+    private final PreviousStageRankingRepository previousStageRankingRepository;
+    private final WorldBossRankingRepository worldBossRankingRepository;
+    private final WorldBossRedisRankingRepository worldBossRedisRankingRepository;
+    private final PreviousWorldBossRankingRepository previousWorldBossRankingRepository;
 
     public Map<String, Object> SpendItem(Long userId, String code, int count, Map<String, Object> map) {
         String[] codeSplit = code.split("_");
@@ -71,6 +86,20 @@ public class MyBelongingInventoryService {
             map.put("count", myBelongingInventory.getCount());
         }
         user.SetUserName(gameName);
+
+        arenaRankingRepository.findByUseridUser(userId).ifPresent(arenaRanking -> arenaRanking.ResetUserGameName(gameName));
+        arenaRedisRankingRepository.findById(userId).ifPresent(arenaRedisRanking -> arenaRedisRanking.ResetUserGameName(gameName));
+        previousArenaRankingRepository.findByUseridUser(userId).ifPresent(previousArenaRanking -> previousArenaRanking.ResetUserGameName(gameName));
+        battlePowerRankingRepository.findByUseridUser(userId).ifPresent(battlePowerRanking -> battlePowerRanking.ResetUserGameName(gameName));
+        battlePowerRedisRankingRepository.findById(userId).ifPresent(battlePowerRedisRanking -> battlePowerRedisRanking.ResetUserGameName(gameName));
+        previousBattlePowerRankingRepository.findByUseridUser(userId).ifPresent(previousBattlePowerRanking -> previousBattlePowerRanking.ResetUserGameName(gameName));
+        stageRankingRepository.findByUseridUser(userId).ifPresent(stageRanking -> stageRanking.ResetUserGameName(gameName));
+        stageRedisRankingRepository.findById(userId).ifPresent(stageRedisRanking -> stageRedisRanking.ResetUserGameName(gameName));
+        previousStageRankingRepository.findByUseridUser(userId).ifPresent(previousStageRanking -> previousStageRanking.ResetUserGameName(gameName));
+        worldBossRankingRepository.findByUseridUser(userId).ifPresent(worldBossRanking -> worldBossRanking.ResetUserGameName(gameName));
+        worldBossRedisRankingRepository.findById(userId).ifPresent(worldBossRedisRanking -> worldBossRedisRanking.ResetUserGameName(gameName));
+        previousWorldBossRankingRepository.findByUseridUser(userId).ifPresent(previousWorldBossRanking -> previousWorldBossRanking.ResetUserGameName(gameName));
+
         map.put("userGameName", user.getUserGameName());
         return map;
     }

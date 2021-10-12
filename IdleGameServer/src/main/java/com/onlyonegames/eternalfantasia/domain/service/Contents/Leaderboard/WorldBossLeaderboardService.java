@@ -49,13 +49,16 @@ public class WorldBossLeaderboardService {
         else {
             worldBossRanking.refresh(totalDamage);
             worldBossRanking.ResetBestDamage(baseDamage);
+            worldBossRanking.ResetUserGameName(user.getUserGameName());
         }
         if(!user.isDummyUser()) {
             WorldBossRedisRanking worldBossRedisRanking = worldBossRedisRankingRepository.findById(userId).orElse(null);
             if(worldBossRedisRanking == null)
                 worldBossRedisRanking = WorldBossRedisRanking.builder().id(userId).totalDamage(totalDamage).userGameName(user.getUserGameName()).build();
-            else
+            else {
                 worldBossRedisRanking.refresh(totalDamage);
+                worldBossRedisRanking.ResetUserGameName(user.getUserGameName());
+            }
             worldBossRedisRankingRepository.save(worldBossRedisRanking);
 
             redisLongTemplate.opsForZSet().add(WORLD_BOSS_RANKING_LEADERBOARD, userId, totalDamage);

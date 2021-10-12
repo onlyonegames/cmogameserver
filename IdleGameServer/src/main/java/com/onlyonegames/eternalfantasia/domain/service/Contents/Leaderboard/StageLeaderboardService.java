@@ -47,13 +47,16 @@ public class StageLeaderboardService {
         }
         else {
             stageRanking.refresh(point);
+            stageRanking.ResetUserGameName(user.getUserGameName());
         }
         if(!user.isDummyUser()) {
             StageRedisRanking stageRedisRanking = stageRedisRankingRepository.findById(userId).orElse(null);
             if(stageRedisRanking == null)
                 stageRedisRanking = StageRedisRanking.builder().id(userId).point(point).userGameName(user.getUserGameName()).build();
-            else
+            else {
                 stageRedisRanking.refresh(point);
+                stageRedisRanking.ResetUserGameName(user.getUserGameName());
+            }
             stageRedisRankingRepository.save(stageRedisRanking);
 
             redisLongTemplate.opsForZSet().add(STAGE_RANKING_LEADERBOARD, userId, point);

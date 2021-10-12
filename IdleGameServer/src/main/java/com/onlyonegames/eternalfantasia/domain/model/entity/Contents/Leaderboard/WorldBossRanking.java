@@ -41,4 +41,8 @@ public class WorldBossRanking extends BaseTimeEntity {
         this.bestDamage = 0L;
         this.ranking = 0;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

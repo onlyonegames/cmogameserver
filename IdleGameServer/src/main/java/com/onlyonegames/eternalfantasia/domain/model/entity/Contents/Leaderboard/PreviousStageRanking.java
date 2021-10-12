@@ -25,4 +25,8 @@ public class PreviousStageRanking extends BaseTimeEntity {
     public void ReceiveReward() {
         this.receivable = false;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

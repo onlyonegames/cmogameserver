@@ -27,4 +27,8 @@ public class BattlePowerRanking extends BaseTimeEntity {
     public void SetRanking(int ranking) {
         this.ranking = ranking;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

@@ -21,4 +21,8 @@ public class StageRedisRanking implements Serializable {
     public void refresh(int point) {
         this.point = point;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

@@ -21,4 +21,8 @@ public class WorldBossRedisRanking implements Serializable {
     public void refresh(Long totalDamage) {
         this.totalDamage = totalDamage;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

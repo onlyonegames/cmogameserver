@@ -29,6 +29,10 @@ public class ArenaRanking extends BaseTimeEntity {
         this.ranking = ranking;
     }
 
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
+
     public void SetFirstUser() {
         this.point = 0;
         this.ranking = 0;

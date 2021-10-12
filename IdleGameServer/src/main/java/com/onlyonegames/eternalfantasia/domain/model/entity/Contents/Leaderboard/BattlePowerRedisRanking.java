@@ -21,4 +21,8 @@ public class BattlePowerRedisRanking implements Serializable {
     public void refresh(Long battlePower) {
         this.battlePower = battlePower;
     }
+
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
 }

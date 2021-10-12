@@ -28,4 +28,8 @@ public class StageRanking extends BaseTimeEntity {
         this.ranking = ranking;
     }
 
+    public void ResetUserGameName(String userGameName) {
+        this.userGameName = userGameName;
+    }
+
 }

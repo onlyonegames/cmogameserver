@@ -45,14 +45,18 @@ public class BattlePowerLeaderboardService {
             battlePowerRanking = BattlePowerRanking.builder().useridUser(userId).battlePower(battlePower).userGameName(user.getUserGameName()).build();
             battlePowerRanking = battlePowerRankingRepository.save(battlePowerRanking);
         }
-        else
+        else {
             battlePowerRanking.refresh(battlePower);
+            battlePowerRanking.ResetUserGameName(user.getUserGameName());
+        }
         if(!user.isDummyUser()) {
             BattlePowerRedisRanking battlePowerRedisRanking = battlePowerRedisRankingRepository.findById(userId).orElse(null);
             if(battlePowerRedisRanking == null)
                 battlePowerRedisRanking = BattlePowerRedisRanking.builder().id(userId).battlePower(battlePower).userGameName(user.getUserGameName()).build();
-            else
+            else {
                 battlePowerRedisRanking.refresh(battlePower);
+                battlePowerRedisRanking.ResetUserGameName(user.getUserGameName());
+            }
             battlePowerRedisRankingRepository.save(battlePowerRedisRanking);
 
             redisLongTemplate.opsForZSet().add(BATTLE_POWER_LEADERBOARD, userId, battlePower);

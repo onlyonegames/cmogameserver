@@ -46,6 +46,7 @@ public class ArenaLeaderboardService {
         }
         else {
             arenaRanking.refresh(point);
+            arenaRanking.ResetUserGameName(user.getUserGameName());
         }
         if(!user.isDummyUser()) {
             ArenaRedisRanking arenaRedisRanking = arenaRedisRankingRepository.findById(userId).orElse(null);
@@ -53,6 +54,7 @@ public class ArenaLeaderboardService {
                 arenaRedisRanking = ArenaRedisRanking.builder().id(userId).point(point).userGameName(user.getUserGameName()).build();
             } else {
                 arenaRedisRanking.refresh(point);
+                arenaRedisRanking.ResetUserGameName(user.getUserGameName());
             }
             arenaRedisRankingRepository.save(arenaRedisRanking);
 
