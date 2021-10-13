@@ -2,6 +2,7 @@ package com.onlyonegames.eternalfantasia.domain.model.dto.Contents;
 
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.PreviousStageRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRedisRanking;
 import lombok.Data;
 
 @Data
@@ -23,5 +24,12 @@ public class PreviousStageRankingDto {
         this.userGameName = dbData.getUserGameName();
         this.point = dbData.getPoint();
         this.ranking = dbData.getRanking();
+    }
+
+    public void InitFromRedisData(StageRedisRanking redisData, int ranking) {
+        this.useridUser = redisData.getId();
+        this.userGameName = redisData.getUserGameName();
+        this.point = redisData.getPoint();
+        this.ranking = ranking;
     }
 }

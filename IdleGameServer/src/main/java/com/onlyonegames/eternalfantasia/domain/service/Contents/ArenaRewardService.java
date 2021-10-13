@@ -47,20 +47,20 @@ public class ArenaRewardService {
 
         int myRanking = previousArenaRanking.getRanking();
         if (myRanking == 1) {
-            gettingItemCount = "50000";
+            gettingItemCount = "20000";
         }
         else if (myRanking == 2) {
-            gettingItemCount = "30000";
+            gettingItemCount = "15000";
         }
         else if (myRanking == 3) {
-            gettingItemCount = "20000";
+            gettingItemCount = "10000";
         }
         else {
             long totalCount = previousArenaRankingRepository.count();
 
             int myPercent = Math.round(myRanking *100f / totalCount);
             if (myPercent <= 10) {
-                gettingItemCount = "10000";
+                gettingItemCount = "9000";
             }
             else if (myPercent <= 30) {
                 gettingItemCount = "8000";

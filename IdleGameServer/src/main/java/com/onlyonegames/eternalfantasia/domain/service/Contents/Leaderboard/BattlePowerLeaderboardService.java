@@ -87,6 +87,7 @@ public class BattlePowerLeaderboardService {
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(BATTLE_POWER_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<BattlePowerRankingInfoDto> list = new ArrayList<>();
+        BattlePowerRankingInfoDto myRankingInfo = null;
         int ranking = 1;
         Long tempBattlePower = 0L;
         int tempRanking = 0;
@@ -104,19 +105,23 @@ public class BattlePowerLeaderboardService {
             battlePowerRankingInfoDto.SetBattlePowerRankingInfoDto(id, value.getUserGameName(), tempRanking, tempBattlePower, 0);
             list.add(battlePowerRankingInfoDto);
             ranking++;
+            if (id.equals(userId))
+                myRankingInfo = battlePowerRankingInfoDto;
         }
 
-        BattlePowerRanking battlePowerRanking = battlePowerRankingRepository.findByUseridUser(userId).orElse(null);
-        BattlePowerRankingInfoDto myRankingInfo = new BattlePowerRankingInfoDto();
-        User user = userRepository.findById(userId).orElse(null);
-        if(user == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+        if (myRankingInfo == null){
+            myRankingInfo = new BattlePowerRankingInfoDto();
+            BattlePowerRanking battlePowerRanking = battlePowerRankingRepository.findByUseridUser(userId).orElse(null);
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) {
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+            }
+            if (battlePowerRanking != null)
+                myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), battlePowerRanking.getBattlePower(), getPercent(userId));
+            else
+                myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
         }
-        if(battlePowerRanking != null)
-            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), battlePowerRanking.getBattlePower(), getPercent(userId));
-        else
-            myRankingInfo.SetBattlePowerRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;

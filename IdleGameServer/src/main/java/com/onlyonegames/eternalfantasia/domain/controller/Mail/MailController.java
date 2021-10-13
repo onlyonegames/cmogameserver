@@ -53,4 +53,18 @@ public class MailController {
         Map<String, Object> response = myMailBoxService.ReadMailAll(userId, dto.getMailType(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
+
+    @GetMapping("/api/Test/Mail/PushMail12")
+    public ResponseDTO<Map<String, Object>> PushMail12() {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = myMailBoxService.DailySendMail12(map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @GetMapping("/api/Test/Mail/PushMail6")
+    public ResponseDTO<Map<String, Object>> PushMail6() {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = myMailBoxService.DailySendMail6(map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
 }

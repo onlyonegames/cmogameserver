@@ -9,10 +9,7 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousWorldB
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRanking;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.StageRanking;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
@@ -29,12 +26,13 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
+import static com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService.ARENA_RANKING_LEADERBOARD;
+import static com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD;
+import static com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService.STAGE_RANKING_LEADERBOARD;
+import static com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService.WORLD_BOSS_RANKING_LEADERBOARD;
 
 @Service
 @Transactional
@@ -61,6 +59,10 @@ public class StandardTimeResetService {
     private final MyShopInfoRepository myShopInfoRepository;
     private final MyGachaInfoRepository myGachaInfoRepository;
     private final ErrorLoggingService errorLoggingService;
+    private final ArenaRedisRankingRepository arenaRedisRankingRepository;
+    private final StageRedisRankingRepository stageRedisRankingRepository;
+    private final BattlePowerRedisRankingRepository battlePowerRedisRankingRepository;
+    private final WorldBossRedisRankingRepository worldBossRedisRankingRepository;
 
     public Map<String, Object> CheckTime(Map<String, Object> map) {
         StandardTime standardTime = standardTimeRepository.findById(1).orElse(null);
@@ -76,20 +78,20 @@ public class StandardTimeResetService {
 
         if(standardTime.getBaseDayTime().isBefore(now)){
             //TODO 일별 컨텐츠 업데이트 코드 또는 서비스 추가
-            ResetWorldBossRanking();
-            ResetArenaForDay();
-            ResetDayPass();
-            ResetMyGachaInfo();
-            standardTime.SetBaseDayTime();
+            ResetWorldBossRanking(); //시스템
+//            ResetArenaForDay();//유저
+//            ResetDayPass();//유저
+//            ResetMyGachaInfo();//유저
+            standardTime.SetBaseDayTime();//시스템
             day = true;
         }
         if(standardTime.getBaseWeekTime().isBefore(now)){
             //TODO 주별 컨텐츠 업데이트 코드 또는 서비스 추가
-            SetPreviousArenaRanking();
-            SetPreviousStageRanking();
-            SetPreviousBattlePowerRanking();
-            ResetChallengeTower(standardTime);
-            standardTime.SetBaseWeekTime();
+            SetPreviousArenaRanking();//시스템
+            SetPreviousStageRanking();//시스템
+            SetPreviousBattlePowerRanking();//시스템
+            ResetChallengeTower(standardTime);//시스템
+            standardTime.SetBaseWeekTime();//시스템
             week = true;
         }
         if(standardTime.getBaseMonthTime().isBefore(now)){
@@ -98,7 +100,7 @@ public class StandardTimeResetService {
             month = true;
         }
         if (day || week || month)
-            ResetShopPurchaseCount(day, week, month);
+            ResetShopPurchaseCount(day, week, month);//유저
         return map;
     }
 
@@ -120,21 +122,39 @@ public class StandardTimeResetService {
     }
 
     private void ResetWorldBossRanking() {
+        Long size = redisLongTemplate.opsForZSet().size(WORLD_BOSS_RANKING_LEADERBOARD);
+        if (size == null) {
+            errorLoggingService.SetErrorLog(0L, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "WORLD_BOSS_RANKING_LEADERBOARD", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("WORLD_BOSS_RANKING_LEADERBOARD", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(WORLD_BOSS_RANKING_LEADERBOARD, 0, size)).orElse(Collections.emptySet());
         List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
         previousWorldBossRankingRepository.deleteAll();
-        for(WorldBossRanking temp : worldBossRankingList) {
-            if (temp.getTotalDamage() == 0L)
+
+        int ranking = 1;
+        Long tempPoint = 0L;
+        int tempRanking = 0;
+
+        for (ZSetOperations.TypedTuple<Long> user : rankings) {
+            Long id = user.getValue();
+            WorldBossRanking worldBossRanking = worldBossRankingList.stream().filter(i -> i.getUseridUser().equals(id)).findAny().orElse(null);
+            if (worldBossRanking == null) {
+                ranking++;
                 continue;
+            }
+            worldBossRanking.ResetZero();
+            WorldBossRedisRanking value = worldBossRedisRankingRepository.findById(id).get();
+            if (!tempPoint.equals(value.getTotalDamage())) {
+                tempPoint = value.getTotalDamage();
+                tempRanking = ranking;
+            }
             PreviousWorldBossRankingDto previousWorldBossRankingDto = new PreviousWorldBossRankingDto();
-            previousWorldBossRankingDto.InitFromPreviousDB(temp);
-            Long ranking = worldBossLeaderboardService.getRank(temp.getUseridUser());
-            if (ranking == 0L)
-                continue;
-            previousWorldBossRankingDto.setRanking(ranking.intValue());
+            previousWorldBossRankingDto.InitFromRedisData(value, worldBossRanking, tempRanking);
             previousWorldBossRankingRepository.save(previousWorldBossRankingDto.ToEntity());
-            temp.ResetZero();
+            ranking++;
+            worldBossRankingList.remove(worldBossRanking);
         }
-        redisLongTemplate.opsForZSet().getOperations().delete(WorldBossLeaderboardService.WORLD_BOSS_RANKING_LEADERBOARD);
+        redisLongTemplate.opsForZSet().getOperations().delete(WORLD_BOSS_RANKING_LEADERBOARD);
         List<MyWorldBossPlayData> myWorldBossPlayDataList = myWorldBossPlayDataRepository.findAll();
         for(MyWorldBossPlayData temp : myWorldBossPlayDataList) {
             temp.ResetPlayableCount();
@@ -142,39 +162,83 @@ public class StandardTimeResetService {
     }
 
     private void SetPreviousArenaRanking() {
-        List<ArenaRanking> arenaRankingList = arenaRankingRepository.findAll();
+        Long size = redisLongTemplate.opsForZSet().size(ARENA_RANKING_LEADERBOARD);
+        if (size == null) {
+            errorLoggingService.SetErrorLog(0L, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "ARENA_RANKING_LEADERBOARD", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("ARENA_RANKING_LEADERBOARD", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(ARENA_RANKING_LEADERBOARD, 0, size)).orElse(Collections.emptySet());
         previousArenaRankingRepository.deleteAll();
-        for(ArenaRanking temp : arenaRankingList) {
+
+        int ranking = 1;
+        int tempPoint = 0;
+        int tempRanking = 0;
+
+        for(ZSetOperations.TypedTuple<Long> user : rankings) {
+            Long id = user.getValue();
+            ArenaRedisRanking value = arenaRedisRankingRepository.findById(id).get();
+            if(tempPoint != value.getPoint()) {
+                tempPoint = value.getPoint();
+                tempRanking = ranking;
+            }
             PreviousArenaRankingDto previousArenaRankingDto = new PreviousArenaRankingDto();
-            previousArenaRankingDto.InitFromPreviousDb(temp);
-            Long ranking = arenaLeaderboardService.getRank(temp.getUseridUser());
-            previousArenaRankingDto.setRanking(ranking.intValue());
+            previousArenaRankingDto.InitFromRedisData(value, tempRanking);
             previousArenaRankingRepository.save(previousArenaRankingDto.ToEntity());
+            ranking++;
         }
     }
 
     private void SetPreviousStageRanking() {
-        List<StageRanking> stageRankingList = stageRankingRepository.findAll();
+        Long size = redisLongTemplate.opsForZSet().size(STAGE_RANKING_LEADERBOARD);
+        if (size == null) {
+            errorLoggingService.SetErrorLog(0L, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "STAGE_RANKING_LEADERBOARD", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("STAGE_RANKING_LEADERBOARD", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(STAGE_RANKING_LEADERBOARD, 0, size)).orElse(Collections.emptySet());
         previousStageRankingRepository.deleteAll();
-        for (StageRanking temp : stageRankingList) {
+
+        int ranking = 1;
+        int tempPoint = 0;
+        int tempRanking = 0;
+
+        for (ZSetOperations.TypedTuple<Long> user : rankings) {
+            Long id = user.getValue();
+            StageRedisRanking value = stageRedisRankingRepository.findById(id).get();
+            if (tempPoint != value.getPoint()) {
+                tempPoint = value.getPoint();
+                tempRanking = ranking;
+            }
             PreviousStageRankingDto previousStageRankingDto = new PreviousStageRankingDto();
-            previousStageRankingDto.InitDB(temp);
-            Long ranking = stageLeaderboardService.getRank(temp.getUseridUser());
-            previousStageRankingDto.setRanking(ranking.intValue());
+            previousStageRankingDto.InitFromRedisData(value, tempRanking);
             previousStageRankingRepository.save(previousStageRankingDto.ToEntity());
+            ranking++;
         }
     }
 
     private void SetPreviousBattlePowerRanking() {
-        List<BattlePowerRanking> battlePowerRankingList = battlePowerRankingRepository.findAll();
-//        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD));
+        Long size = redisLongTemplate.opsForZSet().size(BATTLE_POWER_LEADERBOARD);
+        if (size == null) {
+            errorLoggingService.SetErrorLog(0L, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "BATTLE_POWER_LEADERBOARD", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("BATTLE_POWER_LEADERBOARD", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(BATTLE_POWER_LEADERBOARD, 0, size)).orElse(Collections.emptySet());
         previousBattlePowerRankingRepository.deleteAll();
-        for (BattlePowerRanking temp : battlePowerRankingList) {
+
+        int ranking = 1;
+        Long tempBattlePower = 0L;
+        int tempRanking = 0;
+
+        for (ZSetOperations.TypedTuple<Long> user : rankings) {
+            Long id = user.getValue();
+            BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).get();
+            if (!tempBattlePower.equals(value.getBattlePower())) {
+                tempBattlePower = value.getBattlePower();
+                tempRanking = ranking;
+            }
             PreviousBattlePowerRankingDto previousBattlePowerRankingDto = new PreviousBattlePowerRankingDto();
-            previousBattlePowerRankingDto.InitFromPreviousDb(temp);
-            Long ranking = battlePowerLeaderboardService.getRank(temp.getUseridUser());
-            previousBattlePowerRankingDto.setRanking(ranking.intValue());
+            previousBattlePowerRankingDto.InitFromRedisData(value, tempRanking);
             previousBattlePowerRankingRepository.save(previousBattlePowerRankingDto.ToEntity());
+            ranking++;
         }
     }
 

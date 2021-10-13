@@ -6,8 +6,10 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.GetterReques
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.RequestDto;
 import com.onlyonegames.eternalfantasia.domain.service.GetterService;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +31,14 @@ public class GetterController {
         modifyData.cmds = new ArrayList<>();
         modifyData.cmds.addAll(dto.cmds);
         Map<String, Object> response = getterService.Getter(userId, modifyData, map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @GetMapping("/api/LastResetTime")
+    public ResponseDTO<Map<String, Object>> LastResetTime() {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = getterService.GetLastResetTime(userId, map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }

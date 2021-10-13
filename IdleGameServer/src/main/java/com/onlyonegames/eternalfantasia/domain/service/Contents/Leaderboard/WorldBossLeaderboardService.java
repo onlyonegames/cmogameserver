@@ -89,6 +89,7 @@ public class WorldBossLeaderboardService {
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(WORLD_BOSS_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<WorldBossRankingInfoDto> list = new ArrayList<>();
+        WorldBossRankingInfoDto myRankingInfo = null;
         int ranking = 1;
         Long tempTotalDamage = 0L;
         int tempRanking = 0;
@@ -106,19 +107,23 @@ public class WorldBossLeaderboardService {
             worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, value.getUserGameName(), tempRanking, tempTotalDamage, 0);
             list.add(worldBossRankingInfoDto);
             ranking++;
+            if (id.equals(userId))
+                myRankingInfo = worldBossRankingInfoDto;
         }
 
-        WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
-        WorldBossRankingInfoDto myRankingInfo = new WorldBossRankingInfoDto();
-        if(worldBossRanking != null)
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, worldBossRanking.getUserGameName(), getRank(userId).intValue(), worldBossRanking.getTotalDamage(), getPercent(userId));
-        else {
-            User user = userRepository.findById(userId).orElse(null);
-            if(user == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+        if (myRankingInfo == null){
+            myRankingInfo = new WorldBossRankingInfoDto();
+            WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
+            if (worldBossRanking != null)
+                myRankingInfo.SetWorldBossRankingInfoDto(userId, worldBossRanking.getUserGameName(), getRank(userId).intValue(), worldBossRanking.getTotalDamage(), getPercent(userId));
+            else {
+                User user = userRepository.findById(userId).orElse(null);
+                if (user == null) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+                }
+                myRankingInfo.SetWorldBossRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
             }
-            myRankingInfo.SetWorldBossRankingInfoDto(userId, user.getUserGameName(), 0, 0L, 0);
         }
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);

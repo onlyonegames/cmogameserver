@@ -86,6 +86,7 @@ public class StageLeaderboardService {
     public Map<String, Object> GetLeaderboardForAllUser (Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(STAGE_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<StageRankingInfoDto> list = new ArrayList<>();
+        StageRankingInfoDto myRankingInfo = null;
         int ranking = 1;
         int tempPoint = 0;
         int tempRanking = 0;
@@ -103,19 +104,23 @@ public class StageLeaderboardService {
             stageRankingInfoDto.SetStageRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(stageRankingInfoDto);
             ranking++;
+            if (id.equals(userId))
+                myRankingInfo = stageRankingInfoDto;
         }
 
-        StageRanking stageRanking = stageRankingRepository.findByUseridUser(userId).orElse(null);
-        StageRankingInfoDto myRankingInfo = new StageRankingInfoDto();
-        if(stageRanking != null)
-            myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), getRank(userId).intValue(), stageRanking.getPoint(), getPercent(userId));
-        else {
-            User user = userRepository.findById(userId).orElse(null);
-            if(user == null) {
-                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+        if (myRankingInfo == null){
+            myRankingInfo = new StageRankingInfoDto();
+            StageRanking stageRanking = stageRankingRepository.findByUseridUser(userId).orElse(null);
+            if (stageRanking != null)
+                myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), getRank(userId).intValue(), stageRanking.getPoint(), getPercent(userId));
+            else {
+                User user = userRepository.findById(userId).orElse(null);
+                if (user == null) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+                }
+                myRankingInfo.SetStageRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
             }
-            myRankingInfo.SetStageRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
         }
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);

@@ -93,6 +93,7 @@ public class ArenaLeaderboardService {
     public Map<String, Object> GetLeaderboardForAllUser(Long userId, long bottom, long top, Map<String, Object> map) {
         Set<ZSetOperations.TypedTuple<Long>> rankings = Optional.ofNullable(redisLongTemplate.opsForZSet().reverseRangeWithScores(ARENA_RANKING_LEADERBOARD, bottom, top)).orElse(Collections.emptySet());
         List<ArenaRankingInfoDto> list = new ArrayList<>();
+        ArenaRankingInfoDto myRankingInfo = null;
         int ranking = 1;
         int tempPoint = 0;
         int tempRanking = 0;
@@ -110,18 +111,23 @@ public class ArenaLeaderboardService {
             arenaRankingInfoDto.SetArenaRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(arenaRankingInfoDto);
             ranking++;
+            if (id.equals(userId))
+                myRankingInfo = arenaRankingInfoDto;
         }
-        ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
-        ArenaRankingInfoDto myRankingInfo = new ArenaRankingInfoDto();
-        User user = userRepository.findById(userId).orElse(null);
-        if(user == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+        if (myRankingInfo == null){
+            myRankingInfo = new ArenaRankingInfoDto();
+            ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
+
+            User user = userRepository.findById(userId).orElse(null);
+            if (user == null) {
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: user not find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("Fail! -> Cause: user not find", ResponseErrorCode.NOT_FIND_DATA);
+            }
+            if (arenaRanking != null)
+                myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), arenaRanking.getPoint(), getPercent(userId));
+            else
+                myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
         }
-        if(arenaRanking != null)
-            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), getRank(userId).intValue(), arenaRanking.getPoint(), getPercent(userId));
-        else
-            myRankingInfo.SetArenaRankingInfoDto(userId, user.getUserGameName(), 0, 0, 0);
         map.put("myRankingInfo", myRankingInfo);
         map.put("ranking", list);
         return map;

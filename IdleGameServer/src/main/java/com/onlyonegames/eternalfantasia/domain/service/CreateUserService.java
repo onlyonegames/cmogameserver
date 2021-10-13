@@ -1,5 +1,8 @@
 package com.onlyonegames.eternalfantasia.domain.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -85,6 +88,8 @@ public class CreateUserService
 
     private final ErrorLoggingService errorLoggingService;
 
+    private final StandardTimeRepository standardTimeRepository;
+
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
     {
         Set<Role> roles = new HashSet<>();
@@ -101,6 +106,12 @@ public class CreateUserService
         userCreateDto.setRoles(roles);
         User previousUser = userCreateDto.ToEntity();
         User createdUser = userRepository.save(previousUser);
+
+        StandardTime standardTime = standardTimeRepository.getOne(1);
+
+        createdUser.SetLastDayResetTime(standardTime.getBaseDayTime());
+        createdUser.SetLastWeekResetTime(standardTime.getBaseWeekTime());
+        createdUser.SetLastMonthResetTime(standardTime.getBaseMonthTime());
 
         map.put("user", createdUser);
         long userid = createdUser.getId();

@@ -1,7 +1,9 @@
 package com.onlyonegames.eternalfantasia.domain.model.dto.Contents;
 
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRedisRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.PreviousWorldBossRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.WorldBossRedisRanking;
 import lombok.Data;
 
 @Data
@@ -20,6 +22,14 @@ public class PreviousWorldBossRankingDto {
         this.totalDamage = dbData.getTotalDamage();
         this.bestDamage = dbData.getBestDamage();
         this.ranking = dbData.getRanking();
+    }
+
+    public void InitFromRedisData(WorldBossRedisRanking redisData, WorldBossRanking dbData, int ranking) {
+        this.useridUser = redisData.getId();
+        this.userGameName = redisData.getUserGameName();
+        this.totalDamage = redisData.getTotalDamage();
+        this.bestDamage = dbData.getBestDamage();
+        this.ranking = ranking;
     }
 
     /**

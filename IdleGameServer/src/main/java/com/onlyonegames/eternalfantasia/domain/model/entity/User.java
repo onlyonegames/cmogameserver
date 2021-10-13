@@ -67,6 +67,9 @@ public class User {
     LocalDateTime lastloginDate;
     LocalDateTime previousLoginDate;
     LocalDateTime lastSettingTime;
+    LocalDateTime lastDayResetTime;
+    LocalDateTime lastWeekResetTime;
+    LocalDateTime lastMonthResetTime;
 
     @Builder
     public User(String socialId, String password, String socialProvider, String userGameName, Set<Role> roles) {
@@ -268,5 +271,17 @@ public class User {
     public void ExchangeSocial(String socialId, String socialProvider) {
         this.socialId = socialId;
         this.socialProvider = socialProvider;
+    }
+
+    public void SetLastDayResetTime(LocalDateTime lastDayResetTime) {
+        this.lastDayResetTime = lastDayResetTime;
+    }
+
+    public void SetLastWeekResetTime(LocalDateTime lastWeekResetTime) {
+        this.lastWeekResetTime = lastWeekResetTime;
+    }
+
+    public void SetLastMonthResetTime(LocalDateTime lastMonthResetTime) {
+        this.lastMonthResetTime = lastMonthResetTime;
     }
 }

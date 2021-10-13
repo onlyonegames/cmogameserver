@@ -18,9 +18,11 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyLevelRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 
+import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
@@ -42,6 +44,9 @@ public class UserService {
     private final MyPassDataRepository myPassDataRepository;
     private final ServerStatusInfoRepository serverStatusInfoRepository;
     private final MyMailBoxService myMailBoxService;
+    private final MyArenaPlayDataRepository myArenaPlayDataRepository;
+    private final MyGachaInfoRepository myGachaInfoRepository;
+    private final MyShopInfoRepository myShopInfoRepository;
 
 
     //세션 redis
@@ -82,6 +87,8 @@ public class UserService {
 
         map.put("standardTime", standardTime);
 
+
+
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
         if (myPassData == null) {
             MyDayRewardDataJsonDto myDayRewardDataJsonDto = new MyDayRewardDataJsonDto();
@@ -103,49 +110,7 @@ public class UserService {
                     .json_stageSaveData(json_stage).gettingCount(0L).build();
             myPassData = myPassDataRepository.save(myPassData);
         }
-        String json_saveData = myPassData.getJson_attendanceSaveData();
-        MyAttendanceDataJsonDto myAttendanceDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_saveData, MyAttendanceDataJsonDto.class);
-        if (CheckAttendance(myPassData, myAttendanceDataJsonDto)) {
-            //TODO 남은 보상 메일로 보상처리 보상 테이블 확인 필요
-            Map<String, Object> tempMap = new HashMap<>();
-            LocalDateTime now = LocalDateTime.now();
-            List<AttendanceFreePassTable> attendanceFreePassTableList = gameDataTableService.AttendanceFreePassTable();
-            List<AttendanceBuyPassTable> attendanceBuyPassTableList = gameDataTableService.AttendanceBuyPassTable();
-            for (int i = 0; i <31; i++) {
-                if (!myAttendanceDataJsonDto.getRewardList().get(i)) {
-                    AttendanceFreePassTable attendanceFreePassTable = attendanceFreePassTableList.get(i);
-                    MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
-                    mailSendRequestDto.setToId(userId);
-                    mailSendRequestDto.setSendDate(now);
-                    mailSendRequestDto.setMailType(0);
-                    mailSendRequestDto.setExpireDate(now.plusDays(30));
-                    mailSendRequestDto.setTitle("미획득 출석보상 지급");
-                    mailSendRequestDto.setGettingItem(attendanceFreePassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
-                    mailSendRequestDto.setGettingItemCount(attendanceFreePassTable.getRewardCount());
-                    myMailBoxService.SendMail(mailSendRequestDto, tempMap);
-                }
-                else
-                    myAttendanceDataJsonDto.rewardList.set(i, false);
-                if (myAttendanceDataJsonDto.isPassPurchase()) {
-                    if (!myAttendanceDataJsonDto.getPassRewardList().get(i)) {
-                        AttendanceBuyPassTable attendanceBuyPassTable = attendanceBuyPassTableList.get(i);
-                        MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
-                        mailSendRequestDto.setToId(userId);
-                        mailSendRequestDto.setSendDate(now);
-                        mailSendRequestDto.setMailType(0);
-                        mailSendRequestDto.setExpireDate(now.plusDays(30));
-                        mailSendRequestDto.setTitle("미획득 구매 출석보상 지급");
-                        mailSendRequestDto.setGettingItem(attendanceBuyPassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
-                        mailSendRequestDto.setGettingItemCount(attendanceBuyPassTable.getRewardCount());
-                        myMailBoxService.SendMail(mailSendRequestDto, tempMap);
-                    }
-                    else
-                        myAttendanceDataJsonDto.passRewardList.set(i, false);
-                }
-            }
-        }
-        json_saveData = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
-        myPassData.ResetAttendanceJsonData(json_saveData);
+
 
         return map;
     }
@@ -229,5 +194,6 @@ public class UserService {
             return false;
         }
     }
+
 
 }

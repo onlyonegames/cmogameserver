@@ -63,7 +63,7 @@ public class MyMailBoxService {
 
         List<MyMailBoxJsonDto.MailBoxInfo> deleteExpireMyMailBoxList = new ArrayList<>();
 //        for (MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
-//            Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null); //TODO MailReadLog 위치 변경
+//            Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null); //MailReadLog 위치 변경
 //            if(mailInfo == null) {
 //                deleteExpireMyMailBoxList.add(mailBoxInfo);
 //                MyMailReadLogDto myMailReadLogDto = new MyMailReadLogDto();
@@ -116,7 +116,6 @@ public class MyMailBoxService {
         json_myMailBoxInfo = JsonStringHerlper.WriteValueAsStringFromData(myMailBoxJsonDto);
         myMailBox.ResetJsonMyMailBoxInfo(json_myMailBoxInfo);
 
-        //TODO API 응답구성
         List<MyMailBoxResponseDto> myMailBoxResponseDtoList = new ArrayList<>();
         for(MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
             Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null);
@@ -205,7 +204,6 @@ public class MyMailBoxService {
             json_myMailBoxInfo = JsonStringHerlper.WriteValueAsStringFromData(myMailBoxJsonDto);
             myMailBox.ResetJsonMyMailBoxInfo(json_myMailBoxInfo);
 
-            //TODO API 응답 구성 필요
             for(MyMailBoxJsonDto.MailBoxInfo mailBoxInfos : myMailBoxJsonDto.mailBoxInfoList) {
                 Mail mailInfos = mailList.stream().filter(i -> i.getId().equals(mailBoxInfos.mailId)).findAny().orElse(null);
                 if(mailInfos != null) {
@@ -338,7 +336,7 @@ public class MyMailBoxService {
         }
         mailRepository.deleteAll(deleteExpireMailList);
 
-        if(deleteExpireMyMailBoxList.size() > 0)//TODO 옮긴 이유가 받을 수 있는 메일은 받을 수 있도록 하기위해
+        if(deleteExpireMyMailBoxList.size() > 0)//옮긴 이유가 받을 수 있는 메일은 받을 수 있도록 하기위해
             mailBoxDto.mailBoxInfoList.removeAll(deleteExpireMyMailBoxList);
 
         json_myMailBoxInfo = JsonStringHerlper.WriteValueAsStringFromData(mailBoxDto);
@@ -363,6 +361,51 @@ public class MyMailBoxService {
         mail = mailRepository.save(mail);
         mailDto.InitFromDbData(mail);
         map.put("mail", mailDto);
+        return map;
+    }
+
+    //하루마다 보내는 보상 메일
+    public Map<String, Object> DailySendMail12(Map<String, Object> map) {
+        String gettingItem = "diamond:5000,goldBooster:2,soulStoneBooster:2,expBooster:2,itemBooster:2,speedBooster:2";
+        LocalDateTime now = LocalDateTime.now();
+        String[] gettingItemSplit = gettingItem.split(",");
+        for (String i : gettingItemSplit){
+            String[] temp = i.split(":");
+            MailDto mailDto = new MailDto();
+            mailDto.setToId(0L);
+            mailDto.setTitle("당신의 성장을 응원합니다.");
+            mailDto.setGettingItems(temp[0]);
+            mailDto.setGettingItemCounts(temp[1]);
+            mailDto.setMailType(0);
+            mailDto.setExpireDate(now.plusDays(1));
+            mailDto.setSendDate(now);
+            Mail mail = mailDto.ToEntity();
+            mail = mailRepository.save(mail);
+            mailDto.InitFromDbData(mail);
+            map.put("mail", mailDto);
+        }
+        return map;
+    }
+
+    public Map<String, Object> DailySendMail6(Map<String, Object> map) {
+        String gettingItem = "diamond:5000,dungeonTicket:20";
+        LocalDateTime now = LocalDateTime.now();
+        String[] gettingItemSplit = gettingItem.split(",");
+        for (String i : gettingItemSplit){
+            String[] temp = i.split(":");
+            MailDto mailDto = new MailDto();
+            mailDto.setToId(0L);
+            mailDto.setTitle("당신의 성장을 응원합니다.");
+            mailDto.setGettingItems(temp[0]);
+            mailDto.setGettingItemCounts(temp[1]);
+            mailDto.setMailType(0);
+            mailDto.setExpireDate(now.plusDays(1));
+            mailDto.setSendDate(now);
+            Mail mail = mailDto.ToEntity();
+            mail = mailRepository.save(mail);
+            mailDto.InitFromDbData(mail);
+            map.put("mail", mailDto);
+        }
         return map;
     }
 }

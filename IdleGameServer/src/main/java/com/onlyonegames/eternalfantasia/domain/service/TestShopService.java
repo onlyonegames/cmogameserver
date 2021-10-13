@@ -3,11 +3,13 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.IapResponseDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.ShopPurchaseLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.ShopPurchaseLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
@@ -37,6 +39,7 @@ public class TestShopService {
     private final MyMailBoxService myMailBoxService;
     private final UserRepository userRepository;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
+    private final ShopPurchaseLogRepository shopPurchaseLogRepository;
 
     public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
@@ -51,7 +54,7 @@ public class TestShopService {
         }
         List<ShopRewardTable> shopRewardTableList = gameDataTableService.ShopRewardTable();
         ShopRewardTable shopRewardTable = shopRewardTableList.get(itemIndex);
-        SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
+        boolean log = SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
         String[] rewardList = shopRewardTable.getRewardList().split(",");
         switch (shopRewardTable.getItemName()) {
             case "무료 다이아":
@@ -221,6 +224,11 @@ public class TestShopService {
                     break;
             }
         }
+        if (log) {
+            ShopPurchaseLogDto shopPurchaseLogDto = new ShopPurchaseLogDto();
+            shopPurchaseLogDto.SetShopPurchaseLogDto(userId, shopRewardTable.getItemName(), shopRewardTable.getCurrencyType());
+            shopPurchaseLogRepository.save(shopPurchaseLogDto.ToEntity());
+        }
         map.put("myShopInfo", myShopInfo);
         map.put("userInfo", user);
         return map;
@@ -298,19 +306,22 @@ public class TestShopService {
         myMailBoxService.SendMail(mailSendRequestDto, tempMap);
     }
 
-    private void SpendPrice(User user, String currencyType, int price, String payLoad) {
+    private boolean SpendPrice(User user, String currencyType, int price, String payLoad) {
+        boolean log = false;
         switch (currencyType) {
             case "arenaCoin":
                 if (!user.SpendArenaCoin((long) price)) {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_ARENACOIN.getIntegerValue(), "Fail! -> Cause: Need More ArenaCoin.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More ArenaCoin.", ResponseErrorCode.NEED_MORE_ARENACOIN);
                 }
+                log = true;
                 break;
             case "dragonCoin":
                 if (!user.SpendDragonCoin((long) price)) {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_DRAGONCOIN.getIntegerValue(), "Fail! -> Cause: Need More DragonCoin.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More DragonCoin.", ResponseErrorCode.NEED_MORE_DRAGONCOIN);
                 }
+                log = true;
                 break;
             case "cash":
                 break;
@@ -319,7 +330,9 @@ public class TestShopService {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Need More Mileage.", ResponseErrorCode.NEED_MORE_MILEAGE);
                 }
+                log = true;
                 break;
         }
+        return log;
     }
 }

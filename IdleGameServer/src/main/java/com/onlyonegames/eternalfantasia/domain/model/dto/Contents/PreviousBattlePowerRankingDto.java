@@ -1,6 +1,7 @@
 package com.onlyonegames.eternalfantasia.domain.model.dto.Contents;
 
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRanking;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.BattlePowerRedisRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.PreviousBattlePowerRanking;
 import lombok.Data;
 
@@ -18,6 +19,13 @@ public class PreviousBattlePowerRankingDto {
         this.userGameName = dbData.getUserGameName();
         this.battlePower = dbData.getBattlePower();
         this.ranking = dbData.getRanking();
+    }
+
+    public void InitFromRedisData(BattlePowerRedisRanking redisData, int ranking) {
+        this.useridUser = redisData.getId();
+        this.userGameName = redisData.getUserGameName();
+        this.battlePower = redisData.getBattlePower();
+        this.ranking = ranking;
     }
 
     /**

@@ -4,27 +4,27 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.*;
-import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.CommandDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ContainerDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ElementDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.RequestDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.*;
-import com.onlyonegames.eternalfantasia.domain.model.gamedatas.AccessoryTable;
-import com.onlyonegames.eternalfantasia.domain.model.gamedatas.EquipmentTable;
-import com.onlyonegames.eternalfantasia.domain.model.gamedatas.ServerStatusInfo;
-import com.onlyonegames.eternalfantasia.domain.model.gamedatas.ServerStatusInfoRepository;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailBox;
+import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
+import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
@@ -59,9 +59,13 @@ public class GetterService {
     private final MyMissionInfoRepository myMissionInfoRepository;
     private final MyChatBlockInfoRepository myChatBlockInfoRepository;
     private final MyShopInfoRepository myShopInfoRepository;
+    private final StandardTimeRepository standardTimeRepository;
+    private final MyArenaPlayDataRepository myArenaPlayDataRepository;
+    private final MyMailBoxService myMailBoxService;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
+        StandardTime standardTime = standardTimeRepository.findById(1).orElse(null);
         MyPixieInfoData myPixieInfoData = null;
         MyRuneLevelInfoData myRuneLevelInfoData = null;
         List<MyRuneInventory> myRuneInventoryList = null;
@@ -395,6 +399,15 @@ public class GetterService {
                                             break;
                                         case "mileage":
                                             element.SetValue(user.getMileage());
+                                            break;
+                                        case "lastDayResetTime":
+                                            element.SetValue(user.getLastDayResetTime().toString());
+                                            break;
+                                        case "lastWeekResetTime":
+                                            element.SetValue(user.getLastWeekResetTime().toString());
+                                            break;
+                                        case "lastMonthResetTime":
+                                            element.SetValue(user.getLastMonthResetTime().toString());
                                             break;
                                     }
                                 }
@@ -807,6 +820,12 @@ public class GetterService {
                                     element.SetValue(field.get(myShopInfo).toString());
                                 }
                                 break;
+                            case "standardTime":
+                                for (ElementDto element : container.elements) {
+                                    Field field = standardTime.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(standardTime).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -1054,6 +1073,7 @@ public class GetterService {
                             case "battlePower":
                                 for (ElementDto element : container.elements) {
                                     if (element.getElement().equals("battlePower")){
+//                                        if ()
                                         user.SetBattlePower(element.getValue());
                                         battlePowerLeaderboardService.setScore(userId, Long.parseLong(element.getValue()));
                                     }
@@ -1091,8 +1111,159 @@ public class GetterService {
                     break;
             }
         }
+
+        boolean day = false;
+        boolean week = false;
+        boolean month = false;
+        if (standardTime.getBaseDayTime() != user.getLastDayResetTime()) {
+            ResetArenaForDay(userId);//유저
+            ResetDayPass(userId);//유저
+            ResetMyGachaInfo(userId);//유저
+            day = true;
+            user.SetLastDayResetTime(standardTime.getBaseDayTime());
+        }
+        if (standardTime.getBaseWeekTime() != user.getLastWeekResetTime()) {
+            week = true;
+            user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
+        }
+        if (standardTime.getBaseMonthTime() != user.getLastMonthResetTime()) {
+            month = true;
+            user.SetLastMonthResetTime(standardTime.getBaseMonthTime());
+        }
+
+        if (day || week || month)
+            ResetShopPurchaseCount(userId, day, week, month);
+        if (myPassData == null) {
+            myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
+            if(myPassData == null) {
+                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyPassData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                throw new MyCustomException("Not Found MyPassData", ResponseErrorCode.NOT_FIND_DATA);
+            }
+        }
+        String json_saveData = myPassData.getJson_attendanceSaveData();
+        MyAttendanceDataJsonDto myAttendanceDataJsonDto = JsonStringHerlper.ReadValueFromJson(json_saveData, MyAttendanceDataJsonDto.class);
+        if (CheckAttendance(myPassData, myAttendanceDataJsonDto)) {
+            //TODO 남은 보상 메일로 보상처리 보상 테이블 확인 필요
+            Map<String, Object> tempMap = new HashMap<>();
+            LocalDateTime now = LocalDateTime.now();
+            List<AttendanceFreePassTable> attendanceFreePassTableList = gameDataTableService.AttendanceFreePassTable();
+            List<AttendanceBuyPassTable> attendanceBuyPassTableList = gameDataTableService.AttendanceBuyPassTable();
+            for (int i = 0; i <31; i++) {
+                if (!myAttendanceDataJsonDto.getRewardList().get(i)) {
+                    AttendanceFreePassTable attendanceFreePassTable = attendanceFreePassTableList.get(i);
+                    MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+                    mailSendRequestDto.setToId(userId);
+                    mailSendRequestDto.setSendDate(now);
+                    mailSendRequestDto.setMailType(0);
+                    mailSendRequestDto.setExpireDate(now.plusDays(30));
+                    mailSendRequestDto.setTitle("미획득 출석보상 지급");
+                    mailSendRequestDto.setGettingItem(attendanceFreePassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
+                    mailSendRequestDto.setGettingItemCount(attendanceFreePassTable.getRewardCount());
+                    myMailBoxService.SendMail(mailSendRequestDto, tempMap);
+                }
+                if (myAttendanceDataJsonDto.isPassPurchase()) {
+                    if (!myAttendanceDataJsonDto.getPassRewardList().get(i)) {
+                        AttendanceBuyPassTable attendanceBuyPassTable = attendanceBuyPassTableList.get(i);
+                        MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+                        mailSendRequestDto.setToId(userId);
+                        mailSendRequestDto.setSendDate(now);
+                        mailSendRequestDto.setMailType(0);
+                        mailSendRequestDto.setExpireDate(now.plusDays(30));
+                        mailSendRequestDto.setTitle("미획득 구매 출석보상 지급");
+                        mailSendRequestDto.setGettingItem(attendanceBuyPassTable.getRewardType()); //TODO 보상 테이블에 있는 보상으로 지급
+                        mailSendRequestDto.setGettingItemCount(attendanceBuyPassTable.getRewardCount());
+                        myMailBoxService.SendMail(mailSendRequestDto, tempMap);
+                    }
+                }
+            }
+            myAttendanceDataJsonDto.Init();
+        }
+        json_saveData = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
+        myPassData.ResetAttendanceJsonData(json_saveData);
+
         map.put("cmdRequest", requestList.cmds);
         map.put("lastSettingTime", user.getLastSettingTime());
         return map;
+    }
+
+    public Map<String, Object> GetLastResetTime(Long userId, Map<String, Object> map) {
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        map.put("lastDayResetTime",user.getLastDayResetTime());
+        map.put("lastWeekResetTime",user.getLastWeekResetTime());
+        map.put("lastMonthResetTime",user.getLastMonthResetTime());
+        return map;
+    }
+
+    private void ResetArenaForDay(Long userId) {
+        MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
+        if (myArenaPlayData == null)
+            return;
+        myArenaPlayData.ResetReMatchingAbleCount();
+        myArenaPlayData.ResetPlayableCount();
+
+    }
+
+    private void ResetDayPass(Long userId) {
+        MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
+        if (myPassData == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyPassData Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyPassData Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        MyDayRewardDataJsonDto myDayRewardDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassData.getJson_daySaveData(), MyDayRewardDataJsonDto.class);
+        myDayRewardDataJsonDto.Init();
+        String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
+        myPassData.ResetDayJsonData(json_day);
+        myPassData.SetGettingCount();
+
+    }
+
+    private void ResetMyGachaInfo(Long userId) {
+        MyGachaInfo myGachaInfo = myGachaInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myGachaInfo == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyGachaInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyGachaInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        myGachaInfo.ResetADCount();
+
+    }
+
+    private void ResetShopPurchaseCount(Long userId, boolean day, boolean week, boolean month) {
+        MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
+
+        if (day)
+            myShopInfo.RechargeDay();
+        if (week)
+            myShopInfo.RechargeWeek();
+        if (month)
+            myShopInfo.RechargeMonth();
+
+    }
+
+    /**
+     * @return  boolean 값을 return true : 모든 아이템을 획득하도록 획득 서비스를 실행해야함
+     */
+    private boolean CheckAttendance(MyPassData myPassData, MyAttendanceDataJsonDto dto) {
+        LocalDateTime now = LocalDateTime.now();
+        Duration duration = Duration.between(myPassData.getLastAttendanceDate(), now);
+        if(duration.toDays()>=1) {
+            myPassData.ResetLastAttendanceDate(LocalDateTime.of(now.toLocalDate(), LocalTime.of(0, 0, 0)));
+            return PlusCount(dto);
+        }
+        return false;
+    }
+
+    private boolean PlusCount(MyAttendanceDataJsonDto dto) {
+        if(dto.gettingCount == 31) {
+            dto.gettingCount = 1;
+            return true;
+        }
+        else {
+            dto.gettingCount += 1;
+            return false;
+        }
     }
 }
