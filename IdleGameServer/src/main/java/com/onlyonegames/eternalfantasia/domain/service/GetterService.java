@@ -125,13 +125,6 @@ public class GetterService {
                                 case "dungeonTicket":
                                 case "arenaCoin":
                                 case "mileage":
-//                                    if (user == null) {
-//                                        user = userRepository.findById(userId).orElse(null);
-//                                        if (user == null) {
-//                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
-//                                        }
-//                                    }
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -161,13 +154,6 @@ public class GetterService {
                                 case "level":
                                 case "exp":
                                 case "sexType":
-//                                    if (user == null) {
-//                                        user = userRepository.findById(userId).orElse(null);
-//                                        if (user == null) {
-//                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-//                                            throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
-//                                        }
-//                                    }
                                     break;
                             }
                         }
@@ -1115,18 +1101,18 @@ public class GetterService {
         boolean day = false;
         boolean week = false;
         boolean month = false;
-        if (standardTime.getBaseDayTime().isEqual(user.getLastDayResetTime())) {
+        if (!standardTime.getBaseDayTime().isEqual(user.getLastDayResetTime())) {
             ResetArenaForDay(userId);//유저
             ResetDayPass(userId);//유저
             ResetMyGachaInfo(userId);//유저
             day = true;
             user.SetLastDayResetTime(standardTime.getBaseDayTime());
         }
-        if (standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
+        if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             week = true;
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
         }
-        if (standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
+        if (!standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
             month = true;
             user.SetLastMonthResetTime(standardTime.getBaseMonthTime());
         }
