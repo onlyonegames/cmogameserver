@@ -377,7 +377,7 @@ public class MyMailBoxService {
             mailDto.setGettingItems(temp[0]);
             mailDto.setGettingItemCounts(temp[1]);
             mailDto.setMailType(0);
-            mailDto.setExpireDate(now.plusDays(1));
+            mailDto.setExpireDate(now.plusHours(12));
             mailDto.setSendDate(now);
             Mail mail = mailDto.ToEntity();
             mail = mailRepository.save(mail);
@@ -399,7 +399,7 @@ public class MyMailBoxService {
             mailDto.setGettingItems(temp[0]);
             mailDto.setGettingItemCounts(temp[1]);
             mailDto.setMailType(0);
-            mailDto.setExpireDate(now.plusDays(1));
+            mailDto.setExpireDate(now.plusHours(12));
             mailDto.setSendDate(now);
             Mail mail = mailDto.ToEntity();
             mail = mailRepository.save(mail);
