@@ -1115,18 +1115,18 @@ public class GetterService {
         boolean day = false;
         boolean week = false;
         boolean month = false;
-        if (standardTime.getBaseDayTime() != user.getLastDayResetTime()) {
+        if (standardTime.getBaseDayTime().isEqual(user.getLastDayResetTime())) {
             ResetArenaForDay(userId);//유저
             ResetDayPass(userId);//유저
             ResetMyGachaInfo(userId);//유저
             day = true;
             user.SetLastDayResetTime(standardTime.getBaseDayTime());
         }
-        if (standardTime.getBaseWeekTime() != user.getLastWeekResetTime()) {
+        if (standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             week = true;
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
         }
-        if (standardTime.getBaseMonthTime() != user.getLastMonthResetTime()) {
+        if (standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
             month = true;
             user.SetLastMonthResetTime(standardTime.getBaseMonthTime());
         }
