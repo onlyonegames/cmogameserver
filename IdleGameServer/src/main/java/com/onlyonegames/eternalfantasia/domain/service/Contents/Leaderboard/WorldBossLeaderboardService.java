@@ -107,8 +107,10 @@ public class WorldBossLeaderboardService {
             worldBossRankingInfoDto.SetWorldBossRankingInfoDto(id, value.getUserGameName(), tempRanking, tempTotalDamage, 0);
             list.add(worldBossRankingInfoDto);
             ranking++;
-            if (id.equals(userId))
+            if (id.equals(userId)) {
                 myRankingInfo = worldBossRankingInfoDto;
+                myRankingInfo.setTotalPercent(getPercent(userId));
+            }
         }
 
         if (myRankingInfo == null){

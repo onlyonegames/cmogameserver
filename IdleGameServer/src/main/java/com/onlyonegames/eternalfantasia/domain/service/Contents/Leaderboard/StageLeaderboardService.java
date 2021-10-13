@@ -104,8 +104,10 @@ public class StageLeaderboardService {
             stageRankingInfoDto.SetStageRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(stageRankingInfoDto);
             ranking++;
-            if (id.equals(userId))
+            if (id.equals(userId)) {
                 myRankingInfo = stageRankingInfoDto;
+                myRankingInfo.setTotalPercent(getPercent(userId));
+            }
         }
 
         if (myRankingInfo == null){

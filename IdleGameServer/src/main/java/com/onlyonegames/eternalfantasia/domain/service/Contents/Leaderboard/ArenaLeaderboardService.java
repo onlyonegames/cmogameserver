@@ -111,8 +111,10 @@ public class ArenaLeaderboardService {
             arenaRankingInfoDto.SetArenaRankingInfoDto(id, value.getUserGameName(), tempRanking, tempPoint, 0);
             list.add(arenaRankingInfoDto);
             ranking++;
-            if (id.equals(userId))
+            if (id.equals(userId)) {
                 myRankingInfo = arenaRankingInfoDto;
+                myRankingInfo.setTotalPercent(getPercent(userId));
+            }
         }
         if (myRankingInfo == null){
             myRankingInfo = new ArenaRankingInfoDto();

@@ -105,8 +105,10 @@ public class BattlePowerLeaderboardService {
             battlePowerRankingInfoDto.SetBattlePowerRankingInfoDto(id, value.getUserGameName(), tempRanking, tempBattlePower, 0);
             list.add(battlePowerRankingInfoDto);
             ranking++;
-            if (id.equals(userId))
+            if (id.equals(userId)) {
                 myRankingInfo = battlePowerRankingInfoDto;
+                myRankingInfo.setTotalPercent(getPercent(userId));
+            }
         }
 
         if (myRankingInfo == null){
