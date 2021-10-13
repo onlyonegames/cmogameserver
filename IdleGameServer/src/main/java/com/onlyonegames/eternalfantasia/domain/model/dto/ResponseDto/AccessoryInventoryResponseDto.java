@@ -9,7 +9,7 @@ public class AccessoryInventoryResponseDto {
     String code;
     int count;
     int level;
-    Integer[] optionLockList;
+    String optionLockList;
     String options;
 
     public void InitFromDB(MyAccessoryInventory dbData) {

@@ -22,7 +22,7 @@ public class MyAccessoryInventory extends BaseTimeEntity {
     String code;
     int count;
     int level;
-    Integer[] optionLockList;
+    String optionLockList;
     String options;
 
     public void SetMyAccessoryInventory(AccessoryInventoryResponseDto dto) {
@@ -50,7 +50,7 @@ public class MyAccessoryInventory extends BaseTimeEntity {
         this.count -= 1;
     }
 
-    public void SetOptionLockList(List<Integer> optionLockList) {
-        this.optionLockList = optionLockList.toArray(new Integer[0]);
+    public void SetOptionLockList(String optionLockList) {
+        this.optionLockList = optionLockList;
     }
 }

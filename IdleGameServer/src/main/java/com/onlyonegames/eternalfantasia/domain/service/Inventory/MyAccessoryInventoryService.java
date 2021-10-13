@@ -4,6 +4,7 @@ import com.mysql.cj.xdevapi.JsonString;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.AccessoryOptionJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.OptionLockListJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.AccessoryInventoryResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyAccessoryInventory;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
@@ -66,9 +67,10 @@ public class MyAccessoryInventoryService {
             accessoryOptionJsonDto.options.add(optionInfo);
             String json_Option = JsonStringHerlper.WriteValueAsStringFromData(accessoryOptionJsonDto);
             myAccessoryInventory.Reset_Options(json_Option);
-            List<Integer> optionLockList = new ArrayList<>(Arrays.asList(myAccessoryInventory.getOptionLockList()));
-            optionLockList.add(0);
-            myAccessoryInventory.SetOptionLockList(optionLockList);
+            OptionLockListJsonDto optionLockListJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptionLockList(), OptionLockListJsonDto.class);
+            optionLockListJsonDto.optionLockList.add(0);
+            String optionLockListString = JsonStringHerlper.WriteValueAsStringFromData(optionLockListJsonDto);
+            myAccessoryInventory.SetOptionLockList(optionLockListString);
         }
         accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);
         map.put("myAccessoryInventory", accessoryInventoryResponseDto);
@@ -88,8 +90,9 @@ public class MyAccessoryInventoryService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found User", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Not Found User", ResponseErrorCode.NOT_FIND_DATA);
         }
+        OptionLockListJsonDto optionLockListJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptionLockList(), OptionLockListJsonDto.class);
         int lockCount = 0;
-        for(int i : myAccessoryInventory.getOptionLockList()){
+        for(int i : optionLockListJsonDto.optionLockList){
             if(i == 1)
                 lockCount++;
         }
@@ -107,7 +110,7 @@ public class MyAccessoryInventoryService {
 
         AccessoryOptionJsonDto accessoryOptionJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptions(), AccessoryOptionJsonDto.class);
         for(int i = 0; i < accessoryOptionJsonDto.options.size(); i++) {
-            if(myAccessoryInventory.getOptionLockList()[i] == 1)
+            if(optionLockListJsonDto.optionLockList.get(i) == 1)
                 continue;
             int option_Index = (int)(Math.random() *6);
             int option_Grade_Index = MathHelper.RandomIndexWidthProbability(probabilityList);

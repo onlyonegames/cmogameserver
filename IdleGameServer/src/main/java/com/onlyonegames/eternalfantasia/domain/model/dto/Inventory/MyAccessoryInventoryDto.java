@@ -10,7 +10,7 @@ public class MyAccessoryInventoryDto {
     String code;
     int count;
     int level;
-    Integer[] optionLockList;
+    String optionLockList;
     String options;
 
     public MyAccessoryInventory ToEntity() {
@@ -26,7 +26,7 @@ public class MyAccessoryInventoryDto {
         this.optionLockList = dbData.getOptionLockList();
     }
 
-    public void SetMyAccessoryInventoryDto(Long useridUser, String code, int count, int level, Integer[] optionLockList, String options) {
+    public void SetMyAccessoryInventoryDto(Long useridUser, String code, int count, int level, String optionLockList, String options) {
         this.useridUser = useridUser;
         this.code = code;
         this.count = count;

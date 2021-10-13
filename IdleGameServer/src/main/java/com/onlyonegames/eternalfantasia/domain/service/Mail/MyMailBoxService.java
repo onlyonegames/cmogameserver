@@ -366,7 +366,7 @@ public class MyMailBoxService {
 
     //하루마다 보내는 보상 메일
     public Map<String, Object> DailySendMail12(Map<String, Object> map) {
-        String gettingItem = "diamond:5000,goldBooster:2,soulStoneBooster:2,expBooster:2,itemBooster:2,speedBooster:2";
+        String gettingItem = "diamond:5000,item_011:2,item_012:2,item_013:2,item_014:2,item_015:2";
         LocalDateTime now = LocalDateTime.now();
         String[] gettingItemSplit = gettingItem.split(",");
         for (String i : gettingItemSplit){
