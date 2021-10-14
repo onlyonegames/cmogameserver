@@ -41,7 +41,7 @@ public class MyAttendanceDataJsonDto {
         for(int i = 0; i <31; i++){
             tempList.add(false);
         }
-        this.gettingCount = 0;
+        this.gettingCount = 1;
         this.rewardList = tempList;
         this.passPurchase = false;
         this.passRewardList = tempList;

@@ -106,7 +106,7 @@ public class UserService {
             LocalDateTime now = LocalDateTime.now();
             myPassData = MyPassData.builder().useridUser(userId).json_daySaveData(json_day)
                     .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level)
-                    .lastAttendanceDate(LocalDateTime.of(now.minusDays(1).toLocalDate(), LocalTime.of(0, 0, 0)))
+                    .lastAttendanceDate(LocalDateTime.of(now.toLocalDate(), LocalTime.of(0, 0, 0)))
                     .json_stageSaveData(json_stage).gettingCount(0L).build();
             myPassData = myPassDataRepository.save(myPassData);
         }

@@ -120,6 +120,8 @@ public class MyMailBoxService {
         for(MyMailBoxJsonDto.MailBoxInfo mailBoxInfo : myMailBoxJsonDto.mailBoxInfoList) {
             Mail mailInfo = mailList.stream().filter(i -> i.getId().equals(mailBoxInfo.mailId)).findAny().orElse(null);
             if(mailInfo != null) {
+                if (mailBoxInfo.hasRead && mailBoxInfo.received)
+                    continue;
                 MyMailBoxResponseDto myMailBoxResponseDto = new MyMailBoxResponseDto();
                 myMailBoxResponseDto.setMailId(mailInfo.getId());
                 myMailBoxResponseDto.setTitle(mailInfo.getTitle());
