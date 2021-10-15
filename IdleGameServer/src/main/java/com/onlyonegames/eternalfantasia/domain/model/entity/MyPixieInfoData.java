@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 public class MyPixieInfoData extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence")
+    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     public Long id;
     public Long useridUser;
@@ -26,7 +26,7 @@ public class MyPixieInfoData extends BaseTimeEntity {
     public int runeSlot5;
     public int runeSlot6;
 
-//    public void GetExp(Long addExp) { //TODO 공식 변경 가능성 있음 중요!!
+//    public void GetExp(Long addExp) {
 //        Long temp = addExp;
 //        do{
 //            if(this.exp + temp >= this.maxExp){

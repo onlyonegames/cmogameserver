@@ -13,7 +13,7 @@ import javax.persistence.*;
 @Builder
 public class MyContentsInfo extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence")
+    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
@@ -29,7 +29,7 @@ public class MyContentsInfo extends BaseTimeEntity {
         this.challengeTowerFloor = Integer.parseInt(challengeTowerFloor);
     }
 
-    public void ClearStage() { //TODO 마지막 스테이지를 확인하여 최대 제한
+    public void ClearStage() { //마지막 스테이지를 확인하여 최대 제한
         if(this.adventureStage+1>=140){
             if(this.adventureDifficulty < 3)
                 this.adventureDifficulty++;

@@ -14,12 +14,12 @@ import javax.persistence.*;
 @Builder
 public class MyEquipmentInventory extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence")
+    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
     String code;
-    String grade; //TODO grade가 꼭 필요한지 확인 필요
+    String grade;
     int count;
     int level;
 

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class MyDungeonInfo extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence")
+    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
