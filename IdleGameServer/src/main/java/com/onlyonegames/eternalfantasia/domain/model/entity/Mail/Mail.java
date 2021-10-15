@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class Mail extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long toId;/*0이면 시스템내 모든 유저*/

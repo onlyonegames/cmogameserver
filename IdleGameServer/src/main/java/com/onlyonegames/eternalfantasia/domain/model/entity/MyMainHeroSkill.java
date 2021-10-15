@@ -19,7 +19,7 @@ import lombok.ToString;
 @Entity
 public class MyMainHeroSkill extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;

@@ -18,7 +18,7 @@ public class MyStatusInfo extends BaseTimeEntity
         PHYSICAL_ATTACK_POWER, MAGIC_ATTACK_POWER, MAX_HEALTH_POINT, MAX_MANA_POINT, CRITICAL_CHANCE, CRITICAL_PERCENT
     }
     @Id
-    @TableGenerator(name = "hibernate_sequence", allocationSize = 1000)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
