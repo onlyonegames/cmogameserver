@@ -15,8 +15,8 @@ import java.util.List;
 @Builder
 public class MyAccessoryInventory extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
+    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     Long useridUser;
     String code;

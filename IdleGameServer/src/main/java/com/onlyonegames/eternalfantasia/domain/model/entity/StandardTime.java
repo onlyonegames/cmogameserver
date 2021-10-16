@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StandardTime extends BaseTimeEntity {
     @Id
-    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
+    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
     public LocalDateTime baseDayTime;
     public LocalDateTime baseWeekTime;
