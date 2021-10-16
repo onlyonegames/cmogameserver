@@ -19,8 +19,8 @@ import lombok.ToString;
 @Entity
 public class MyMainHeroSkill extends BaseTimeEntity {
     @Id
-    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
     // 가장 낮은 단계의 스킬 아이디

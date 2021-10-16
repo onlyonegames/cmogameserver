@@ -13,8 +13,8 @@ import javax.persistence.*;
 @Builder
 public class MyPixieInfoData extends BaseTimeEntity {
     @Id
-    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     public Long id;
     public Long useridUser;
     public int level;

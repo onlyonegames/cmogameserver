@@ -19,8 +19,8 @@ import lombok.Data;
 @Entity
 public class Role {
     @Id
-    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     private Long id;
 
     @Enumerated(EnumType.STRING)

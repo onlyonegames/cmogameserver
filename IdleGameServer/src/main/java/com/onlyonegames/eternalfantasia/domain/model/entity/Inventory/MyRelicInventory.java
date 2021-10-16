@@ -14,8 +14,8 @@ import javax.persistence.*;
 @Builder
 public class MyRelicInventory extends BaseTimeEntity {
     @Id
-    //@TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableGenerator(name = "hibernate_sequence", initialValue = 100, allocationSize = 1000)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
     int table_id;
