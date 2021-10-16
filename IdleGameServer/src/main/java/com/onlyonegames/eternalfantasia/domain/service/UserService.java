@@ -33,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @AllArgsConstructor
 public class UserService {
 
@@ -51,6 +51,32 @@ public class UserService {
 
     //세션 redis
     private final OnlyoneSessionRepository sessionRepository;
+    @Transactional
+    public void UpdateLastLoginDate(Long userId){
+        User user = userRepository.findById(userId).orElse(null);
+        user.SetLastLoginDate();
+    }
+    @Transactional
+    public void InsertMyPassData(Long userId){
+        MyDayRewardDataJsonDto myDayRewardDataJsonDto = new MyDayRewardDataJsonDto();
+        MyAttendanceDataJsonDto myAttendanceDataJsonDto = new MyAttendanceDataJsonDto();
+        MyLevelRewardDataJsonDto myLevelRewardDataJsonDto = new MyLevelRewardDataJsonDto();
+        MyAdventureStageDataJsonDto myAdventureStageDataJsonDto = new MyAdventureStageDataJsonDto();
+        myDayRewardDataJsonDto.Init();
+        myAttendanceDataJsonDto.Init();
+        myLevelRewardDataJsonDto.Init();
+        myAdventureStageDataJsonDto.Init();
+        String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
+        String json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
+        String json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
+        String json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
+        LocalDateTime now = LocalDateTime.now();
+        MyPassData myPassData = MyPassData.builder().useridUser(userId).json_daySaveData(json_day)
+                .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level)
+                .lastAttendanceDate(LocalDateTime.of(now.toLocalDate(), LocalTime.of(0, 0, 0)))
+                .json_stageSaveData(json_stage).gettingCount(0L).build();
+        myPassDataRepository.save(myPassData);
+    }
 
     public Map<String, Object> login(Long userId, String jwt, Map<String, Object> map) {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -75,7 +101,8 @@ public class UserService {
             throw new MyCustomException("Black User", ResponseErrorCode.BLACK_USER);
         }
 
-        user.SetLastLoginDate();
+       // user.SetLastLoginDate();
+        UpdateLastLoginDate(userId);
         map.put("userInfo", user);
         map.put("serverTime", user.getLastloginDate());
 
@@ -91,24 +118,25 @@ public class UserService {
 
         MyPassData myPassData = myPassDataRepository.findByUseridUser(userId).orElse(null);
         if (myPassData == null) {
-            MyDayRewardDataJsonDto myDayRewardDataJsonDto = new MyDayRewardDataJsonDto();
-            MyAttendanceDataJsonDto myAttendanceDataJsonDto = new MyAttendanceDataJsonDto();
-            MyLevelRewardDataJsonDto myLevelRewardDataJsonDto = new MyLevelRewardDataJsonDto();
-            MyAdventureStageDataJsonDto myAdventureStageDataJsonDto = new MyAdventureStageDataJsonDto();
-            myDayRewardDataJsonDto.Init();
-            myAttendanceDataJsonDto.Init();
-            myLevelRewardDataJsonDto.Init();
-            myAdventureStageDataJsonDto.Init();
-            String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
-            String json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
-            String json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
-            String json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
-            LocalDateTime now = LocalDateTime.now();
-            myPassData = MyPassData.builder().useridUser(userId).json_daySaveData(json_day)
-                    .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level)
-                    .lastAttendanceDate(LocalDateTime.of(now.toLocalDate(), LocalTime.of(0, 0, 0)))
-                    .json_stageSaveData(json_stage).gettingCount(0L).build();
-            myPassData = myPassDataRepository.save(myPassData);
+            InsertMyPassData(userId);
+//            MyDayRewardDataJsonDto myDayRewardDataJsonDto = new MyDayRewardDataJsonDto();
+//            MyAttendanceDataJsonDto myAttendanceDataJsonDto = new MyAttendanceDataJsonDto();
+//            MyLevelRewardDataJsonDto myLevelRewardDataJsonDto = new MyLevelRewardDataJsonDto();
+//            MyAdventureStageDataJsonDto myAdventureStageDataJsonDto = new MyAdventureStageDataJsonDto();
+//            myDayRewardDataJsonDto.Init();
+//            myAttendanceDataJsonDto.Init();
+//            myLevelRewardDataJsonDto.Init();
+//            myAdventureStageDataJsonDto.Init();
+//            String json_day = JsonStringHerlper.WriteValueAsStringFromData(myDayRewardDataJsonDto);
+//            String json_attendance = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
+//            String json_level = JsonStringHerlper.WriteValueAsStringFromData(myLevelRewardDataJsonDto);
+//            String json_stage = JsonStringHerlper.WriteValueAsStringFromData(myAdventureStageDataJsonDto);
+//            LocalDateTime now = LocalDateTime.now();
+//            myPassData = MyPassData.builder().useridUser(userId).json_daySaveData(json_day)
+//                    .json_attendanceSaveData(json_attendance).json_levelSaveData(json_level)
+//                    .lastAttendanceDate(LocalDateTime.of(now.toLocalDate(), LocalTime.of(0, 0, 0)))
+//                    .json_stageSaveData(json_stage).gettingCount(0L).build();
+//            myPassData = myPassDataRepository.save(myPassData);
         }
 
 
@@ -118,7 +146,7 @@ public class UserService {
     private Sort sortByBattleEndTime() {
         return Sort.by(Sort.Direction.DESC, "battleEndTime");
     }
-
+    @Transactional
     public Map<String, Object> setUserName(Long userId, String userName, Map<String, Object> map) {
 
         User findUser = userRepository.findById(userId).orElse(null);
@@ -129,7 +157,7 @@ public class UserService {
         findUser.SetUserName(userName);
         return map;
     }
-
+    @Transactional
     public Map<String, Object> AccountLink(Long userId, String socialId, String socialProvider, Map<String, Object> map) {
         Pattern UUID_REGEX_PATTERN = Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
         User user = userRepository.findById(userId).orElse(null);
