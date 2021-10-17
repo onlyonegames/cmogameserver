@@ -22,4 +22,11 @@ public class StandardTimeResetController {
         Map<String, Object> response = standardTimeResetService.CheckTime(map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
+    //by rainful for only test
+    @GetMapping("/api/Test/Empty")
+    public ResponseDTO<Map<String, Object>> Empty() {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = map;
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
 }
