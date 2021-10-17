@@ -28,13 +28,12 @@ import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
 
 @Service
-@Transactional(isolation = Isolation.READ_COMMITTED)
+@Transactional
 @AllArgsConstructor
 public class UserService {
 
