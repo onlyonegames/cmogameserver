@@ -106,7 +106,7 @@ public class RewardReceiveService {
                         throw new MyCustomException("Fail! -> Cause: AttendanceBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
                     passName = "출석패스보상지급";
-                    SendMail(userId, false, "출석패스보상지급", "diamond", "1", tempMap);
+                    SendMail(userId, false, "출석패스보상지급", attendanceBuyPassTable.getRewardType(), attendanceBuyPassTable.getRewardCount(), tempMap);
                 }
                 else {
                     if (!myAttendanceDataJsonDto.ReceiveReward(index)) {
@@ -280,7 +280,7 @@ public class RewardReceiveService {
                             throw new MyCustomException("Fail! -> Cause: AttendanceBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                         }
                         passName = "출석패스보상지급";
-                        SendMail(userId, false, "출석패스보상지급", "diamond", "1", tempMap);
+                        SendMail(userId, false, "출석패스보상지급", attendanceBuyPassTable.getRewardType(), attendanceBuyPassTable.getRewardCount(), tempMap);
                         PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
                         passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, j);
                         passReceiveLogRepository.save(passReceiveLogDto.ToEntity());
