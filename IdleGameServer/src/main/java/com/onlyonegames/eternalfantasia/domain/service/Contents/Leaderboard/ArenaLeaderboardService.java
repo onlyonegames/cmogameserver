@@ -87,7 +87,22 @@ public class ArenaLeaderboardService {
         Long myRank = redisLongTemplate.opsForZSet().reverseRank(ARENA_RANKING_LEADERBOARD, userId);
         if(myRank == null)
             myRank = redisLongTemplate.opsForZSet().size(ARENA_RANKING_LEADERBOARD)-30L;
-        return redisLongTemplate.opsForZSet().reverseRange(ARENA_RANKING_LEADERBOARD, myRank -30L, myRank +30L);
+
+        //by rainful 2021-12-23 아래의 조건으로 상대를 못찾는 상황이 생겨서 새로운 루틴 적용함.
+        //return redisLongTemplate.opsForZSet().reverseRange(ARENA_RANKING_LEADERBOARD, myRank - 30L, myRank + 30L);
+        Set<Long> ids = null;
+        Long minRank = myRank -30L;
+        Long maxRank = myRank +30L;
+        while (true) {
+            if(ids == null || ids.size() == 0) {
+                ids = redisLongTemplate.opsForZSet().reverseRange(ARENA_RANKING_LEADERBOARD, minRank, maxRank);
+                minRank = minRank - 30L;
+                maxRank = maxRank + 30L;
+            }
+            else
+                break;
+        }
+        return ids;
     }
 
     public Map<String, Object> GetLeaderboardForAllUser(Long userId, long bottom, long top, Map<String, Object> map) {
