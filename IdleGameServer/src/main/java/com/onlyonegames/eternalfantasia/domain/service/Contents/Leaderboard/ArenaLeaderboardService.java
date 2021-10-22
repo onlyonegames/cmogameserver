@@ -89,6 +89,7 @@ public class ArenaLeaderboardService {
             myRank = redisLongTemplate.opsForZSet().size(ARENA_RANKING_LEADERBOARD)-30L;
         //by rainful 2021-12-23 아래의 조건으로 상대를 못찾는 상황이 생겨서 새로운 루틴 적용함.
         //return redisLongTemplate.opsForZSet().reverseRange(ARENA_RANKING_LEADERBOARD, myRank - 30L, myRank + 30L);
+        
         Set<Long> ids = null;
         Long minRank = myRank -30L;
         Long maxRank = myRank +30L;
