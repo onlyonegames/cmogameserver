@@ -34,7 +34,7 @@ public class WorldBossLeaderboardService {
 
     private final WorldBossRankingRepository worldBossRankingRepository;
 
-    public WorldBossRanking setScore(Long userId, Long totalDamage, Long baseDamage) {
+    public WorldBossRanking setScore(Long userId, double totalDamage, double baseDamage) {
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -91,14 +91,14 @@ public class WorldBossLeaderboardService {
         List<WorldBossRankingInfoDto> list = new ArrayList<>();
         WorldBossRankingInfoDto myRankingInfo = null;
         int ranking = 1;
-        Long tempTotalDamage = 0L;
+        double tempTotalDamage = 0L;
         int tempRanking = 0;
         for(ZSetOperations.TypedTuple<Long> user : rankings) {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
             WorldBossRedisRanking value = worldBossRedisRankingRepository.findById(id).get();
-            if(!tempTotalDamage.equals(value.getTotalDamage())) {
+            if(tempTotalDamage != value.getTotalDamage()) {
                 tempTotalDamage = value.getTotalDamage();
                 tempRanking = ranking;
             }

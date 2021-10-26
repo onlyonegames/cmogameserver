@@ -17,10 +17,10 @@ public class WorldBossPlayLog extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    Long damage;
-    Long totalDamage;
+    double damage;
+    double totalDamage;
 
-    public void SetDamageAndTotalDamage(Long damage, Long totalDamage) {
+    public void SetDamageAndTotalDamage(double damage, double totalDamage) {
         this.damage = damage;
         this.totalDamage = totalDamage;
     }

@@ -1110,6 +1110,7 @@ public class GetterService {
         }
         if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             week = true;
+            ResetChallengeTower(userId);
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
         }
         if (!standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
@@ -1215,6 +1216,16 @@ public class GetterService {
         }
         myGachaInfo.ResetADCount();
 
+    }
+
+    private void ResetChallengeTower(Long userId) {
+        MyContentsInfo myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myContentsInfo == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyContentsInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyContentsInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        if (myContentsInfo.getChallengeTowerFloor() != 0)
+            myContentsInfo.SetChallengeTowerFloor(0);
     }
 
     private void ResetShopPurchaseCount(Long userId, boolean day, boolean week, boolean month) {

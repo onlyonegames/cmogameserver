@@ -6,14 +6,14 @@ import lombok.Data;
 @Data
 public class WorldBossRankingDto {
     int ranking;
-    Long totalDamage;
-    Long bestDamage;
+    double totalDamage;
+    double bestDamage;
     double totalPercent;
 
     public void SetFirstUser() {
         this.ranking = 0;
-        this.totalDamage = 0L;
-        this.bestDamage = 0L;
+        this.totalDamage = 0;
+        this.bestDamage = 0;
         this.totalPercent = 0;
     }
 

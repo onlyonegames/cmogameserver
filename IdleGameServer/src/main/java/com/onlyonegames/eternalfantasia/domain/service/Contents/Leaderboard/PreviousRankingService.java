@@ -60,18 +60,18 @@ public class PreviousRankingService {
     }
 
     public Map<String, Object> GetPreviousWorldBossRanking(Long userId, Map<String, Object> map){
-        List<PreviousWorldBossRanking> previousWorldBossRankingList = previousWorldBossRankingRepository.findAll(Sort.by(Sort.Direction.ASC, "ranking"));
-        List<PreviousWorldBossRanking> tempList = new ArrayList<>();
-        for(PreviousWorldBossRanking temp : previousWorldBossRankingList) {
-            if(temp.getRanking() > 100)
-                continue;
-            tempList.add(temp);
-        }
+//        List<PreviousWorldBossRanking> previousWorldBossRankingList = previousWorldBossRankingRepository.findAll(Sort.by(Sort.Direction.ASC, "ranking"));
+//        List<PreviousWorldBossRanking> tempList = new ArrayList<>();
+//        for(PreviousWorldBossRanking temp : previousWorldBossRankingList) {
+//            if(temp.getRanking() > 100)
+//                continue;
+//            tempList.add(temp);
+//        }
         long totalCount = previousWorldBossRankingRepository.count();
-        PreviousWorldBossRanking myPreviousWorldBossRanking = previousWorldBossRankingList.stream().filter(i -> i.getUseridUser().equals(userId)).findAny().orElse(null);
+        PreviousWorldBossRanking myPreviousWorldBossRanking = previousWorldBossRankingRepository.findByUseridUser(userId).orElse(null);//previousWorldBossRankingList.stream().filter(i -> i.getUseridUser().equals(userId)).findAny().orElse(null);
         if(myPreviousWorldBossRanking == null) {
             PreviousWorldBossRankingDto previousWorldBossRankingDto = new PreviousWorldBossRankingDto();
-            previousWorldBossRankingDto.setTotalDamage(0L);
+            previousWorldBossRankingDto.setTotalDamage(0d);
             previousWorldBossRankingDto.setRanking(0);
             map.put("myPreviousWorldBossRanking", previousWorldBossRankingDto);
             map.put("myPercent", 0d);
@@ -82,7 +82,7 @@ public class PreviousRankingService {
             map.put("myPercent", myPercent);
         }
 
-        map.put("previousWorldBossRanking", tempList);
+//        map.put("previousWorldBossRanking", tempList);
         return map;
     }
 

@@ -112,7 +112,7 @@ public class MyAccessoryInventoryService {
         for(int i = 0; i < accessoryOptionJsonDto.options.size(); i++) {
             if(optionLockListJsonDto.optionLockList.get(i) == 1)
                 continue;
-            int option_Index = (int)(Math.random() *6);
+            int option_Index = (int)(Math.random() * 9);
             int option_Grade_Index = MathHelper.RandomIndexWidthProbability(probabilityList);
             AccessoryOptionJsonDto.OptionInfo optionInfo = accessoryOptionJsonDto.options.get(i);
             optionInfo.SetOptionInfo(option_Grade_Index, option_Index);

@@ -60,8 +60,8 @@ public class BattlePowerLeaderboardService {
             battlePowerRedisRankingRepository.save(battlePowerRedisRanking);
 
             redisLongTemplate.opsForZSet().add(BATTLE_POWER_LEADERBOARD, userId, battlePower);
+            battlePowerRanking.SetRanking(getRank(userId).intValue());
         }
-        battlePowerRanking.SetRanking(getRank(userId).intValue());
         return battlePowerRanking;
     }
 

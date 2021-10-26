@@ -53,7 +53,7 @@ public class RedisScoreSetting {
 
         List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
         for(WorldBossRanking worldBossRanking : worldBossRankingList) {
-            if (worldBossRanking.getTotalDamage().equals(0L))
+            if (worldBossRanking.getTotalDamage() == 0D)
                 continue;
             WorldBossRedisRanking worldBossRedisRanking = WorldBossRedisRanking.builder().id(worldBossRanking.getUseridUser())
                     .userGameName(worldBossRanking.getUserGameName()).totalDamage(worldBossRanking.getTotalDamage()).build();

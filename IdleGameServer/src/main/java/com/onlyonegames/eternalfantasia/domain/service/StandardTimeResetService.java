@@ -99,18 +99,18 @@ public class StandardTimeResetService {
             standardTime.SetBaseMonthTime();
             month = true;
         }
-        if (day || week || month)
-            ResetShopPurchaseCount(day, week, month);//유저
+//        if (day || week || month)
+//            ResetShopPurchaseCount(day, week, month);//유저
         return map;
     }
 
     private void ResetChallengeTower(StandardTime standardTime) {
         int classIndex = standardTime.getChallengeTowerClassIndex() + 1;
         standardTime.SetChallengeTowerClassIndex(classIndex<5?classIndex:0);
-        List<MyContentsInfo> myContentsInfoList = myContentsInfoRepository.findAllByChallengeTowerFloorNot(0);
-        for(MyContentsInfo temp : myContentsInfoList) {
-            temp.SetChallengeTowerFloor(0);
-        }
+//        List<MyContentsInfo> myContentsInfoList = myContentsInfoRepository.findAllByChallengeTowerFloorNot(0);
+//        for(MyContentsInfo temp : myContentsInfoList) {
+//            temp.SetChallengeTowerFloor(0);
+//        }
     }
 
     private void ResetArenaForDay() {
@@ -132,7 +132,7 @@ public class StandardTimeResetService {
         previousWorldBossRankingRepository.deleteAll();
 
         int ranking = 1;
-        Long tempPoint = 0L;
+        double tempPoint = 0;
         int tempRanking = 0;
 
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
@@ -144,7 +144,7 @@ public class StandardTimeResetService {
             }
             worldBossRanking.ResetZero();
             WorldBossRedisRanking value = worldBossRedisRankingRepository.findById(id).get();
-            if (!tempPoint.equals(value.getTotalDamage())) {
+            if (tempPoint != value.getTotalDamage()) {
                 tempPoint = value.getTotalDamage();
                 tempRanking = ranking;
             }

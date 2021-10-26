@@ -11,8 +11,8 @@ public class PreviousWorldBossRankingDto {
     Long id;
     Long useridUser;
     String userGameName;
-    Long totalDamage;
-    Long bestDamage;
+    double totalDamage;
+    double bestDamage;
     int ranking;
     boolean receivable;
 

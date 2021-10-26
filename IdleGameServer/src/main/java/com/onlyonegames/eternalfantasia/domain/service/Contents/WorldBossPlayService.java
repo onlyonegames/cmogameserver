@@ -83,16 +83,14 @@ public class WorldBossPlayService {
         return map;
     }
 
-    public Map<String, Object> WorldBossFinish(Long userId, Long totalDamage, Map<String, Object> map) {
-        Long damage = 0L;
+    public Map<String, Object> WorldBossFinish(Long userId, double totalDamage, Map<String, Object> map) {
+        double damage = 0L;
         WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
         if(worldBossRanking != null) {
             damage = worldBossRanking.getTotalDamage();
             worldBossRanking.ResetBestDamage(totalDamage);
         }
         damage += totalDamage;
-
-        damage = MathHelper.Clamp(damage, 0, Long.MAX_VALUE);
 
         WorldBossRanking saveRanking = worldBossLeaderboardService.setScore(userId, damage, totalDamage);
         Long changeRanking = worldBossLeaderboardService.getRank(saveRanking.getUseridUser());
