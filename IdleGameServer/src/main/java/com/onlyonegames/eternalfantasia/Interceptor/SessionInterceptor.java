@@ -46,11 +46,11 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
                 errorLoggingService.SetErrorLog(userid, ResponseErrorCode.DUPLICATED_SESSION.getIntegerValue(), "Fail! -> Cause: Dubplicated Session.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
                 throw new MyCustomException("Fail! -> Cause: Dubplicated Session.", ResponseErrorCode.DUPLICATED_SESSION);
             }
-            LocalDateTime now = LocalDateTime.now();
-            if(now.isAfter(onlyoneSession.getSessionExpireTime())) {
-                errorLoggingService.SetErrorLog(userid, ResponseErrorCode.EXPIRED_SESSION.getIntegerValue(), "Fail! -> Cause: Expired Session.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-                throw new MyCustomException("Fail! -> Cause: Expired Session.", ResponseErrorCode.EXPIRED_SESSION);
-            }
+//            LocalDateTime now = LocalDateTime.now();
+//            if(now.isAfter(onlyoneSession.getSessionExpireTime())) {
+//                errorLoggingService.SetErrorLog(userid, ResponseErrorCode.EXPIRED_SESSION.getIntegerValue(), "Fail! -> Cause: Expired Session.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+//                throw new MyCustomException("Fail! -> Cause: Expired Session.", ResponseErrorCode.EXPIRED_SESSION);
+//            }
 
             onlyoneSession.RenewalExpireTime();
             sessionRepository.save(onlyoneSession);
