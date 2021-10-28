@@ -6,18 +6,12 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousArenaR
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousBattlePowerRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousStageRankingDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Contents.PreviousWorldBossRankingDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,22 +32,13 @@ import static com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboa
 @Transactional
 @AllArgsConstructor
 public class StandardTimeResetService {
-    private final MyContentsInfoRepository myContentsInfoRepository;
     private final StandardTimeRepository standardTimeRepository;
     private final MyArenaPlayDataRepository myArenaPlayDataRepository;
-    private final ArenaRankingRepository arenaRankingRepository;
     private final PreviousArenaRankingRepository previousArenaRankingRepository;
     private final WorldBossRankingRepository worldBossRankingRepository;
     private final PreviousWorldBossRankingRepository previousWorldBossRankingRepository;
-    private final ArenaLeaderboardService arenaLeaderboardService;
-    private final WorldBossLeaderboardService worldBossLeaderboardService;
     private final RedisTemplate<String, Long> redisLongTemplate;
-    private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
-    private final StageRankingRepository stageRankingRepository;
     private final PreviousStageRankingRepository previousStageRankingRepository;
-    private final StageLeaderboardService stageLeaderboardService;
-    private final BattlePowerLeaderboardService battlePowerLeaderboardService;
-    private final BattlePowerRankingRepository battlePowerRankingRepository;
     private final PreviousBattlePowerRankingRepository previousBattlePowerRankingRepository;
     private final MyPassDataRepository myPassDataRepository;
     private final MyShopInfoRepository myShopInfoRepository;
@@ -135,6 +120,7 @@ public class StandardTimeResetService {
         double tempPoint = 0;
         int tempRanking = 0;
 
+        List<PreviousWorldBossRanking> saveList = new ArrayList<>();
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
             Long id = user.getValue();
             WorldBossRanking worldBossRanking = worldBossRankingList.stream().filter(i -> i.getUseridUser().equals(id)).findAny().orElse(null);
@@ -150,15 +136,16 @@ public class StandardTimeResetService {
             }
             PreviousWorldBossRankingDto previousWorldBossRankingDto = new PreviousWorldBossRankingDto();
             previousWorldBossRankingDto.InitFromRedisData(value, worldBossRanking, tempRanking);
-            previousWorldBossRankingRepository.save(previousWorldBossRankingDto.ToEntity());
+            saveList.add(previousWorldBossRankingDto.ToEntity());
             ranking++;
             worldBossRankingList.remove(worldBossRanking);
         }
+        previousWorldBossRankingRepository.saveAll(saveList);
         redisLongTemplate.opsForZSet().getOperations().delete(WORLD_BOSS_RANKING_LEADERBOARD);
-        List<MyWorldBossPlayData> myWorldBossPlayDataList = myWorldBossPlayDataRepository.findAll();
-        for(MyWorldBossPlayData temp : myWorldBossPlayDataList) {
-            temp.ResetPlayableCount();
-        }
+//        List<MyWorldBossPlayData> myWorldBossPlayDataList = myWorldBossPlayDataRepository.findAll();
+//        for(MyWorldBossPlayData temp : myWorldBossPlayDataList) {
+//            temp.ResetPlayableCount();
+//        }
     }
 
     private void SetPreviousArenaRanking() {
@@ -174,6 +161,7 @@ public class StandardTimeResetService {
         int tempPoint = 0;
         int tempRanking = 0;
 
+        List<PreviousArenaRanking> saveList = new ArrayList<>();
         for(ZSetOperations.TypedTuple<Long> user : rankings) {
             Long id = user.getValue();
             ArenaRedisRanking value = arenaRedisRankingRepository.findById(id).get();
@@ -183,9 +171,10 @@ public class StandardTimeResetService {
             }
             PreviousArenaRankingDto previousArenaRankingDto = new PreviousArenaRankingDto();
             previousArenaRankingDto.InitFromRedisData(value, tempRanking);
-            previousArenaRankingRepository.save(previousArenaRankingDto.ToEntity());
+            saveList.add(previousArenaRankingDto.ToEntity());
             ranking++;
         }
+        previousArenaRankingRepository.saveAll(saveList);
     }
 
     private void SetPreviousStageRanking() {
@@ -201,6 +190,7 @@ public class StandardTimeResetService {
         int tempPoint = 0;
         int tempRanking = 0;
 
+        List<PreviousStageRanking> saveList = new ArrayList<>();
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
             Long id = user.getValue();
             StageRedisRanking value = stageRedisRankingRepository.findById(id).get();
@@ -210,9 +200,10 @@ public class StandardTimeResetService {
             }
             PreviousStageRankingDto previousStageRankingDto = new PreviousStageRankingDto();
             previousStageRankingDto.InitFromRedisData(value, tempRanking);
-            previousStageRankingRepository.save(previousStageRankingDto.ToEntity());
+            saveList.add(previousStageRankingDto.ToEntity());
             ranking++;
         }
+        previousStageRankingRepository.saveAll(saveList);
     }
 
     private void SetPreviousBattlePowerRanking() {
@@ -227,7 +218,7 @@ public class StandardTimeResetService {
         int ranking = 1;
         Long tempBattlePower = 0L;
         int tempRanking = 0;
-
+        List<PreviousBattlePowerRanking> saveList = new ArrayList<>();
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
             Long id = user.getValue();
             BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).get();
@@ -237,9 +228,10 @@ public class StandardTimeResetService {
             }
             PreviousBattlePowerRankingDto previousBattlePowerRankingDto = new PreviousBattlePowerRankingDto();
             previousBattlePowerRankingDto.InitFromRedisData(value, tempRanking);
-            previousBattlePowerRankingRepository.save(previousBattlePowerRankingDto.ToEntity());
+            saveList.add(previousBattlePowerRankingDto.ToEntity());
             ranking++;
         }
+        previousBattlePowerRankingRepository.saveAll(saveList);
     }
 
     private void ResetDayPass() {

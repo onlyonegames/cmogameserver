@@ -59,6 +59,7 @@ public class User {
     int userType; // 1 : 일반 유저, 0 : 화이트 유저 == 개발자  // 정해야함
     Long battlePower;
     int mileage;
+    String costumeTicket;
     boolean advertisement;
     boolean blackUser;
 
@@ -102,6 +103,7 @@ public class User {
         this.battlePower = 0L;
         this.mileage = 0;
         this.advertisement = false;
+        this.costumeTicket = "0";
     }
 
     public void AddGold(BigInteger _addGold) {
@@ -258,6 +260,10 @@ public class User {
 
     public void SetMileage(String element) {
         this.mileage = Integer.parseInt(element);
+    }
+
+    public void SetCostumeTicket(String element) {
+        this.costumeTicket = element;
     }
 
     public void ADRemove() {

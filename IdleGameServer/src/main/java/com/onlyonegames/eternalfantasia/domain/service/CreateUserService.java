@@ -90,6 +90,8 @@ public class CreateUserService
 
     private final StandardTimeRepository standardTimeRepository;
 
+    private final MyBoosterInfoRepository myBoosterInfoRepository;
+
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
     {
         Set<Role> roles = new HashSet<>();
@@ -178,6 +180,9 @@ public class CreateUserService
         MyShopInfo myShopInfo = createMyShopInfo(userid);
         myShopInfoRepository.save(myShopInfo);
 
+        MyBoosterInfo myBoosterInfo = createMyBoosterInfo(userid);
+        myBoosterInfoRepository.save(myBoosterInfo);
+
         return map;
     }
 
@@ -247,7 +252,7 @@ public class CreateUserService
     private MyEquipmentInfo createMyEquipmentInfo(Long userId) {
         return MyEquipmentInfo.builder().useridUser(userId).nowUsedClass(0).warriorEquipment(1).thiefEquipment(2).knightEquipment(3)
                 .archerEquipment(4).magicianEquipment(5).nowUsedWeapon(0).swordEquipment(1).daggerEquipment(25).spearEquipment(49)
-                .bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).build();
+                .bowEquipment(73).wandEquipment(97).earringEquipment(0).necklaceEquipment(0).ringEquipment(0).costumeEquipment(-1).build();
     }
 
     private MyContentsInfo createMyContentsInfo(Long userId) {
@@ -319,5 +324,9 @@ public class CreateUserService
         MyShopInfoDto myShopInfoDto = new MyShopInfoDto();
         myShopInfoDto.setUseridUser(userId);
         return myShopInfoDto.ToEntity();
+    }
+
+    private MyBoosterInfo createMyBoosterInfo(Long userId) {
+        return MyBoosterInfo.builder().useridUser(userId).soulStoneRisePercent("").allSpeedRisePercent("").itemDropPlusRisePercent("").expRisePercent("").goldRisePercent("").build();
     }
 }

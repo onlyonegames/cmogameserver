@@ -39,14 +39,10 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ErrorLoggingService errorLoggingService;
-    private final GameDataTableService gameDataTableService;
     private final StandardTimeRepository standardTimeRepository;
     private final MyPassDataRepository myPassDataRepository;
     private final ServerStatusInfoRepository serverStatusInfoRepository;
-    private final MyMailBoxService myMailBoxService;
-    private final MyArenaPlayDataRepository myArenaPlayDataRepository;
-    private final MyGachaInfoRepository myGachaInfoRepository;
-    private final MyShopInfoRepository myShopInfoRepository;
+    private final MyBoosterInfoRepository myBoosterInfoRepository;
 
 
     //세션 redis
@@ -111,6 +107,11 @@ public class UserService {
             myPassData = myPassDataRepository.save(myPassData);
         }
 
+        MyBoosterInfo myBoosterInfo = myBoosterInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myBoosterInfo == null) {
+            myBoosterInfo = MyBoosterInfo.builder().useridUser(userId).soulStoneRisePercent("").allSpeedRisePercent("").itemDropPlusRisePercent("").expRisePercent("").goldRisePercent("").build();
+            myBoosterInfoRepository.save(myBoosterInfo);
+        }
 
         return map;
     }

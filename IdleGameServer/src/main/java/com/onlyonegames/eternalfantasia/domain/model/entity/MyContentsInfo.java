@@ -30,6 +30,8 @@ public class MyContentsInfo extends BaseTimeEntity {
     }
 
     public void ClearStage() { //마지막 스테이지를 확인하여 최대 제한
+        if (adventureDifficulty == 3 && this.adventureStage == 0)
+            return;
         if(this.adventureStage+1>=140){
             if(this.adventureDifficulty < 3)
                 this.adventureDifficulty++;
@@ -37,5 +39,9 @@ public class MyContentsInfo extends BaseTimeEntity {
         }
         else
             this.adventureStage++;
+    }
+
+    public void ClearFloor() {
+        this.challengeTowerFloor++;
     }
 }

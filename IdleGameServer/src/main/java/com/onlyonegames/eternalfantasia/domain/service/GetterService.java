@@ -8,11 +8,13 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailBox;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyWorldBossPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
@@ -62,6 +64,9 @@ public class GetterService {
     private final StandardTimeRepository standardTimeRepository;
     private final MyArenaPlayDataRepository myArenaPlayDataRepository;
     private final MyMailBoxService myMailBoxService;
+    private final MyCostumeInventoryRepository myCostumeInventoryRepository;
+    private final MyBoosterInfoRepository myBoosterInfoRepository;
+    private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -87,6 +92,8 @@ public class GetterService {
         MyMissionInfo myMissionInfo = null;
         MyChatBlockInfo myChatBlockInfo = null;
         MyShopInfo myShopInfo = null;
+        List<MyCostumeInventory> myCostumeInventoryList = null;
+        MyBoosterInfo myBoosterInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -338,6 +345,24 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "costumeInventory":
+                        if (myCostumeInventoryList == null) {
+                            myCostumeInventoryList = myCostumeInventoryRepository.findAllByUseridUser(userId);
+                            if (myCostumeInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyCostumeInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyCostumeInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "booster":
+                        if (myBoosterInfo == null) {
+                            myBoosterInfo = myBoosterInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myBoosterInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyBoosterInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyBoosterInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -394,6 +419,9 @@ public class GetterService {
                                             break;
                                         case "lastMonthResetTime":
                                             element.SetValue(user.getLastMonthResetTime().toString());
+                                            break;
+                                        case "costumeTicket":
+                                            element.SetValue(user.getCostumeTicket());
                                             break;
                                     }
                                 }
@@ -812,6 +840,41 @@ public class GetterService {
                                     element.SetValue(field.get(standardTime).toString());
                                 }
                                 break;
+                            case "costumeInventory":
+                                List<ElementDto> costumeElementDtoList = new ArrayList<>();
+                                boolean costumeFlag = false;
+                                for (ElementDto element : container.elements) {
+                                    if (element.getElement().equals("all")) {
+                                        for (MyCostumeInventory myCostumeInventory : myCostumeInventoryList) {
+                                            CostumeInventoryResponseDto costumeInventoryResponseDto = new CostumeInventoryResponseDto();
+                                            costumeInventoryResponseDto.setCode(myCostumeInventory.getCode());
+                                            String costume_Json = JsonStringHerlper.WriteValueAsStringFromData(costumeInventoryResponseDto);
+                                            ElementDto elementDto = new ElementDto();
+                                            elementDto.SetElement(myCostumeInventory.getCode(), costume_Json);
+                                            costumeElementDtoList.add(elementDto);
+                                        }
+                                        costumeFlag = true;
+                                        break;
+                                    }
+                                    MyCostumeInventory myCostumeInventory = myCostumeInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if(myCostumeInventory == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyCostumeInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyCostumeInventory", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    CostumeInventoryResponseDto costumeInventoryResponseDto = new CostumeInventoryResponseDto();
+                                    costumeInventoryResponseDto.setCode(myCostumeInventory.getCode());
+                                    String costume_Json = JsonStringHerlper.WriteValueAsStringFromData(costumeInventoryResponseDto);
+                                    element.SetValue(costume_Json);
+                                }
+                                if (costumeFlag)
+                                    container.elements = costumeElementDtoList;
+                                break;
+                            case "booster":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myBoosterInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myBoosterInfo).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -857,6 +920,8 @@ public class GetterService {
                                         case "mileage":
                                             user.SetMileage(element.getValue());
                                             break;
+                                        case "costumeTicket":
+                                            user.SetCostumeTicket(element.getValue());
                                     }
                                 }
                                 break;
@@ -1059,9 +1124,14 @@ public class GetterService {
                             case "battlePower":
                                 for (ElementDto element : container.elements) {
                                     if (element.getElement().equals("battlePower")){
-//                                        if ()
                                         user.SetBattlePower(element.getValue());
-                                        battlePowerLeaderboardService.setScore(userId, Long.parseLong(element.getValue()));
+                                        LocalDateTime now = LocalDateTime.now();
+                                        LocalTime start = LocalTime.of(0,0,0);
+                                        LocalTime end = LocalTime.of(0, 10, 0);
+                                        int dayOfWeekNumber = now.getDayOfWeek().getValue();
+                                        if (!((now.toLocalTime().isAfter(start) && now.toLocalTime().isBefore(end)) && dayOfWeekNumber == 1)) {
+                                            battlePowerLeaderboardService.setScore(userId, Long.parseLong(element.getValue()));
+                                        }
                                     }
                                 }
                                 break;
@@ -1091,6 +1161,24 @@ public class GetterService {
                                     field.set(myChatBlockInfo, element.getValue());
                                 }
                                 break;
+                            case "costumeInventory":
+                                for (ElementDto element : container.elements) {
+                                    CostumeInventoryResponseDto costumeInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), CostumeInventoryResponseDto.class);
+                                    MyCostumeInventory myCostumeInventory = myCostumeInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if (myCostumeInventory == null) {
+                                        MyCostumeInventoryDto myCostumeInventoryDto = new MyCostumeInventoryDto();
+                                        myCostumeInventoryDto.SetMyCostumeInventoryDto(userId, costumeInventoryResponseDto.getCode());
+                                        myCostumeInventory = myCostumeInventoryRepository.save(myCostumeInventoryDto.ToEntity());
+                                        myCostumeInventoryList.add(myCostumeInventory);
+                                    }
+                                }
+                                break;
+                            case "booster":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myBoosterInfo.getClass().getDeclaredField(element.getElement());
+                                    field.set(myBoosterInfo, element.getValue());
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();
@@ -1111,6 +1199,7 @@ public class GetterService {
         if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             week = true;
             ResetChallengeTower(userId);
+            ResetWorldBossPlayable(userId);
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
         }
         if (!standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
@@ -1238,6 +1327,13 @@ public class GetterService {
         if (month)
             myShopInfo.RechargeMonth();
 
+    }
+
+    private void ResetWorldBossPlayable(Long userId) {
+        MyWorldBossPlayData myWorldBossPlayData = myWorldBossPlayDataRepository.findByUseridUser(userId).orElse(null);
+        if (myWorldBossPlayData == null)
+            return;
+        myWorldBossPlayData.ResetPlayableCount();
     }
 
     /**

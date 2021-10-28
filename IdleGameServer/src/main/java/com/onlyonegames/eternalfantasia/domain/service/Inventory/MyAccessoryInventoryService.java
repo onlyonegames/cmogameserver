@@ -49,7 +49,7 @@ public class MyAccessoryInventoryService {
         }
         double rng = MathHelper.Range(0, 1);
         double baseRNG = 1-(0.02 * (myAccessoryInventory.getLevel() - 1));
-        baseRNG = Math.max(baseRNG, 0.02D);
+        baseRNG = Math.max(baseRNG, 0.05D);
         if(rng > baseRNG) {
             myAccessoryInventory.SpendAccessory();
             accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);

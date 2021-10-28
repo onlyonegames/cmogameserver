@@ -32,6 +32,7 @@ public class MyEquipmentInfo extends BaseTimeEntity {
     public int earringEquipment;
     public int necklaceEquipment;
     public int ringEquipment;
+    public int costumeEquipment;
 
     public void SetNowUsedClass(String element) {
         this.nowUsedClass = Integer.parseInt(element);

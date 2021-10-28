@@ -2,6 +2,7 @@ package com.onlyonegames.eternalfantasia.domain.controller.Mail;
 
 import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
+import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ReadMailAllRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.ReadMailRequestDto;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MailExpireService;
@@ -65,6 +66,13 @@ public class MailController {
     public ResponseDTO<Map<String, Object>> PushMail6() {
         Map<String, Object> map = new HashMap<>();
         Map<String, Object> response = myMailBoxService.DailySendMail6(map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
+    @PostMapping("/api/Test/Mail/SendMail")
+    public ResponseDTO<Map<String, Object>> SendMail(@RequestBody MailSendRequestDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = myMailBoxService.SendMail(dto, map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 }
