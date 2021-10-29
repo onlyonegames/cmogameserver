@@ -33,7 +33,7 @@ public class BattlePowerLeaderboardService {
     private final UserRepository userRepository;
     private final ErrorLoggingService errorLoggingService;
 
-    public BattlePowerRanking setScore(Long userId, Long battlePower) {
+    public BattlePowerRanking setScore(Long userId, double battlePower) {
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find. userId => " + userId, this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -89,14 +89,14 @@ public class BattlePowerLeaderboardService {
         List<BattlePowerRankingInfoDto> list = new ArrayList<>();
         BattlePowerRankingInfoDto myRankingInfo = null;
         int ranking = 1;
-        Long tempBattlePower = 0L;
+        double tempBattlePower = 0d;
         int tempRanking = 0;
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
             BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).get();
-            if(!tempBattlePower.equals(value.getBattlePower())) {
+            if(tempBattlePower != value.getBattlePower()) {
                 tempBattlePower = value.getBattlePower();
                 tempRanking = ranking;
             }

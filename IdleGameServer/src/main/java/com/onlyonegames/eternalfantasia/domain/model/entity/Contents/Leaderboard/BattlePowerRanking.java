@@ -18,10 +18,10 @@ public class BattlePowerRanking extends BaseTimeEntity {
     Long id;
     Long useridUser;
     String userGameName;
-    Long battlePower;
+    double battlePower;
     int ranking;
 
-    public void refresh(Long battlePower) {
+    public void refresh(double battlePower) {
         this.battlePower = battlePower;
     }
     public void SetRanking(int ranking) {

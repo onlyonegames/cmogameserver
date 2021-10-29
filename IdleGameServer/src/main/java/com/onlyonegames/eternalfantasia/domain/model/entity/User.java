@@ -57,7 +57,7 @@ public class User {
     boolean dummyUser;
     boolean new_user;
     int userType; // 1 : 일반 유저, 0 : 화이트 유저 == 개발자  // 정해야함
-    Long battlePower;
+    double battlePower;
     int mileage;
     String costumeTicket;
     boolean advertisement;
@@ -255,7 +255,7 @@ public class User {
     }
 
     public void SetBattlePower(String element) {
-        this.battlePower = Long.parseLong(element);
+        this.battlePower = Double.parseDouble(element);
     }
 
     public void SetMileage(String element) {

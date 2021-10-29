@@ -18,7 +18,7 @@ public class PreviousBattlePowerRanking extends BaseTimeEntity {
     Long id;
     Long useridUser;
     String userGameName;
-    Long battlePower;
+    double battlePower;
     int ranking;
     boolean receivable;
 

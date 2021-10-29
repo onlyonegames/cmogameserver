@@ -16,9 +16,9 @@ public class BattlePowerRedisRanking implements Serializable {
     @Id
     Long id; //유저 아이디
     String userGameName;
-    Long battlePower;
+    double battlePower;
 
-    public void refresh(Long battlePower) {
+    public void refresh(double battlePower) {
         this.battlePower = battlePower;
     }
 

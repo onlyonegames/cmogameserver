@@ -1130,7 +1130,7 @@ public class GetterService {
                                         LocalTime end = LocalTime.of(0, 10, 0);
                                         int dayOfWeekNumber = now.getDayOfWeek().getValue();
                                         if (!((now.toLocalTime().isAfter(start) && now.toLocalTime().isBefore(end)) && dayOfWeekNumber == 1)) {
-                                            battlePowerLeaderboardService.setScore(userId, Long.parseLong(element.getValue()));
+                                            battlePowerLeaderboardService.setScore(userId, Double.parseDouble(element.getValue()));
                                         }
                                     }
                                 }

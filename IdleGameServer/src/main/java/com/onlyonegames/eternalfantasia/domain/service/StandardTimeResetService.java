@@ -216,13 +216,13 @@ public class StandardTimeResetService {
         previousBattlePowerRankingRepository.deleteAll();
 
         int ranking = 1;
-        Long tempBattlePower = 0L;
+        double tempBattlePower = 0d;
         int tempRanking = 0;
         List<PreviousBattlePowerRanking> saveList = new ArrayList<>();
         for (ZSetOperations.TypedTuple<Long> user : rankings) {
             Long id = user.getValue();
             BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).get();
-            if (!tempBattlePower.equals(value.getBattlePower())) {
+            if (tempBattlePower != value.getBattlePower()) {
                 tempBattlePower = value.getBattlePower();
                 tempRanking = ranking;
             }

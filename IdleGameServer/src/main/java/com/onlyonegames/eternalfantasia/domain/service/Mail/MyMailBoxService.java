@@ -366,6 +366,27 @@ public class MyMailBoxService {
         return map;
     }
 
+    public Map<String, Object> SendMail(Long userId, int plusDay, String title, String gettingItem, Map<String, Object> map) {
+        LocalDateTime now = LocalDateTime.now();
+        String[] gettingItemSplit = gettingItem.split(",");
+        for (String i : gettingItemSplit){
+            String[] temp = i.split(":");
+            MailDto mailDto = new MailDto();
+            mailDto.setToId(userId);
+            mailDto.setTitle(title);
+            mailDto.setGettingItems(temp[0]);
+            mailDto.setGettingItemCounts(temp[1]);
+            mailDto.setMailType(0);
+            mailDto.setExpireDate(now.plusDays(plusDay));
+            mailDto.setSendDate(now);
+            Mail mail = mailDto.ToEntity();
+            mail = mailRepository.save(mail);
+            mailDto.InitFromDbData(mail);
+            map.put("mail", mailDto);
+        }
+        return map;
+    }
+
     //하루마다 보내는 보상 메일
     public Map<String, Object> DailySendMail12(Map<String, Object> map) {
         String gettingItem = "diamond:5000,item_011:2,item_012:2,item_013:2,item_014:2,item_015:2";

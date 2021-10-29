@@ -20,6 +20,10 @@ public class ElementDto {
         this.value = element;
     }
 
+    public void SetValue(double element) {
+        this.value = Double.toString(element);
+    }
+
     public void SetElement(String element, String value) {
         this.element = element;
         this.value = value;

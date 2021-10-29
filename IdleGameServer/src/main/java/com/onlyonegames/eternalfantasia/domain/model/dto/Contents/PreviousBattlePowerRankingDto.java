@@ -10,7 +10,7 @@ public class PreviousBattlePowerRankingDto {
     Long id;
     Long useridUser;
     String userGameName;
-    Long battlePower;
+    double battlePower;
     int ranking;
     boolean receivable;
 

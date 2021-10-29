@@ -7,10 +7,10 @@ public class BattlePowerRankingInfoDto {
     Long useridUser;
     String userGameName;
     int ranking;
-    Long battlePower;
+    double battlePower;
     double totalPercent;
 
-    public void SetBattlePowerRankingInfoDto(Long useridUser, String userGameName, int ranking, Long battlePower, double totalPercent) {
+    public void SetBattlePowerRankingInfoDto(Long useridUser, String userGameName, int ranking, double battlePower, double totalPercent) {
         this.useridUser = useridUser;
         this.userGameName = userGameName;
         this.ranking = ranking;
