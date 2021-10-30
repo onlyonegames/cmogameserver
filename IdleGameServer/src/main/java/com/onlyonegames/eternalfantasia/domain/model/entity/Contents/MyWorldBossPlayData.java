@@ -31,6 +31,10 @@ public class MyWorldBossPlayData extends BaseTimeEntity {
         return true;
     }
 
+    public void SetPlayableCount (int playableCount) {
+        this.playableCount = playableCount;
+    }
+
     public void SetPlayLogId(Long playLogId) {
         this.playLogId = playLogId;
     }
