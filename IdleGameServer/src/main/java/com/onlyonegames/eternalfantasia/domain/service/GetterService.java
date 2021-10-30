@@ -1193,13 +1193,13 @@ public class GetterService {
             ResetArenaForDay(userId);//유저
             ResetDayPass(userId);//유저
             ResetMyGachaInfo(userId);//유저
+            ResetWorldBossPlayable(userId);
             day = true;
             user.SetLastDayResetTime(standardTime.getBaseDayTime());
         }
         if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             week = true;
             ResetChallengeTower(userId);
-            ResetWorldBossPlayable(userId);
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
         }
         if (!standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
