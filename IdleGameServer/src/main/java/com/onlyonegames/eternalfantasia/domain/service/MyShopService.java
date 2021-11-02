@@ -237,7 +237,7 @@ public class MyShopService {
         return map;
     }
     private AccessoryTable GetRandomAccessory() {
-        int randomIndex = (int) (Math.random() * 11);
+        int randomIndex = (int) (Math.random() * 12);
         return gameDataTableService.AccessoryTable().get(randomIndex);
     }
 
