@@ -379,8 +379,8 @@ public class RewardReceiveService {
                         errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: AdventureStageBuyPassTable Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                         throw new MyCustomException("Fail! -> Cause: AdventureStageBuyPassTable Can't find", ResponseErrorCode.NOT_FIND_DATA);
                     }
-                    passName = "스테이지패스보상지급";
-                    SendMail(userId, false, "스테이지패스보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
+                    passName = "스테이지보상지급";
+                    SendMail(userId, false, "스테이지보상지급", adventureStageFreePassTable.getRewardType(), adventureStageFreePassTable.getRewardCount(), tempMap);
                     PassReceiveLogDto passReceiveLogDto = new PassReceiveLogDto();
                     passReceiveLogDto.SetPassReceiveLogDto(userId, passName, levelIndex, j);
                     passReceiveLogRepository.save(passReceiveLogDto.ToEntity());

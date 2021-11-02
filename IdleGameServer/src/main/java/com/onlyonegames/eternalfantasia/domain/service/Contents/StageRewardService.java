@@ -58,7 +58,7 @@ public class StageRewardService {
 
             int myPercent = Math.round(myRanking *100f / totalCount);
             if (myPercent <= 10) {
-                gettingItemCount = "90000";
+                gettingItemCount = "9000";
             }
             else if (myPercent <= 30) {
                 gettingItemCount = "8000";
