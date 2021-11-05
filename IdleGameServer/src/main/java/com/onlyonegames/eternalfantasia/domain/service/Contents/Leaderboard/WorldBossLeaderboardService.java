@@ -97,7 +97,11 @@ public class WorldBossLeaderboardService {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
-            WorldBossRedisRanking value = worldBossRedisRankingRepository.findById(id).get();
+            if (id == null)
+                continue;
+            WorldBossRedisRanking value = worldBossRedisRankingRepository.findById(id).orElse(null);
+            if (value == null)
+                continue;
             if(tempTotalDamage != value.getTotalDamage()) {
                 tempTotalDamage = value.getTotalDamage();
                 tempRanking = ranking;

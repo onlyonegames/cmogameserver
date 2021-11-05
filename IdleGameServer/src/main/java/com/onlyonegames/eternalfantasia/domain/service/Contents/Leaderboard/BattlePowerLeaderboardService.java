@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
+import javax.swing.plaf.IconUIResource;
 import javax.transaction.Transactional;
 
 import java.util.*;
@@ -95,7 +96,11 @@ public class BattlePowerLeaderboardService {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
-            BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).get();
+            if (id == null)
+                continue;
+            BattlePowerRedisRanking value = battlePowerRedisRankingRepository.findById(id).orElse(null);
+            if (value == null)
+                continue;
             if(tempBattlePower != value.getBattlePower()) {
                 tempBattlePower = value.getBattlePower();
                 tempRanking = ranking;

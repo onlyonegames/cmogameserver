@@ -38,7 +38,7 @@ public class User {
     String socialProvider;
     String userGameName;
     int level;
-    int exp;
+    Long exp;
     int sexType; //0 : 남자, 1 : 여자 default : 0
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -92,7 +92,7 @@ public class User {
         this.arenaCoin = 0L;
         this.dragonCoin = 0L;
         this.level = 1;
-        this.exp = 0;
+        this.exp = 0L;
         this.sexType = 0;
         this.fieldIndex = 0;
         this.battleStatus = "";
@@ -231,7 +231,7 @@ public class User {
     }
 
     public void SetExp(String element) {
-        this.exp = Integer.parseInt(element);
+        this.exp = Long.parseLong(element);
     }
 
     public void SetFieldIndex(String element) {

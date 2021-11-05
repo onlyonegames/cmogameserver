@@ -94,7 +94,11 @@ public class StageLeaderboardService {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
-            StageRedisRanking value = stageRedisRankingRepository.findById(id).get();
+            if (id == null)
+                continue;
+            StageRedisRanking value = stageRedisRankingRepository.findById(id).orElse(null);
+            if (value == null)
+                continue;
             if(tempPoint != value.getPoint()) {
                 tempPoint = value.getPoint();
                 tempRanking = ranking;

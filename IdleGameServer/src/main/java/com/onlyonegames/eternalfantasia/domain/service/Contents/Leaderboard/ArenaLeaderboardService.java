@@ -116,7 +116,11 @@ public class ArenaLeaderboardService {
             if(ranking > 100)
                 break;
             Long id = user.getValue();
-            ArenaRedisRanking value = arenaRedisRankingRepository.findById(id).get();
+            if (id == null)
+                continue;
+            ArenaRedisRanking value = arenaRedisRankingRepository.findById(id).orElse(null);
+            if (value == null)
+                continue;
             if(tempPoint != value.getPoint()) {
                 tempPoint = value.getPoint();
                 tempRanking = ranking;
