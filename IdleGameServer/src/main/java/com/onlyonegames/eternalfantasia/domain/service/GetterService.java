@@ -924,7 +924,8 @@ public class GetterService {
                                             user.SetMileage(element.getValue());
                                             break;
                                         case "costumeTicket":
-                                            user.SetCostumeTicket(element.getValue());
+//                                            user.SetCostumeTicket(element.getValue());
+                                            break;
                                     }
                                 }
                                 break;
@@ -1166,6 +1167,11 @@ public class GetterService {
                                 break;
                             case "costumeInventory":
                                 for (ElementDto element : container.elements) {
+                                    if (element.getElement().equals("co_001")||element.getElement().equals("co_008")||
+                                            element.getElement().equals("co_009")||element.getElement().equals("co_010")||
+                                            element.getElement().equals("co_011")||element.getElement().equals("co_020")||
+                                            element.getElement().equals("co_021")||element.getElement().equals("co_022"))
+                                        continue;
                                     CostumeInventoryResponseDto costumeInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), CostumeInventoryResponseDto.class);
                                     MyCostumeInventory myCostumeInventory = myCostumeInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if (myCostumeInventory == null) {
