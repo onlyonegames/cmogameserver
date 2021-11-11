@@ -8,10 +8,12 @@ public class WeaponInventoryResponseDto {
     String code;
     int count;
     int level;
+    int isPromotionLock;
 
     public void InitFromDB(MyEquipmentInventory dbData) {
         this.code = dbData.getCode();
         this.count = dbData.getCount();
         this.level = dbData.getLevel();
+        this.isPromotionLock = dbData.getIsPromotionLock();
     }
 }

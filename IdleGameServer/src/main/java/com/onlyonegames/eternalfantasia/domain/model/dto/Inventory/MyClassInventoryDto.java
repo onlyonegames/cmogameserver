@@ -11,6 +11,7 @@ public class MyClassInventoryDto {
     int level;
     int count;
     int promotionPercent;
+    int isPromotionLock;
 
     public MyClassInventory ToEntity() {
         return MyClassInventory.builder().useridUser(useridUser).code(code).level(level).count(count).promotionPercent(promotionPercent).build();
@@ -25,11 +26,12 @@ public class MyClassInventoryDto {
         this.promotionPercent = dbData.getPromotionPercent();
     }
 
-    public void SetMyClassInventoryDto(Long useridUser, String code, int level, int count, int promotionPercent) {
+    public void SetMyClassInventoryDto(Long useridUser, String code, int level, int count, int promotionPercent, int isPromotionLock) {
         this.useridUser = useridUser;
         this.code = code;
         this.level = level;
         this.count = count;
         this.promotionPercent = promotionPercent;
+        this.isPromotionLock = isPromotionLock;
     }
 }

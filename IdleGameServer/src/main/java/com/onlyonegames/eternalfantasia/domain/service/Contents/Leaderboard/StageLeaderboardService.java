@@ -117,8 +117,15 @@ public class StageLeaderboardService {
         if (myRankingInfo == null){
             myRankingInfo = new StageRankingInfoDto();
             StageRanking stageRanking = stageRankingRepository.findByUseridUser(userId).orElse(null);
-            if (stageRanking != null)
-                myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), getRank(userId).intValue(), stageRanking.getPoint(), getPercent(userId));
+            if (stageRanking != null) {
+                int myRanking = 0;
+                StageRankingInfoDto temp = list.stream().filter(i -> i.getPoint() == stageRanking.getPoint()).findAny().orElse(null);
+                if (temp == null)
+                    myRanking = getRank(userId).intValue();
+                else
+                    myRanking = temp.getRanking();
+                myRankingInfo.SetStageRankingInfoDto(userId, stageRanking.getUserGameName(), myRanking, stageRanking.getPoint(), getPercent(userId));
+            }
             else {
                 User user = userRepository.findById(userId).orElse(null);
                 if (user == null) {

@@ -9,11 +9,13 @@ public class ClassInventoryResponseDto {
     int level;
     int count;
     int promotionPercent;
+    int isPromotionLock;
 
     public void InitFromDB(MyClassInventory dbData) {
         this.code = dbData.getCode();
         this.level = dbData.getLevel();
         this.count = dbData.getCount();
         this.promotionPercent = dbData.getPromotionPercent();
+        this.isPromotionLock = dbData.getIsPromotionLock();
     }
 }

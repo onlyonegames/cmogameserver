@@ -22,6 +22,7 @@ public class MyClassInventory extends BaseTimeEntity {
     int level;
     int count;
     int promotionPercent;
+    int isPromotionLock;
 
     public void AddCount(int addCount) {
         this.count += addCount;
@@ -43,5 +44,6 @@ public class MyClassInventory extends BaseTimeEntity {
         this.level = dto.getLevel();
         this.count = dto.getCount();
         this.promotionPercent = dto.getPromotionPercent();
+        this.isPromotionLock = dto.getIsPromotionLock();
     }
 }

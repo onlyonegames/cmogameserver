@@ -27,6 +27,13 @@ public class MyAccessoryInventoryController {
         Map<String, Object> response = myAccessoryInventoryService.UpgradeAccessory(userId, dto.getCode(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
+    @PostMapping("/api/Inventory/UpgradeAllAccessory")
+    public ResponseDTO<Map<String, Object>> UpgradeAllAccessory(@RequestBody AccessoryUpgradeRequestDto dto) {
+        Map<String, Object> map = new HashMap<>();
+        Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Map<String, Object> response = myAccessoryInventoryService.UpgradeAllAccessory(userId, dto.getCode(), map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
 
     @PostMapping("/api/Inventory/ChangeOptionAccessory")
     public ResponseDTO<Map<String, Object>> ChangeOptionAccessory(@RequestBody AccessoryInventoryResponseDto dto) {

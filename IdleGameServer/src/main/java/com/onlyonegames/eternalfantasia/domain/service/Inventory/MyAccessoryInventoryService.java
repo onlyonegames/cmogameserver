@@ -77,6 +77,53 @@ public class MyAccessoryInventoryService {
         return map;
     }
 
+    public Map<String, Object> UpgradeAllAccessory(Long userId, String code, Map<String, Object> map) {
+        List<MyAccessoryInventory> myAccessoryInventoryList = myAccessoryInventoryRepository.findAllByUseridUser(userId);
+        MyAccessoryInventory myAccessoryInventory = myAccessoryInventoryList.stream().filter(i -> i.getCode().equals(code)).findAny().orElse(null);
+        if(myAccessoryInventory == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyAccessoryInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Not Found MyAccessoryInventory", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        AccessoryInventoryResponseDto accessoryInventoryResponseDto = new AccessoryInventoryResponseDto();
+        if(myAccessoryInventory.getLevel() == 0) {
+            myAccessoryInventory.SpendAccessory();
+            myAccessoryInventory.AccessoryLevelUp();
+            accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);
+            map.put("myAccessoryInventory", accessoryInventoryResponseDto);
+            return map;
+        }
+        List<Boolean> successList = new ArrayList<>();
+        while (myAccessoryInventory.getCount() != 0 && myAccessoryInventory.getLevel() != 100) {
+            double rng = MathHelper.Range(0, 1);
+            double baseRNG = 1 - (0.02 * (myAccessoryInventory.getLevel() - 1));
+            baseRNG = Math.max(baseRNG, 0.05D);
+            myAccessoryInventory.SpendAccessory();
+            if (rng > baseRNG) {
+                successList.add(false);
+                continue;
+            }
+            myAccessoryInventory.AccessoryLevelUp();
+            int level = myAccessoryInventory.getLevel();
+            if (level == 2 || level == 5 || level == 10) {
+                AccessoryOptionJsonDto accessoryOptionJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptions(), AccessoryOptionJsonDto.class);
+                AccessoryOptionJsonDto.OptionInfo optionInfo = new AccessoryOptionJsonDto.OptionInfo();
+                optionInfo.SetOptionInfo(0, (int) (Math.random() * 6));
+                accessoryOptionJsonDto.options.add(optionInfo);
+                String json_Option = JsonStringHerlper.WriteValueAsStringFromData(accessoryOptionJsonDto);
+                myAccessoryInventory.Reset_Options(json_Option);
+                OptionLockListJsonDto optionLockListJsonDto = JsonStringHerlper.ReadValueFromJson(myAccessoryInventory.getOptionLockList(), OptionLockListJsonDto.class);
+                optionLockListJsonDto.optionLockList.add(0);
+                String optionLockListString = JsonStringHerlper.WriteValueAsStringFromData(optionLockListJsonDto);
+                myAccessoryInventory.SetOptionLockList(optionLockListString);
+            }
+            successList.add(true);
+        }
+        accessoryInventoryResponseDto.InitFromDB(myAccessoryInventory);
+        map.put("myAccessoryInventory", accessoryInventoryResponseDto);
+        map.put("successList", successList);
+        return map;
+    }
+
     public Map<String, Object> ChangeOption(Long userId, AccessoryInventoryResponseDto dto, Map<String, Object> map) {
         List<MyAccessoryInventory> myAccessoryInventoryList = myAccessoryInventoryRepository.findAllByUseridUser(userId);
         MyAccessoryInventory myAccessoryInventory = myAccessoryInventoryList.stream().filter(i -> i.getCode().equals(dto.getCode())).findAny().orElse(null);

@@ -38,7 +38,7 @@ public class User {
     String socialProvider;
     String userGameName;
     int level;
-    Long exp;
+    double exp;
     int sexType; //0 : 남자, 1 : 여자 default : 0
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
@@ -62,6 +62,7 @@ public class User {
     String costumeTicket;
     boolean advertisement;
     boolean blackUser;
+//    int totalPurchase;
 
     @CreatedDate
     private LocalDateTime createdDate;
@@ -92,7 +93,7 @@ public class User {
         this.arenaCoin = 0L;
         this.dragonCoin = 0L;
         this.level = 1;
-        this.exp = 0L;
+        this.exp = 0;
         this.sexType = 0;
         this.fieldIndex = 0;
         this.battleStatus = "";
@@ -105,6 +106,10 @@ public class User {
         this.advertisement = false;
         this.costumeTicket = "0";
     }
+
+//    public void AddPurchase(int price) {
+//        this.totalPurchase += price;
+//    }
 
     public void AddGold(BigInteger _addGold) {
         BigInteger gold = new BigInteger(this.gold);
@@ -231,7 +236,7 @@ public class User {
     }
 
     public void SetExp(String element) {
-        this.exp = Long.parseLong(element);
+        this.exp = Double.parseDouble(element);
     }
 
     public void SetFieldIndex(String element) {

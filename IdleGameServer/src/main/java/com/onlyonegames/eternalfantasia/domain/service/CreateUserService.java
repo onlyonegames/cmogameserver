@@ -211,7 +211,7 @@ public class CreateUserService
                 String[] codeSplit = temp.getCode().split("_");
                 if(codeSplit[1].equals("000")){
                     MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 0, 1);
+                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 0, 1, 0);
                     myEquipmentInventoryList.add(myEquipmentInventoryDto.ToEntity());
                 }
             }
