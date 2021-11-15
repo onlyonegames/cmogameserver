@@ -4,20 +4,17 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.*;
-import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.GetSetLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.*;
-import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailBox;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyWorldBossPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
-import com.onlyonegames.eternalfantasia.domain.repository.Logging.GetSetLogRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
@@ -69,7 +66,6 @@ public class GetterService {
     private final MyCostumeInventoryRepository myCostumeInventoryRepository;
     private final MyBoosterInfoRepository myBoosterInfoRepository;
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
-    private final GetSetLogRepository getSetLogRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -1260,11 +1256,6 @@ public class GetterService {
         }
         json_saveData = JsonStringHerlper.WriteValueAsStringFromData(myAttendanceDataJsonDto);
         myPassData.ResetAttendanceJsonData(json_saveData);
-
-        String cmdLog = JsonStringHerlper.WriteValueAsStringFromData(requestList);
-        GetSetLogDto getSetLogDto = new GetSetLogDto();
-        getSetLogDto.SetGetSetLogDto(userId, cmdLog);
-        getSetLogRepository.save(getSetLogDto.ToEntity());
 
         map.put("cmdRequest", requestList.cmds);
         map.put("lastSettingTime", user.getLastSettingTime());
