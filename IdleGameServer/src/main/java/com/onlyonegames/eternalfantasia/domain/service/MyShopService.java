@@ -72,56 +72,38 @@ public class MyShopService {
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
-            case "스타트 성장 패키지":
-                if (!myShopInfo.BuyStartPackage()) {
+            case "고대결정 패키지":
+                if (!myShopInfo.BuyAncientCrystalPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
-            case "전사 패키지":
-                if (!myShopInfo.BuyWarriorPackage()) {
+            case "연금 장신구 패키지":
+                if (!myShopInfo.BuyAlchemyPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
-            case "도둑 패키지":
-                if (!myShopInfo.BuyThiefPackage()) {
+            case "버프 패키지":
+                if (!myShopInfo.BuyBuffPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
-            case "기사 패키지":
-                if (!myShopInfo.BuyKnightPackage()) {
+            case "스팩업 패키지":
+                if (!myShopInfo.BuySpecUpPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
-            case "궁수 패키지":
-                if (!myShopInfo.BuyArcherPackage()) {
-                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
-                }
-                break;
-            case "마법사 패키지":
-                if (!myShopInfo.BuyMagicianPackage()) {
+            case "스킬각성패키지":
+                if (!myShopInfo.BuySkillAwakeningPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
             case "영혼석 패키지":
                 if (!myShopInfo.BuySoulStonePackage()) {
-                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
-                }
-                break;
-            case "주간 패키지":
-                if (!myShopInfo.BuyWeeklyPackage()) {
-                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
-                }
-                break;
-            case "월간 패키지":
-                if (!myShopInfo.BuyMonthlyPackage()) {
                     errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
@@ -217,6 +199,36 @@ public class MyShopService {
                         SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
                     }
                     break;
+                case "allAccessory":
+                    for (int j = 0; j < 12; j++) {
+                        AccessoryTable accessoryTable = gameDataTableService.AccessoryTable().get(j);
+                        String code = accessoryTable.getCode();
+                        SendMail(userId, purchase, shopRewardTable.getItemName(), code, reward[1], tempMap);
+                    }
+                    break;
+                case "allDivineDGradeRune":
+                    for (RuneInfoTable runeInfoTable : GetAllDivineDGradeRune()) {
+                        SendMail(userId, purchase, shopRewardTable.getItemName(), runeInfoTable.getCode(), reward[1], tempMap);
+                    }
+                    break;
+                case "allDivineDGradeEquipment":
+                    for (EquipmentTable equipmentTable : GetAllDivineDGradeEquipment()) {
+                        SendMail(userId, purchase, shopRewardTable.getItemName(), equipmentTable.getCode(), reward[1], tempMap);
+                    }
+                    break;
+                case "ancientDGradeEquipment":
+                    EquipmentTable equipmentTable = GetAncientDGradeRandomEquipment();
+                    String code = equipmentTable.getCode();
+                    SendMail(userId, purchase, shopRewardTable.getItemName(), code, reward[1], tempMap);
+                    break;
+                case "randomOrb":
+                    String orbCode = GetRandomOrb();
+                    SendMail(userId, purchase, shopRewardTable.getItemName(), orbCode, reward[1], tempMap);
+                    break;
+                case "randomNewAccessory":
+                    AccessoryTable accessoryCode = GetRandomNewAccessory();
+                    SendMail(userId, purchase, shopRewardTable.getItemName(), accessoryCode.getCode(), reward[1], tempMap);
+                    break;
                 case "adRemove":
                     user.ADRemove();
                     break;
@@ -294,6 +306,47 @@ public class MyShopService {
         List<RuneInfoTable> divineRuneInfoTableList = runeInfoTableList.stream().filter(i -> i.getQualityNo() == 6 && i.getGradeNo() == 1).collect(Collectors.toList());
         int index = (int) (Math.random() * 5);
         return divineRuneInfoTableList.get(index);
+    }
+
+    private AccessoryTable GetRandomNewAccessory() {
+        int randomIndex = (int) MathHelper.Range(12, 14);
+        return gameDataTableService.AccessoryTable().get(randomIndex);
+    }
+
+    private String GetRandomOrb() {
+        String orbCode;
+        int randomIndex = (int) (Math.random() * 4);
+        switch(randomIndex) {
+            case 1:
+                orbCode = "blueOrb";
+                break;
+            case 2:
+                orbCode = "greenOrb";
+                break;
+            case 3:
+                orbCode = "yellowOrb";
+                break;
+            default:
+                orbCode = "redOrb";
+        }
+        return orbCode;
+    }
+
+    private EquipmentTable GetAncientDGradeRandomEquipment() {
+        List<EquipmentTable> equipmentTableList = gameDataTableService.EquipmentTable();
+        List<EquipmentTable> ancientEquipmentList = equipmentTableList.stream().filter(i -> i.getGrade().equals("Ancient") && i.getGradeValue() == 1).collect(Collectors.toList());
+        int index = (int) (Math.random() * 5);
+        return ancientEquipmentList.get(index);
+    }
+
+    private List<RuneInfoTable> GetAllDivineDGradeRune() {
+        List<RuneInfoTable> runeInfoTableList = gameDataTableService.RuneInfoTable();
+        return runeInfoTableList.stream().filter(i -> i.getQualityNo() == 6 && i.getGradeNo() == 1).collect(Collectors.toList());
+    }
+
+    private List<EquipmentTable> GetAllDivineDGradeEquipment() {
+        List<EquipmentTable> equipmentTableList = gameDataTableService.EquipmentTable();
+        return equipmentTableList.stream().filter(i -> i.getGrade().equals("Divine") && i.getGradeValue() == 1).collect(Collectors.toList());
     }
 
     private void SendMail(Long userId, boolean purchase, String title, String gettingItem, String gettingItemCount, Map<String, Object> tempMap) {

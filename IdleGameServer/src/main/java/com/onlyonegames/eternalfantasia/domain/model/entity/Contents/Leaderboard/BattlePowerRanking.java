@@ -20,6 +20,7 @@ public class BattlePowerRanking extends BaseTimeEntity {
     String userGameName;
     double battlePower;
     int ranking;
+    boolean isBlack;
 
     public void refresh(double battlePower) {
         this.battlePower = battlePower;
@@ -30,5 +31,9 @@ public class BattlePowerRanking extends BaseTimeEntity {
 
     public void ResetUserGameName(String userGameName) {
         this.userGameName = userGameName;
+    }
+
+    public void SetBlack() {
+        this.isBlack = true;
     }
 }

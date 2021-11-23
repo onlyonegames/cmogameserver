@@ -15,11 +15,13 @@ public class MyDungeonInfoDto {
     int accessoryDungeonFloor;
     LocalDateTime runeDungeonTime;
     int runeDungeonFloor;
+    LocalDateTime ancientCrystalDungeonTime;
+    int ancientCrystalDungeonFloor;
 
     public MyDungeonInfo ToEntity() {
         LocalDateTime now = LocalDateTime.now().minusDays(1);
         return MyDungeonInfo.builder().useridUser(useridUser).weaponDungeonTime(now).weaponDungeonFloor(0)
                 .accessoryDungeonTime(now).accessoryDungeonFloor(0)
-                .runeDungeonTime(now).runeDungeonFloor(0).build();
+                .runeDungeonTime(now).runeDungeonFloor(0).ancientCrystalDungeonTime(now).ancientCrystalDungeonFloor(0).build();
     }
 }

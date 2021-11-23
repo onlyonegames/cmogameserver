@@ -24,6 +24,6 @@ public class MyDungeonInfo extends BaseTimeEntity {
     public int accessoryDungeonFloor;
     public LocalDateTime runeDungeonTime;
     public int runeDungeonFloor;
-
-
+    public LocalDateTime ancientCrystalDungeonTime;
+    public int ancientCrystalDungeonFloor;
 }

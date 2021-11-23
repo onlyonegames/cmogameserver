@@ -55,7 +55,7 @@ public class WorldBossRewardService {
                 if (temp.gettingItem.equals("diamond"))
                     temp.setGettingItemCount("7000");
                 else
-                    temp.setGettingItemCount("800");
+                    temp.setGettingItemCount("10000");
             }
         }
         else if (myRanking == 2) {
@@ -63,7 +63,7 @@ public class WorldBossRewardService {
                 if (temp.gettingItem.equals("diamond"))
                     temp.setGettingItemCount("6000");
                 else
-                    temp.setGettingItemCount("700");
+                    temp.setGettingItemCount("5000");
             }
         }
         else if (myRanking == 3) {
@@ -71,7 +71,7 @@ public class WorldBossRewardService {
                 if (temp.gettingItem.equals("diamond"))
                     temp.setGettingItemCount("5000");
                 else
-                    temp.setGettingItemCount("600");
+                    temp.setGettingItemCount("3000");
             }
         }
         else {

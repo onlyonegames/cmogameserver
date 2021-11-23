@@ -9,11 +9,13 @@ public class WeaponInventoryResponseDto {
     int count;
     int level;
     int isPromotionLock;
+    String carveData;
 
     public void InitFromDB(MyEquipmentInventory dbData) {
         this.code = dbData.getCode();
         this.count = dbData.getCount();
         this.level = dbData.getLevel();
         this.isPromotionLock = dbData.getIsPromotionLock();
+        this.carveData = dbData.getCarveData();
     }
 }

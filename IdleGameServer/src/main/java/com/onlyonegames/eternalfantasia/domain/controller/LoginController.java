@@ -60,4 +60,12 @@ public class LoginController {
         return new ResponseDTO<>(HttpStatus.OK,
                 ResponseErrorCode.NONE.getIntegerValue(), "", true, userService.login(user.getId(),jwt, map));
     }
+
+    @PostMapping("/api/Test/SetBlackUser")
+    public ResponseDTO<Map<String, Object>> SetBlackUser(@RequestBody UserBaseDto userBaseDto) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = userService.BlackUser(userBaseDto.getId(), map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
+
 }

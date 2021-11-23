@@ -12,9 +12,10 @@ public class MyEquipmentInventoryDto {
     int count;
     int level;
     int isPromotionLock;
+    String carveData;
 
     public MyEquipmentInventory ToEntity() {
-        return MyEquipmentInventory.builder().useridUser(useridUser).code(code).grade(grade).count(count).level(level).build();
+        return MyEquipmentInventory.builder().useridUser(useridUser).code(code).grade(grade).count(count).level(level).carveData(carveData).build();
     }
 
     public void InitFromDBData(MyEquipmentInventory dbData){
@@ -24,14 +25,16 @@ public class MyEquipmentInventoryDto {
         this.grade = dbData.getGrade();
         this.count = dbData.getCount();
         this.level = dbData.getLevel();
+        this.carveData = dbData.getCarveData();
     }
 
-    public void SetMyEquipmentInventoryDto(Long useridUser, String code, String grade, int count, int level, int isPromotionLock) {
+    public void SetMyEquipmentInventoryDto(Long useridUser, String code, String grade, int count, int level, int isPromotionLock, String carveData) {
         this.useridUser = useridUser;
         this.code = code;
         this.grade = grade;
         this.count = count;
         this.level = level;
         this.isPromotionLock = isPromotionLock;
+        this.carveData = carveData;
     }
 }

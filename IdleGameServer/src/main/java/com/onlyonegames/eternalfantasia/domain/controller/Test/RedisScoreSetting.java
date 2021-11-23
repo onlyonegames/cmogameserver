@@ -53,7 +53,7 @@ public class RedisScoreSetting {
 
         List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
         for(WorldBossRanking worldBossRanking : worldBossRankingList) {
-            if (worldBossRanking.getTotalDamage() == 0D)
+            if (worldBossRanking.getTotalDamage() == 0D || worldBossRanking.isBlack())
                 continue;
             WorldBossRedisRanking worldBossRedisRanking = WorldBossRedisRanking.builder().id(worldBossRanking.getUseridUser())
                     .userGameName(worldBossRanking.getUserGameName()).totalDamage(worldBossRanking.getTotalDamage()).build();
@@ -64,6 +64,8 @@ public class RedisScoreSetting {
 
         List<ArenaRanking> arenaRankingList = arenaRankingRepository.findAll();
         for(ArenaRanking arenaRanking : arenaRankingList) {
+            if (arenaRanking.isBlack())
+                continue;
             ArenaRedisRanking arenaRedisRanking = ArenaRedisRanking.builder().id(arenaRanking.getUseridUser())
                     .userGameName(arenaRanking.getUserGameName()).point(arenaRanking.getPoint()).build();
             arenaRedisRankingRepository.save(arenaRedisRanking);
@@ -73,6 +75,8 @@ public class RedisScoreSetting {
 
         List<StageRanking> stageRankingList = stageRankingRepository.findAll();
         for (StageRanking stageRanking : stageRankingList) {
+            if (stageRanking.isBlack())
+                continue;
             StageRedisRanking stageRedisRanking = StageRedisRanking.builder().id(stageRanking.getUseridUser())
                     .userGameName(stageRanking.getUserGameName()).point(stageRanking.getPoint()).build();
             stageRedisRankingRepository.save(stageRedisRanking);
@@ -82,6 +86,8 @@ public class RedisScoreSetting {
 
         List<BattlePowerRanking> battlePowerRankingList = battlePowerRankingRepository.findAll();
         for (BattlePowerRanking battlePowerRanking : battlePowerRankingList) {
+            if (battlePowerRanking.isBlack())
+                continue;
             BattlePowerRedisRanking battlePowerRedisRanking = BattlePowerRedisRanking.builder().id(battlePowerRanking.getUseridUser())
                     .userGameName(battlePowerRanking.getUserGameName()).battlePower(battlePowerRanking.getBattlePower()).build();
             battlePowerRedisRankingRepository.save(battlePowerRedisRanking);
@@ -90,6 +96,70 @@ public class RedisScoreSetting {
         }
 
         map.put("test", worldBossRedisRankingRepository.findAll());
+        map.put("success", true);
+
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, map);
+    }
+    @GetMapping("/api/Test/RedisScoreSettingForBattlePower")
+    public ResponseDTO<Map<String, Object>> RedisScoreSettingForBattlePower() {
+        Map<String, Object> map = new HashMap<>();
+//
+//        redisLongTemplate.opsForZSet().getOperations().delete(WorldBossLeaderboardService.WORLD_BOSS_RANKING_LEADERBOARD);
+//        Iterable<WorldBossRedisRanking> worldBossRedisRankingList = worldBossRedisRankingRepository.findAll();
+//        worldBossRedisRankingRepository.deleteAll(worldBossRedisRankingList);
+
+//        redisLongTemplate.opsForZSet().getOperations().delete(ArenaLeaderboardService.ARENA_RANKING_LEADERBOARD);
+//        Iterable<ArenaRedisRanking> arenaRedisRankingList = arenaRedisRankingRepository.findAll();
+//        arenaRedisRankingRepository.deleteAll(arenaRedisRankingList);
+
+//        redisLongTemplate.opsForZSet().getOperations().delete(StageLeaderboardService.STAGE_RANKING_LEADERBOARD);
+//        Iterable<StageRedisRanking> stageRedisRankingList = stageRedisRankingRepository.findAll();
+//        stageRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD);
+        Iterable<BattlePowerRedisRanking> battlePowerRedisRankingList = battlePowerRedisRankingRepository.findAll();
+        battlePowerRedisRankingRepository.deleteAll();
+
+//        List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
+//        for(WorldBossRanking worldBossRanking : worldBossRankingList) {
+//            if (worldBossRanking.getTotalDamage() == 0D)
+//                continue;
+//            WorldBossRedisRanking worldBossRedisRanking = WorldBossRedisRanking.builder().id(worldBossRanking.getUseridUser())
+//                    .userGameName(worldBossRanking.getUserGameName()).totalDamage(worldBossRanking.getTotalDamage()).build();
+//            worldBossRedisRankingRepository.save(worldBossRedisRanking);
+//
+//            redisLongTemplate.opsForZSet().add(WorldBossLeaderboardService.WORLD_BOSS_RANKING_LEADERBOARD, worldBossRanking.getUseridUser(), worldBossRanking.getTotalDamage());
+//        }
+//
+//        List<ArenaRanking> arenaRankingList = arenaRankingRepository.findAll();
+//        for(ArenaRanking arenaRanking : arenaRankingList) {
+//            ArenaRedisRanking arenaRedisRanking = ArenaRedisRanking.builder().id(arenaRanking.getUseridUser())
+//                    .userGameName(arenaRanking.getUserGameName()).point(arenaRanking.getPoint()).build();
+//            arenaRedisRankingRepository.save(arenaRedisRanking);
+//
+//            redisLongTemplate.opsForZSet().add(ArenaLeaderboardService.ARENA_RANKING_LEADERBOARD, arenaRanking.getUseridUser(), arenaRanking.getPoint());
+//        }
+//
+//        List<StageRanking> stageRankingList = stageRankingRepository.findAll();
+//        for (StageRanking stageRanking : stageRankingList) {
+//            StageRedisRanking stageRedisRanking = StageRedisRanking.builder().id(stageRanking.getUseridUser())
+//                    .userGameName(stageRanking.getUserGameName()).point(stageRanking.getPoint()).build();
+//            stageRedisRankingRepository.save(stageRedisRanking);
+//
+//            redisLongTemplate.opsForZSet().add(StageLeaderboardService.STAGE_RANKING_LEADERBOARD, stageRanking.getUseridUser(), stageRanking.getPoint());
+//        }
+
+        List<BattlePowerRanking> battlePowerRankingList = battlePowerRankingRepository.findAll();
+        for (BattlePowerRanking battlePowerRanking : battlePowerRankingList) {
+            battlePowerRanking.refresh(0);
+            BattlePowerRedisRanking battlePowerRedisRanking = BattlePowerRedisRanking.builder().id(battlePowerRanking.getUseridUser())
+                    .userGameName(battlePowerRanking.getUserGameName()).battlePower(battlePowerRanking.getBattlePower()).build();
+            battlePowerRedisRankingRepository.save(battlePowerRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD, battlePowerRanking.getUseridUser(), battlePowerRanking.getBattlePower());
+        }
+
+        map.put("test", battlePowerRankingList);
         map.put("success", true);
 
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, map);

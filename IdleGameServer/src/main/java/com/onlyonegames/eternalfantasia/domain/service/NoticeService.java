@@ -26,8 +26,10 @@ public class NoticeService {
         List<NoticeInfo> noticeInfoList = null;
         if (noticeInfo == null) {
             noticeInfo = noticeInfoRepository.findById(1).get();//.findAllByBeginDateBeforeAndExpireDateAfter(now, now);
-//            if (noticeInfo.getExpireDate().isBefore(now))
-//                noticeInfo = noticeInfoList.get(0);
+            if (noticeInfo.getExpireDate().isBefore(now)) {
+                noticeInfo.ChangeContents("");
+                noticeInfo.changeExpireDate(now.plusYears(1));
+            }
         }
         else {
             if (noticeInfo.getExpireDate().isBefore(now)) {

@@ -8,15 +8,12 @@ public class MyShopInfoDto {
     Long id;
     int freeDiamond;
     int todayPackage;
-    int startPackage;
-    int warriorPackage;
-    int thiefPackage;
-    int knightPackage;
-    int archerPackage;
-    int magicianPackage;
+    int ancientCrystalPackage;
+    int alchemyPackage;
+    int buffPackage;
+    int specUpPackage;
+    int skillAwakeningPackage;
     int soulStonePackage;
-    int weeklyPackage;
-    int monthlyPackage;
     int adRemovePackage;
     int itemAD;
     int expAD;
@@ -27,24 +24,20 @@ public class MyShopInfoDto {
 
     public MyShopInfo ToEntity() {
         Init();
-        return MyShopInfo.builder().freeDiamond(freeDiamond).todayPackage(todayPackage).startPackage(startPackage).warriorPackage(warriorPackage)
-                .thiefPackage(thiefPackage).knightPackage(knightPackage).archerPackage(archerPackage).magicianPackage(magicianPackage)
-                .soulStonePackage(soulStonePackage).weeklyPackage(weeklyPackage).monthlyPackage(monthlyPackage).adRemovePackage(adRemovePackage)
+        return MyShopInfo.builder().freeDiamond(freeDiamond).todayPackage(todayPackage).ancientCrystalPackage(ancientCrystalPackage).alchemyPackage(alchemyPackage)
+                .buffPackage(buffPackage).specUpPackage(specUpPackage).skillAwakeningPackage(skillAwakeningPackage).soulStonePackage(soulStonePackage).adRemovePackage(adRemovePackage)
                 .itemAD(itemAD).expAD(expAD).goldAD(goldAD).soulStoneAD(soulStoneAD).speedAD(speedAD).useridUser(useridUser).build();
     }
 
     void Init() {
         this.freeDiamond = 1;
         this.todayPackage = 3;
-        this.startPackage = 1;
-        this.warriorPackage = 1;
-        this.thiefPackage = 1;
-        this.knightPackage = 1;
-        this.archerPackage = 1;
-        this.magicianPackage = 1;
+        this.ancientCrystalPackage = 3;
+        this.alchemyPackage = 3;
+        this.buffPackage = 1;
+        this.specUpPackage = 1;
+        this.skillAwakeningPackage = 1;
         this.soulStonePackage = 3;
-        this.weeklyPackage = 3;
-        this.monthlyPackage = 2;
         this.adRemovePackage = 1;
         this.itemAD = 3;
         this.expAD = 3;

@@ -40,17 +40,17 @@
 
 	<springProfile name="local">
 
-		<logger name="net.donnert.spring.boot" level="DEBUG" />
+		<logger name="net.donnert.spring.boot" level="WARN" />
 
 		
 
-		<root level="INFO">
+		<root level="WARN">
 
 			<appender-ref ref="CONSOLE"/>
 
 			<appender-ref ref="FILE"/>
 
-		</root>	
+		</root>
 
 	</springProfile>
 
@@ -58,11 +58,11 @@
 
 	<springProfile name="!local">
 
-		<logger name="net.donnert.spring.boot" level="DEBUG" />
+		<logger name="net.donnert.spring.boot" level="WARN" />
 
 
 
-		<root level="INFO">
+		<root level="WARN">
 
 			<appender-ref ref="CONSOLE"/>
 

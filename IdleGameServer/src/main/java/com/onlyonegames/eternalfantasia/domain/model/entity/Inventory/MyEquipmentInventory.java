@@ -23,6 +23,7 @@ public class MyEquipmentInventory extends BaseTimeEntity {
     int count;
     int level;
     int isPromotionLock;
+    String carveData;
 
     public void AddCount(int addCount) {
         this.count += addCount;
@@ -44,5 +45,6 @@ public class MyEquipmentInventory extends BaseTimeEntity {
         this.count = dto.getCount();
         this.level = dto.getLevel();
         this.isPromotionLock = dto.getIsPromotionLock();
+        this.carveData = dto.getCarveData();
     }
 }

@@ -62,6 +62,11 @@ public class User {
     String costumeTicket;
     boolean advertisement;
     boolean blackUser;
+    String ancientCrystal;
+    String redOrb;
+    String greenOrb;
+    String yellowOrb;
+    String blueOrb;
 //    int totalPurchase;
 
     @CreatedDate
@@ -105,6 +110,11 @@ public class User {
         this.mileage = 0;
         this.advertisement = false;
         this.costumeTicket = "0";
+        this.ancientCrystal = "0";
+        this.redOrb = "0";
+        this.greenOrb = "0";
+        this.yellowOrb = "0";
+        this.blueOrb = "0";
     }
 
 //    public void AddPurchase(int price) {
@@ -271,6 +281,26 @@ public class User {
         this.costumeTicket = element;
     }
 
+    public void SetAncientCrystal(String element) {
+        this.ancientCrystal = element;
+    }
+
+    public void SetRedOrb(String element) {
+        this.redOrb = element;
+    }
+
+    public void SetGreenOrb(String element) {
+        this.greenOrb = element;
+    }
+
+    public void SetYellowOrb(String element) {
+        this.yellowOrb = element;
+    }
+
+    public void SetBlueOrb(String element) {
+        this.blueOrb = element;
+    }
+
     public void ADRemove() {
         this.advertisement = true;
     }
@@ -294,5 +324,9 @@ public class User {
 
     public void SetLastMonthResetTime(LocalDateTime lastMonthResetTime) {
         this.lastMonthResetTime = lastMonthResetTime;
+    }
+
+    public void SetBlackUser() {
+        this.blackUser = true;
     }
 }

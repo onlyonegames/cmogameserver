@@ -211,7 +211,7 @@ public class CreateUserService
                 String[] codeSplit = temp.getCode().split("_");
                 if(codeSplit[1].equals("000")){
                     MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 0, 1, 0);
+                    myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, temp.getCode(), temp.getGrade(), 0, 1, 0,"");
                     myEquipmentInventoryList.add(myEquipmentInventoryDto.ToEntity());
                 }
             }
@@ -289,12 +289,15 @@ public class CreateUserService
     }
 
     private MyGachaInfo createMyGachaInfo(Long userId) {
-        return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).classLevel(0).classExp(0).weaponAD(5).classAD(5).artifactAD(5).build();
+        return MyGachaInfo.builder().useridUser(userId).weaponLevel(0).weaponExp(0).classLevel(0).classExp(0)
+                .weaponAD(5).classAD(5).artifactAD(5).runeAD(5).runeLevel(0).runeExp(0).build();
     }
 
     private MyCollectionInfo createMyCollectionInfo(Long userId) {
         List<InitJsonDatasForFirstUser> forFirstUsers = gameDataTableService.InitJsonDatasForFirstUser();
-        return MyCollectionInfo.builder().useridUser(userId).json_weaponCollectionInfo(forFirstUsers.get(2).getInitJson()).json_classCollectionInfo(forFirstUsers.get(3).getInitJson()).json_monsterCollectionInfo(forFirstUsers.get(4).getInitJson()).build();
+        return MyCollectionInfo.builder().useridUser(userId).json_weaponCollectionInfo(forFirstUsers.get(2).getInitJson())
+                .json_classCollectionInfo(forFirstUsers.get(3).getInitJson()).json_monsterCollectionInfo(forFirstUsers.get(4).getInitJson())
+                .json_runeCollectionInfo(forFirstUsers.get(8).getInitJson()).build();
     }
 
     private MyQuickMissionData createMyQuickMissionData(Long userId) {

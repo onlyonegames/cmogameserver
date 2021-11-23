@@ -19,6 +19,7 @@ public class MyCollectionInfo extends BaseTimeEntity {
     public String json_weaponCollectionInfo;
     public String json_classCollectionInfo;
     public String json_monsterCollectionInfo;
+    public String json_runeCollectionInfo;
     Long useridUser;
 
     public void ResetJson_weaponCollectionInfo (String json_weaponCollectionInfo){

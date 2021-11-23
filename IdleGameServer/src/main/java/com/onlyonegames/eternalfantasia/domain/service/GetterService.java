@@ -131,6 +131,11 @@ public class GetterService {
                                 case "dungeonTicket":
                                 case "arenaCoin":
                                 case "mileage":
+                                case "ancientCrystal":
+                                case "redOrb":
+                                case "greenOrb":
+                                case "yellowOrb":
+                                case "blueOrb":
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -421,6 +426,21 @@ public class GetterService {
                                             break;
                                         case "costumeTicket":
                                             element.SetValue(user.getCostumeTicket());
+                                            break;
+                                        case "ancientCrystal":
+                                            element.SetValue(user.getAncientCrystal());
+                                            break;
+                                        case "redOrb":
+                                            element.SetValue(user.getRedOrb());
+                                            break;
+                                        case "greenOrb":
+                                            element.SetValue(user.getGreenOrb());
+                                            break;
+                                        case "yellowOrb":
+                                            element.SetValue(user.getYellowOrb());
+                                            break;
+                                        case "blueOrb":
+                                            element.SetValue(user.getBlueOrb());
                                             break;
                                     }
                                 }
@@ -922,6 +942,21 @@ public class GetterService {
                                         case "costumeTicket":
                                             user.SetCostumeTicket(element.getValue());
                                             break;
+                                        case "ancientCrystal":
+                                            user.SetAncientCrystal(element.getValue());
+                                            break;
+                                        case "redOrb":
+                                            user.SetRedOrb(element.getValue());
+                                            break;
+                                        case "greenOrb":
+                                            user.SetGreenOrb(element.getValue());
+                                            break;
+                                        case "yellowOrb":
+                                            user.SetYellowOrb(element.getValue());
+                                            break;
+                                        case "blueOrb":
+                                            user.SetBlueOrb(element.getValue());
+                                            break;
                                     }
                                 }
                                 break;
@@ -1027,11 +1062,12 @@ public class GetterService {
                                     MyEquipmentInventory myEquipmentInventory = myEquipmentInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if (myEquipmentInventory == null) {
                                         EquipmentTable equipmentTable = gameDataTableService.EquipmentTable().stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
-                                        if(equipmentTable == null) {errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found EquipmentTable", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        if(equipmentTable == null) {
+                                            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found EquipmentTable", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
                                             throw new MyCustomException("Not Found EquipmentTable", ResponseErrorCode.NOT_FIND_DATA);
                                         }
                                         MyEquipmentInventoryDto myEquipmentInventoryDto = new MyEquipmentInventoryDto();
-                                        myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, element.getElement(), equipmentTable.getGrade(), weaponInventoryResponseDto.getCount(), weaponInventoryResponseDto.getLevel(), weaponInventoryResponseDto.getIsPromotionLock());
+                                        myEquipmentInventoryDto.SetMyEquipmentInventoryDto(userId, element.getElement(), equipmentTable.getGrade(), weaponInventoryResponseDto.getCount(), weaponInventoryResponseDto.getLevel(), weaponInventoryResponseDto.getIsPromotionLock(), weaponInventoryResponseDto.getCarveData());
                                         myEquipmentInventory = myEquipmentInventoryRepository.save(myEquipmentInventoryDto.ToEntity());
                                         myEquipmentInventoryList.add(myEquipmentInventory);
                                     }else {

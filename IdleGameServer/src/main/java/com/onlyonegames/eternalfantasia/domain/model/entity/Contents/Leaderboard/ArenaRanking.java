@@ -20,6 +20,7 @@ public class ArenaRanking extends BaseTimeEntity {
     String userGameName;
     int point;
     int ranking;
+    boolean isBlack;
 
     public void refresh(int point) {
         this.point = point;
@@ -36,5 +37,9 @@ public class ArenaRanking extends BaseTimeEntity {
     public void SetFirstUser() {
         this.point = 0;
         this.ranking = 0;
+    }
+
+    public void SetBlack() {
+        this.isBlack = true;
     }
 }

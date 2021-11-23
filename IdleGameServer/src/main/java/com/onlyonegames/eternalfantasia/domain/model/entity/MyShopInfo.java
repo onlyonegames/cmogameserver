@@ -18,15 +18,12 @@ public class MyShopInfo extends BaseTimeEntity {
     Long id;
     public int freeDiamond;
     public int todayPackage;
-    public int startPackage;
-    public int warriorPackage;
-    public int thiefPackage;
-    public int knightPackage;
-    public int archerPackage;
-    public int magicianPackage;
+    public int ancientCrystalPackage;
+    public int alchemyPackage;
+    public int buffPackage;
+    public int specUpPackage;
+    public int skillAwakeningPackage;
     public int soulStonePackage;
-    public int weeklyPackage;
-    public int monthlyPackage;
     public int adRemovePackage;
     public int itemAD;
     public int expAD;
@@ -47,58 +44,40 @@ public class MyShopInfo extends BaseTimeEntity {
         this.todayPackage -= 1;
         return true;
     }
-    public boolean BuyStartPackage() {
-        if (this.startPackage<1)
+    public boolean BuyAncientCrystalPackage() {
+        if (this.ancientCrystalPackage<1)
             return false;
-        this.startPackage -= 1;
+        this.ancientCrystalPackage -= 1;
         return true;
     }
-    public boolean BuyWarriorPackage() {
-        if (this.warriorPackage<1)
+    public boolean BuyAlchemyPackage() {
+        if (this.alchemyPackage<1)
             return false;
-        this.warriorPackage -= 1;
+        this.alchemyPackage -= 1;
         return true;
     }
-    public boolean BuyThiefPackage() {
-        if (this.thiefPackage<1)
+    public boolean BuyBuffPackage() {
+        if (this.buffPackage<1)
             return false;
-        this.thiefPackage -= 1;
+        this.buffPackage -= 1;
         return true;
     }
-    public boolean BuyKnightPackage() {
-        if (this.knightPackage<1)
+    public boolean BuySpecUpPackage() {
+        if (this.specUpPackage<1)
             return false;
-        this.knightPackage -= 1;
+        this.specUpPackage -= 1;
         return true;
     }
-    public boolean BuyArcherPackage() {
-        if (this.archerPackage<1)
+    public boolean BuySkillAwakeningPackage() {
+        if (this.skillAwakeningPackage<1)
             return false;
-        this.archerPackage -= 1;
-        return true;
-    }
-    public boolean BuyMagicianPackage() {
-        if (this.magicianPackage<1)
-            return false;
-        this.magicianPackage -= 1;
+        this.skillAwakeningPackage -= 1;
         return true;
     }
     public boolean BuySoulStonePackage() {
         if (this.soulStonePackage<1)
             return false;
         this.soulStonePackage -= 1;
-        return true;
-    }
-    public boolean BuyWeeklyPackage() {
-        if (this.weeklyPackage<1)
-            return false;
-        this.weeklyPackage -= 1;
-        return true;
-    }
-    public boolean BuyMonthlyPackage() {
-        if (this.monthlyPackage<1)
-            return false;
-        this.monthlyPackage -= 1;
         return true;
     }
     public boolean BuyAdRemovePackage() {
@@ -142,6 +121,7 @@ public class MyShopInfo extends BaseTimeEntity {
         this.freeDiamond = 1;
         this.todayPackage = 3;
         this.soulStonePackage = 3;
+        this.ancientCrystalPackage = 3;
         this.itemAD = 3;
         this.expAD = 3;
         this.goldAD = 3;
@@ -150,10 +130,11 @@ public class MyShopInfo extends BaseTimeEntity {
     }
 
     public void RechargeWeek() {
-        this.weeklyPackage = 3;
+        this.alchemyPackage = 3;
+        this.buffPackage = 1;
     }
 
     public void RechargeMonth() {
-        this.monthlyPackage = 2;
+
     }
 }

@@ -21,6 +21,7 @@ public class WorldBossRanking extends BaseTimeEntity {
     double totalDamage;
     double bestDamage;
     int ranking;
+    boolean isBlack;
 
     public void refresh(double totalDamage) {
         this.totalDamage = totalDamage;
@@ -44,5 +45,9 @@ public class WorldBossRanking extends BaseTimeEntity {
 
     public void ResetUserGameName(String userGameName) {
         this.userGameName = userGameName;
+    }
+
+    public void SetBlack() {
+        this.isBlack = true;
     }
 }

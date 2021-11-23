@@ -20,6 +20,7 @@ public class StageRanking extends BaseTimeEntity {
     String userGameName;
     int point;
     int ranking;
+    boolean isBlack;
 
     public void refresh(int point) {
         this.point = point;
@@ -32,4 +33,7 @@ public class StageRanking extends BaseTimeEntity {
         this.userGameName = userGameName;
     }
 
+    public void SetBlack() {
+        this.isBlack = true;
+    }
 }

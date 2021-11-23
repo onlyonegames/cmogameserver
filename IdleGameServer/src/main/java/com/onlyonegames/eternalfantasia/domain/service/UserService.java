@@ -3,6 +3,7 @@ package com.onlyonegames.eternalfantasia.domain.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +13,15 @@ import com.onlyonegames.eternalfantasia.Interceptor.OnlyoneSession;
 import com.onlyonegames.eternalfantasia.Interceptor.OnlyoneSessionRepository;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyAdventureStageDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyAttendanceDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyDayRewardDataJsonDto;
-import com.onlyonegames.eternalfantasia.domain.model.dto.MyLevelRewardDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyArenaPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
 import com.onlyonegames.eternalfantasia.domain.repository.*;
 
-import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
@@ -43,6 +42,15 @@ public class UserService {
     private final MyPassDataRepository myPassDataRepository;
     private final ServerStatusInfoRepository serverStatusInfoRepository;
     private final MyBoosterInfoRepository myBoosterInfoRepository;
+    private final MyCollectionInfoRepository myCollectionInfoRepository;
+    private final ArenaRankingRepository arenaRankingRepository;
+    private final ArenaRedisRankingRepository arenaRedisRankingRepository;
+    private final BattlePowerRankingRepository battlePowerRankingRepository;
+    private final BattlePowerRedisRankingRepository battlePowerRedisRankingRepository;
+    private final StageRankingRepository stageRankingRepository;
+    private final StageRedisRankingRepository stageRedisRankingRepository;
+    private final WorldBossRankingRepository worldBossRankingRepository;
+    private final WorldBossRedisRankingRepository worldBossRedisRankingRepository;
 
 
     //세션 redis
@@ -113,6 +121,73 @@ public class UserService {
             myBoosterInfoRepository.save(myBoosterInfo);
         }
 
+        MyCollectionInfo myCollectionInfo = myCollectionInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myCollectionInfo == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyCollectionInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyCollectionInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        WeaponCollectionInfoJsonDto weaponCollectionInfoJsonDto = JsonStringHerlper.ReadValueFromJson(myCollectionInfo.getJson_weaponCollectionInfo(), WeaponCollectionInfoJsonDto.class);
+        if (weaponCollectionInfoJsonDto.buffer.size() <= 120) {
+            for (int i = 0; i < 20; i++){
+                WeaponCollectionInfoJsonDto.Collection temp = new WeaponCollectionInfoJsonDto.Collection();
+                temp.SetIsGetRewards();
+                weaponCollectionInfoJsonDto.buffer.add(temp);
+            }
+//            WeaponCollectionInfoJsonDto tempCollection = new WeaponCollectionInfoJsonDto();
+//            tempCollection.buffer = new ArrayList<>();
+//            int count = 0;
+//            for (WeaponCollectionInfoJsonDto.Collection collection : weaponCollectionInfoJsonDto.buffer) {
+//                tempCollection.buffer.add(collection);
+//                count++;
+//                if (count == 24) {
+//                    for (int i = 0; i < 4; i++) {
+//                        WeaponCollectionInfoJsonDto.Collection temp = new WeaponCollectionInfoJsonDto.Collection();
+//                        temp.SetIsGetRewards();
+//                        tempCollection.buffer.add(temp);
+//                    }
+//                    count = 0;
+//                }
+//            }
+            myCollectionInfo.ResetJson_weaponCollectionInfo(JsonStringHerlper.WriteValueAsStringFromData(weaponCollectionInfoJsonDto));
+        }
+        return map;
+    }
+
+    public Map<String, Object> BlackUser(Long userId, Map<String, Object> map) {
+        User user = userRepository.findById(userId).orElse(null);
+        if(user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: userId Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: userId Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        user.SetBlackUser();
+        ArenaRanking arenaRanking = arenaRankingRepository.findByUseridUser(userId).orElse(null);
+        if(arenaRanking == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaRanking Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: ArenaRanking Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        BattlePowerRanking battlePowerRanking = battlePowerRankingRepository.findByUseridUser(userId).orElse(null);
+        if(battlePowerRanking == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: BattlePowerRanking Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: BattlePowerRanking Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        StageRanking stageRanking = stageRankingRepository.findByUseridUser(userId).orElse(null);
+        if(stageRanking == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: StageRanking Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: StageRanking Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        WorldBossRanking worldBossRanking = worldBossRankingRepository.findByUseridUser(userId).orElse(null);
+        if(worldBossRanking == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: WorldBossRanking Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: WorldBossRanking Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+        arenaRanking.SetBlack();
+        battlePowerRanking.SetBlack();
+        stageRanking.SetBlack();
+        worldBossRanking.SetBlack();
+        arenaRedisRankingRepository.findById(userId).ifPresent(arenaRedisRankingRepository::delete);
+        battlePowerRedisRankingRepository.findById(userId).ifPresent(battlePowerRedisRankingRepository::delete);
+        stageRedisRankingRepository.findById(userId).ifPresent(stageRedisRankingRepository::delete);
+        worldBossRedisRankingRepository.findById(userId).ifPresent(worldBossRedisRankingRepository::delete);
         return map;
     }
 

@@ -24,10 +24,14 @@ public class MyGachaInfo extends BaseTimeEntity {
     public int weaponAD;
     public int classAD;
     public int artifactAD;
+    public int runeLevel;
+    public int runeExp;
+    public int runeAD;
 
     public void ResetADCount() {
         this.weaponAD = 5;
         this.classAD = 5;
         this.artifactAD = 5;
+        this.runeAD = 5;
     }
 }
