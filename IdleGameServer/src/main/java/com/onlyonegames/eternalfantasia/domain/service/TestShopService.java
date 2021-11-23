@@ -308,7 +308,7 @@ public class TestShopService {
     }
 
     private AccessoryTable GetRandomNewAccessory() {
-        int randomIndex = (int) MathHelper.Range(12, 14);
+        int randomIndex = (int) MathHelper.Range(12, 15);
         return gameDataTableService.AccessoryTable().get(randomIndex);
     }
 
