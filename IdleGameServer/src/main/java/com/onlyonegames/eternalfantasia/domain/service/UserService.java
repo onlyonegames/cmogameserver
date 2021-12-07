@@ -51,12 +51,19 @@ public class UserService {
     private final StageRedisRankingRepository stageRedisRankingRepository;
     private final WorldBossRankingRepository worldBossRankingRepository;
     private final WorldBossRedisRankingRepository worldBossRedisRankingRepository;
+    private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
+    private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
+    private final VersionCheckService versionCheckService;
 
 
     //세션 redis
     private final OnlyoneSessionRepository sessionRepository;
 
-    public Map<String, Object> login(Long userId, String jwt, Map<String, Object> map) {
+    public Map<String, Object> login(Long userId, String version, String jwt, Map<String, Object> map) {
+        if (version == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.VERSION_DOESNT_MATCH.getIntegerValue(), "Fail! -> Cause: VERSION_DOESNT_MATCH", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: VERSION_DOESNT_MATCH", ResponseErrorCode.VERSION_DOESNT_MATCH);
+        }
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
         User user = userRepository.findById(userId).orElse(null);
         if(user == null) {
@@ -150,6 +157,22 @@ public class UserService {
 //            }
             myCollectionInfo.ResetJson_weaponCollectionInfo(JsonStringHerlper.WriteValueAsStringFromData(weaponCollectionInfoJsonDto));
         }
+
+        MyAmplificationStatusInfo myAmplificationStatusInfo = myAmplificationStatusInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myAmplificationStatusInfo == null) {
+            MyAmplificationStatusInfoDto myAmplificationStatusInfoDto = new MyAmplificationStatusInfoDto();
+            myAmplificationStatusInfoDto.setUseridUser(userId);
+            myAmplificationStatusInfoRepository.save(myAmplificationStatusInfoDto.ToEntity());
+        }
+
+        MyEventExchangeInfo myEventExchangeInfo = myEventExchangeInfoRepository.findByUseridUser(userId).orElse(null);
+        if (myEventExchangeInfo == null) {
+            MyEventExchangeInfoDto myEventExchangeInfoDto = new MyEventExchangeInfoDto();
+            myEventExchangeInfoDto.setUseridUser(userId);
+            myEventExchangeInfoRepository.save(myEventExchangeInfoDto.ToEntity());
+        }
+
+        versionCheckService.VersionCheck(map);
         return map;
     }
 

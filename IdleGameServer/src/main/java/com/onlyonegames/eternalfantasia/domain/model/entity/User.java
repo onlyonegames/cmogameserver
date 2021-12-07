@@ -67,6 +67,9 @@ public class User {
     String greenOrb;
     String yellowOrb;
     String blueOrb;
+    double fragment;
+    Long eventItem;
+    int advancedEventItem;
 //    int totalPurchase;
 
     @CreatedDate
@@ -115,6 +118,9 @@ public class User {
         this.greenOrb = "0";
         this.yellowOrb = "0";
         this.blueOrb = "0";
+        this.fragment = 0;
+        this.eventItem = 0L;
+        this.advancedEventItem = 0;
     }
 
 //    public void AddPurchase(int price) {
@@ -181,6 +187,20 @@ public class User {
         return true;
     }
 
+    public boolean SpendEventItem(Long spendEventItem) {
+        if (spendEventItem > this.eventItem)
+            return false;
+        this.eventItem -= spendEventItem;
+        return true;
+    }
+
+    public boolean SpendAdvancedEventItem(int spendAdvancedEventItem) {
+        if (spendAdvancedEventItem > this.advancedEventItem)
+            return false;
+        this.advancedEventItem -= spendAdvancedEventItem;
+        return true;
+    }
+
     public void SetLastLoginDate() {
         if (this.lastloginDate == null)
             this.previousLoginDate = LocalDateTime.now();
@@ -211,6 +231,10 @@ public class User {
 
     public void AddArenaCoin(Long addArenaCoin) {
         this.arenaCoin += addArenaCoin;
+    }
+
+    public void AddAdvancedEventItem(int addAdvancedEventItem) {
+        this.advancedEventItem += addAdvancedEventItem;
     }
 
     public void SetLastSettingTime() {
@@ -299,6 +323,14 @@ public class User {
 
     public void SetBlueOrb(String element) {
         this.blueOrb = element;
+    }
+
+    public void SetFragment(String element) {
+        this.fragment = Double.parseDouble(element);
+    }
+
+    public void SetEventItem(String element) {
+        this.eventItem = Long.parseLong(element);
     }
 
     public void ADRemove() {

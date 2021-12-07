@@ -30,6 +30,7 @@ public class GameDataTableService
     private List<AdventureStageBuyPassTable> adventureStageBuyPassTableList = null;
     private List<AdventureStageFreePassTable> adventureStageFreePassTableList = null;
     private List<ShopRewardTable> shopRewardTableList = null;
+    private List<ExchangeItemTable> exchangeItemTableList = null;
 
     @Autowired
     private UpgradeStatusBuyInfoTableRepository upgradeStatusBuyInfoTableRepository;  // 2021-03-23 재형: 능력치 상승 초기 구매 가격
@@ -68,13 +69,8 @@ public class GameDataTableService
     private AdventureStageFreePassTableRepository adventureStageFreePassTableRepository;
     @Autowired
     private ShopRewardTableRepository shopRewardTableRepository;
-
-    /**/
-    // 2021-03-23 재형: 능력치 상승 초기 구매 가격
-    public List<UpgradeStatusBuyInfoTable> UpgradeStatusBuyInfoTableList() {
-        upgradeStatusBuyInfoTableList = upgradeStatusBuyInfoTableList == null ? upgradeStatusBuyInfoTableRepository.findAll() : upgradeStatusBuyInfoTableList;
-        return upgradeStatusBuyInfoTableList;
-    }
+    @Autowired
+    private ExchangeItemTableRepository exchangeItemTableRepository;
 
     /*idle game*/
     public List<HeroClassInfoTable> HeroClassInfoTable() {
@@ -102,7 +98,7 @@ public class GameDataTableService
         return runeInfoTableList;
     }
 
-    public List<SkillUpgradeInfoTable> SkillUpgradeInfoTable() {
+    public List<SkillUpgradeInfoTable> SkillUpgradeInfoTable() {//TODO 삭제
         skillUpgradeInfoTableList = skillUpgradeInfoTableList == null ? skillUpgradeInfoTableRepository.findAll() : skillUpgradeInfoTableList;
         return skillUpgradeInfoTableList;
     }
@@ -112,7 +108,7 @@ public class GameDataTableService
         return accessoryTableList;
     }
 
-    public List<PassiveSkillTable> PassiveSkillTable() {
+    public List<PassiveSkillTable> PassiveSkillTable() { //TODO 삭제
         passiveSkillTableList = passiveSkillTableList == null ? passiveSkillTableRepository.findAll() : passiveSkillTableList;
         return passiveSkillTableList;
     }
@@ -162,6 +158,12 @@ public class GameDataTableService
         return shopRewardTableList;
     }
 
+    public List<ExchangeItemTable> ExchangeItemTable() {
+        exchangeItemTableList = exchangeItemTableList == null ? exchangeItemTableRepository.findAll() : exchangeItemTableList;
+        return exchangeItemTableList;
+    }
+
+
     public Map<String, Object> ResetGameDataTable(Map<String, Object> map)
     {
         upgradeStatusBuyInfoTableList = null;
@@ -184,12 +186,11 @@ public class GameDataTableService
         adventureStageFreePassTableList = null;
         adventureStageBuyPassTableList = null;
         shopRewardTableList = null;
+        exchangeItemTableList = null;
 
-        UpgradeStatusBuyInfoTableList();
 
         /*idle game*/
         HeroClassInfoTable();
-        ActiveSkillTable();
         EquipmentTable();
         InitJsonDatasForFirstUser();
         RuneInfoTable();
@@ -205,6 +206,7 @@ public class GameDataTableService
         AdventureStageFreePassTable();
         AdventureStageBuyPassTable();
         ShopRewardTable();
+        ExchangeItemTable();
 
         /*idle game*/
         map.put("heroClassInfoTable", heroClassInfoTableList);
@@ -224,6 +226,7 @@ public class GameDataTableService
         map.put("adventureStageFreePassTable", adventureStageFreePassTableList);
         map.put("adventureStageBuyPassTable", adventureStageBuyPassTableList);
         map.put("shopRewardTable", shopRewardTableList);
+        map.put("exchangeItemTableList", exchangeItemTableList);
         return map;
     }
 }

@@ -15,6 +15,7 @@ public class UserBaseDto {
     String password;
     String socialProvider;
     String userGameName;
+    String version;
     Set<Role> roles = new HashSet<>();
 
     public User ToEntity() {

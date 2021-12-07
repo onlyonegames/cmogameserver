@@ -66,6 +66,8 @@ public class GetterService {
     private final MyCostumeInventoryRepository myCostumeInventoryRepository;
     private final MyBoosterInfoRepository myBoosterInfoRepository;
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
+    private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
+    private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -93,6 +95,8 @@ public class GetterService {
         MyShopInfo myShopInfo = null;
         List<MyCostumeInventory> myCostumeInventoryList = null;
         MyBoosterInfo myBoosterInfo = null;
+        MyAmplificationStatusInfo myAmplificationStatusInfo = null;
+        MyEventExchangeInfo myEventExchangeInfo = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -136,6 +140,9 @@ public class GetterService {
                                 case "greenOrb":
                                 case "yellowOrb":
                                 case "blueOrb":
+                                case "fragment":
+                                case "eventItem":
+                                case "advancedEventItem":
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -367,6 +374,24 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "amplificateStatusUserData":
+                        if (myAmplificationStatusInfo == null) {
+                            myAmplificationStatusInfo = myAmplificationStatusInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myAmplificationStatusInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyAmplificationStatusInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyAmplificationStatusInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
+                    case "eventExchangeInfo":
+                        if (myEventExchangeInfo == null) {
+                            myEventExchangeInfo = myEventExchangeInfoRepository.findByUseridUser(userId).orElse(null);
+                            if (myEventExchangeInfo == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Fount MyEventExchangeInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyEventExchangeInfo", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -441,6 +466,15 @@ public class GetterService {
                                             break;
                                         case "blueOrb":
                                             element.SetValue(user.getBlueOrb());
+                                            break;
+                                        case "fragment":
+                                            element.SetValue(user.getFragment());
+                                            break;
+                                        case "eventItem":
+                                            element.SetValue(user.getEventItem());
+                                            break;
+                                        case "advancedEventItem":
+                                            element.SetValue(user.getAdvancedEventItem());
                                             break;
                                     }
                                 }
@@ -894,6 +928,18 @@ public class GetterService {
                                     element.SetValue(field.get(myBoosterInfo).toString());
                                 }
                                 break;
+                            case "amplificateStatusUserData":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myAmplificationStatusInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myAmplificationStatusInfo).toString());
+                                }
+                                break;
+                            case "eventExchangeInfo":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myEventExchangeInfo.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myEventExchangeInfo).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -956,6 +1002,12 @@ public class GetterService {
                                             break;
                                         case "blueOrb":
                                             user.SetBlueOrb(element.getValue());
+                                            break;
+                                        case "fragment":
+                                            user.SetFragment(element.getValue());
+                                            break;
+                                        case "eventItem":
+                                            user.SetEventItem(element.getValue());
                                             break;
                                     }
                                 }
@@ -1215,6 +1267,14 @@ public class GetterService {
                                     field.set(myBoosterInfo, element.getValue());
                                 }
                                 break;
+                            case "amplificateStatusUserData":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myAmplificationStatusInfo.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if(elementType.getTypeName().equals("int"))
+                                        field.set(myAmplificationStatusInfo, Integer.parseInt(element.getValue()));
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();
@@ -1226,17 +1286,33 @@ public class GetterService {
         boolean week = false;
         boolean month = false;
         if (!standardTime.getBaseDayTime().isEqual(user.getLastDayResetTime())) {
+            if (myEventExchangeInfo == null) {
+                myEventExchangeInfo = myEventExchangeInfoRepository.findByUseridUser(userId).orElse(null);
+                if (myEventExchangeInfo == null) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Fount MyEventExchangeInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Not Found MyEventExchangeInfo", ResponseErrorCode.NOT_FIND_DATA);
+                }
+            }
             ResetArenaForDay(userId);//유저
             ResetDayPass(userId);//유저
             ResetMyGachaInfo(userId);//유저
             ResetWorldBossPlayable(userId);
             day = true;
             user.SetLastDayResetTime(standardTime.getBaseDayTime());
+            myEventExchangeInfo.RechargeDay();
         }
         if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
+            if (myEventExchangeInfo == null) {
+                myEventExchangeInfo = myEventExchangeInfoRepository.findByUseridUser(userId).orElse(null);
+                if (myEventExchangeInfo == null) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Fount MyEventExchangeInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Not Found MyEventExchangeInfo", ResponseErrorCode.NOT_FIND_DATA);
+                }
+            }
             week = true;
             ResetChallengeTower(userId);
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
+            myEventExchangeInfo.RechargeWeek();
         }
         if (!standardTime.getBaseMonthTime().isEqual(user.getLastMonthResetTime())) {
             month = true;

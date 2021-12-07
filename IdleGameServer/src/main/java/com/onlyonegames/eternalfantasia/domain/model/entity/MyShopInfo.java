@@ -30,6 +30,7 @@ public class MyShopInfo extends BaseTimeEntity {
     public int goldAD;
     public int soulStoneAD;
     public int speedAD;
+    public int fragmentPackage;
     Long useridUser;
 
     public boolean BuyFreeDiamond() {
@@ -117,6 +118,13 @@ public class MyShopInfo extends BaseTimeEntity {
         return true;
     }
 
+    public boolean BuyFragmentPackage() {
+        if (this.fragmentPackage < 1)
+            return false;
+        this.fragmentPackage -= 1;
+        return true;
+    }
+
     public void RechargeDay() {
         this.freeDiamond = 1;
         this.todayPackage = 3;
@@ -127,6 +135,7 @@ public class MyShopInfo extends BaseTimeEntity {
         this.goldAD = 3;
         this.soulStoneAD = 3;
         this.speedAD = 3;
+        this.fragmentPackage = 3;
     }
 
     public void RechargeWeek() {

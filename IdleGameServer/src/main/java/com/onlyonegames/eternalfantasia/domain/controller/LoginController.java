@@ -58,7 +58,7 @@ public class LoginController {
         User user = userPrincipal.getUser();
 
         return new ResponseDTO<>(HttpStatus.OK,
-                ResponseErrorCode.NONE.getIntegerValue(), "", true, userService.login(user.getId(),jwt, map));
+                ResponseErrorCode.NONE.getIntegerValue(), "", true, userService.login(user.getId(), userBaseDto.getVersion(), jwt, map));
     }
 
     @PostMapping("/api/Test/SetBlackUser")

@@ -92,6 +92,10 @@ public class CreateUserService
 
     private final MyBoosterInfoRepository myBoosterInfoRepository;
 
+    private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
+
+    private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
+
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
     {
         Set<Role> roles = new HashSet<>();
@@ -182,6 +186,12 @@ public class CreateUserService
 
         MyBoosterInfo myBoosterInfo = createMyBoosterInfo(userid);
         myBoosterInfoRepository.save(myBoosterInfo);
+
+        MyAmplificationStatusInfo myAmplificationStatusInfo = createMyAmplificationStatusInfo(userid);
+        myAmplificationStatusInfoRepository.save(myAmplificationStatusInfo);
+
+        MyEventExchangeInfo myEventExchangeInfo = createMyEventExchangeInfo(userid);
+        myEventExchangeInfoRepository.save(myEventExchangeInfo);
 
         return map;
     }
@@ -331,5 +341,17 @@ public class CreateUserService
 
     private MyBoosterInfo createMyBoosterInfo(Long userId) {
         return MyBoosterInfo.builder().useridUser(userId).soulStoneRisePercent("").allSpeedRisePercent("").itemDropPlusRisePercent("").expRisePercent("").goldRisePercent("").build();
+    }
+
+    private MyAmplificationStatusInfo createMyAmplificationStatusInfo(Long userId) {
+        MyAmplificationStatusInfoDto myAmplificationStatusInfoDto = new MyAmplificationStatusInfoDto();
+        myAmplificationStatusInfoDto.setUseridUser(userId);
+        return myAmplificationStatusInfoDto.ToEntity();
+    }
+
+    private MyEventExchangeInfo createMyEventExchangeInfo(Long userId) {
+        MyEventExchangeInfoDto myEventExchangeInfoDto = new MyEventExchangeInfoDto();
+        myEventExchangeInfoDto.setUseridUser(userId);
+        return myEventExchangeInfoDto.ToEntity();
     }
 }

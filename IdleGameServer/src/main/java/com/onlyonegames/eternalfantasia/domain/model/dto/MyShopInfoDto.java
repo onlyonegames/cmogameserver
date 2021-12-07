@@ -20,13 +20,14 @@ public class MyShopInfoDto {
     int goldAD;
     int soulStoneAD;
     int speedAD;
+    int fragmentPackage;
     Long useridUser;
 
     public MyShopInfo ToEntity() {
         Init();
         return MyShopInfo.builder().freeDiamond(freeDiamond).todayPackage(todayPackage).ancientCrystalPackage(ancientCrystalPackage).alchemyPackage(alchemyPackage)
                 .buffPackage(buffPackage).specUpPackage(specUpPackage).skillAwakeningPackage(skillAwakeningPackage).soulStonePackage(soulStonePackage).adRemovePackage(adRemovePackage)
-                .itemAD(itemAD).expAD(expAD).goldAD(goldAD).soulStoneAD(soulStoneAD).speedAD(speedAD).useridUser(useridUser).build();
+                .itemAD(itemAD).expAD(expAD).goldAD(goldAD).soulStoneAD(soulStoneAD).speedAD(speedAD).fragmentPackage(fragmentPackage).useridUser(useridUser).build();
     }
 
     void Init() {
@@ -44,5 +45,6 @@ public class MyShopInfoDto {
         this.goldAD = 3;
         this.soulStoneAD = 3;
         this.speedAD = 3;
+        this.fragmentPackage = 3;
     }
 }

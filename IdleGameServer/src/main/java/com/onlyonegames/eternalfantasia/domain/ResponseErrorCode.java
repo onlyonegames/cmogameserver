@@ -11,6 +11,7 @@ public enum ResponseErrorCode {
     INVAILD_DATA_TO_JSON_STRING(-4, "INVAILD_DATA_TO_JSON_STRING"),
     SERVER_CHECK(-5, "SERVER_CHECK"),
     ALREADY_LINKED_ACCOUNT(-6, "ALREADY_LINKED_ACCOUNT"),
+    VERSION_DOESNT_MATCH(-7, "VERSION_DOESNT_MATCH"),
     NOT_FIND_DATA(-100, "NOT_FOUND")/*해당 테이블에 데이터가 존재하지 않음.*/,
     NOT_EXIST_CODE(-101, "NOT_EXIST_CODE"),/*특정 프로세스에서 조건에 맞는 코드를 갖는 아이템이 존재하지 않음. 혹은 잘못된 코드*/
     INVAILD_EVENTNO(-102,"INVAILD_EVENTNO"),/*이벤트 스크립트 번호가 순서에 맞지 않음.*/
@@ -34,6 +35,11 @@ public enum ResponseErrorCode {
     /*400 부터 결제 관련 프로세스 오류*/
     ALREADY_RECEIVED_ITEM(-400, "ALREADY_RECEIVED_ITEM"),
     NOT_VERIFIED_PURCHASE(-401, "NOT_VERIFIED_PURCHASE"),
+    /*-500 부터 교환 이벤트 오류*/
+    CANT_EXCHANGE_ANYMORE(-500, "CANT_EXCHANGE_ANYMORE"),
+    NEED_MORE_EVENT_ITEM(-501, "NEED_MORE_EVENT_ITEM"),
+    NEED_MORE_ADVANCED_EVENT_ITEM(-502, "NEED_MORE_ADVANCED_EVENT_ITEM"),
+    CURRENCY_TYPE_ERROR(-503, "CURRENCY_TYPE_ERROR"),
     /*-1200부터 상점 관련 프로세스 오류*/
     SHOP_CANT_FIND_SHOPID(-1200, "SHOP_CANT_FIND_SHOPID"),
     ALREADY_BOUGHT(-1201, "ALREADY_BOUGHT"), //이미 구매함.
@@ -50,7 +56,7 @@ public enum ResponseErrorCode {
     /*-1700부터 가챠 관련 오류*/
     ALREADY_FREE_GOTCHA(-1700, "ALREADY_FREE_GOTCHA"),/*무료 가챠는 하루에 한번만~*/
     //CLOSE_ALL_PICKUP_GOTCHA(-1701, "CLOSE_ALL_PICKUP_GOTCHA");/*현재 픽업 가챠는 모두 끝났음*/
-    /*-1900부터 이벤트 관련 오류*/
+    /*-1900부터 패스 관련 오류*/
     Duplicate_Scheduler_Found(-1900, "Duplicate_Scheduler_Found"),/*같은 종류의 이벤트가 중복으로 발생함*/
     ALREADY_RECEIVED_REWARD(-1901, "ALREADY_RECEIVED_REWARD"),/*이미 당일 출석보상을 받음*/
     /*-2000부터 프로필 관련 오류*/
