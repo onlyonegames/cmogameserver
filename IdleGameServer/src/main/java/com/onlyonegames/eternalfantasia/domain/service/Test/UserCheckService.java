@@ -4,6 +4,7 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ActiveSkillDataJsonDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.PassiveSkillDataJsonDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.MyWorldBossPlayData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Logging.WorldBossPlayLog;
@@ -17,6 +18,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.MyActiveSkillDataRepos
 import com.onlyonegames.eternalfantasia.domain.repository.MyPassiveSkillDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
+import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,7 @@ public class UserCheckService {
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
     private final WorldBossPlayLogRepository worldBossPlayLogRepository;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
+    private final MyMailBoxService myMailBoxService;
 
     public Map<String, Object> UserSkillPointCheck(Long userId, Map<String, Object> map) {
         User user = userRepository.findById(userId).orElse(null);
