@@ -91,16 +91,16 @@ public class ArenaMatchingService {
 
         ArenaRanking enemyArenaRanking = arenaRankingRepository.findByUseridUser(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyArenaRanking == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaPlayLog not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: ArenaPlayLog not find.", ResponseErrorCode.NOT_FIND_DATA);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaRanking not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: ArenaRanking not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         enemyArenaRanking.SetRanking(arenaLeaderboardService.getRank(myArenaPlayData.getMatchedUserId()).intValue());
         map.put("enemyArenaRanking", enemyArenaRanking);
 
         User enemyUser = userRepository.findById(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyUser == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaPlayLog not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: ArenaPlayLog not find.", ResponseErrorCode.NOT_FIND_DATA);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: enemyUser not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: enemyUser not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         map.put("enemyUserBattleStatus", enemyUser.getBattleStatus());
         map.put("myArenaPlayData", myArenaPlayData);
@@ -110,8 +110,8 @@ public class ArenaMatchingService {
     public Map<String, Object> ForceGetReadyVersus(Long userId, Map<String, Object> map) {
         MyArenaPlayData myArenaPlayData = myArenaPlayDataRepository.findByUseridUser(userId).orElse(null);
         if(myArenaPlayData == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaPlayLog not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: ArenaPlayLog not find.", ResponseErrorCode.NOT_FIND_DATA);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyArenaPlayData not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: MyArenaPlayData not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         if(!myArenaPlayData.SpendReMatchingAbleCount()) {
             //TODO ErrorLogging Add
@@ -131,15 +131,15 @@ public class ArenaMatchingService {
 
         ArenaRanking enemyArenaRanking = arenaRankingRepository.findByUseridUser(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyArenaRanking == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaPlayLog not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: ArenaPlayLog not find.", ResponseErrorCode.NOT_FIND_DATA);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: EnemyArenaRanking not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: EnemyArenaRanking not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         map.put("enemyArenaRanking", enemyArenaRanking);
 
         User enemyUser = userRepository.findById(myArenaPlayData.getMatchedUserId()).orElse(null);
         if(enemyUser == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: ArenaPlayLog not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: ArenaPlayLog not find.", ResponseErrorCode.NOT_FIND_DATA);
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: EnemyUser not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: EnemyUser not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
         map.put("enemyUserBattleStatus", enemyUser.getBattleStatus());
         map.put("myArenaPlayData", myArenaPlayData);
