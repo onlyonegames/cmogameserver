@@ -175,4 +175,17 @@ public class UserCheckService {
         }
         return map;
     }
+
+    private void SendMail(Long userId, boolean purchase, String title, String gettingItem, String gettingItemCount, Map<String, Object> tempMap) {
+        LocalDateTime now = LocalDateTime.now();
+        MailSendRequestDto mailSendRequestDto = new MailSendRequestDto();
+        mailSendRequestDto.setToId(userId);
+        mailSendRequestDto.setSendDate(now);
+        mailSendRequestDto.setMailType(purchase?1:0);
+        mailSendRequestDto.setExpireDate(now.plusDays(30));
+        mailSendRequestDto.setTitle(title);
+        mailSendRequestDto.setGettingItem(gettingItem); //TODO 보상 테이블에 있는 보상으로 지급
+        mailSendRequestDto.setGettingItemCount(gettingItemCount);
+        myMailBoxService.SendMail(mailSendRequestDto, tempMap);
+    }
 }
