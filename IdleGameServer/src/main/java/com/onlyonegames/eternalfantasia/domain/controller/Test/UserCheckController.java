@@ -39,4 +39,11 @@ public class UserCheckController {
 //        Map<String, Object> response = userCheckService.Price(map);
 //        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
 //    }
+
+    @GetMapping("/api/Test/CrystalCheck")
+    public ResponseDTO<Map<String, Object>> CrystalCheck() {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> response = userCheckService.CrystalCheck(map);
+        return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
+    }
 }

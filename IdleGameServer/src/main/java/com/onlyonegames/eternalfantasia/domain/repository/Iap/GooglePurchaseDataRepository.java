@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface GooglePurchaseDataRepository extends JpaRepository<GooglePurchaseData, Long> {
     List<GooglePurchaseData> findAllByUseridUser(Long userId);
     Optional<GooglePurchaseData> findByOrderId(String orderId);
+    List<GooglePurchaseData> findAllByGoodsId(String goodsId);
 }

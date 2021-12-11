@@ -163,4 +163,13 @@ public class UserCheckService {
 //        }
 //        return map;
 //    }
+    public Map<String, Object> CrystalCheck(Map<String, Object> map) {
+        List<GooglePurchaseData> googlePurchaseDataList = googlePurchaseDataRepository.findAllByGoodsId("shop_fragment_package");
+        for (GooglePurchaseData googlePurchaseData : googlePurchaseDataList) {
+            String gettingItem = "ancientCrystal";
+            String gettingItemCount = "950000";
+            SendMail(googlePurchaseData.getUseridUser(), false, "상점 개편 보상 지급", gettingItem, gettingItemCount, map);
+        }
+        return map;
+    }
 }
