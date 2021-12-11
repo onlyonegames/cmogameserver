@@ -167,7 +167,6 @@ public class UserCheckService {
 //        return map;
 //    }
     public Map<String, Object> CrystalCheck(Map<String, Object> map) {
-        List<GooglePurchaseData> googlePurchaseDataList = googlePurchaseDataRepository.findAllByGoodsId("shop_fragment_package");
         List<GooglePurchaseData> googlePurchaseDataList = googlePurchaseDataRepository.findAllByGoodsId("shop_ancient_crystal_package");
         for (GooglePurchaseData googlePurchaseData : googlePurchaseDataList) {
             String gettingItem = "ancientCrystal";
