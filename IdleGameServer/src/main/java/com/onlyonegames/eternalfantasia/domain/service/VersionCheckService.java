@@ -21,7 +21,7 @@ public class VersionCheckService {
     private VersionCheckTable versionCheckTable = null;
 
     public VersionCheckTable VersionCheckTable() {
-        versionCheckTable = versionCheckTable == null ? versionCheckTableRepository.getOne(1) : versionCheckTable;
+        versionCheckTable = versionCheckTable == null ? versionCheckTableRepository.findById(1).orElse(null) : versionCheckTable;
         return versionCheckTable;
     }
 
@@ -37,11 +37,14 @@ public class VersionCheckService {
     }
 
     public Map<String, Object> PreVersionCheck(String version, Map<String, Object> map) {
-        ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
+        ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.findById(1).orElse(null);
         if (serverStatusInfo.getServerStatus() == 1)
             map.put("serverStatus", serverStatusInfo.getServerStatus());
 
-        VersionCheckTable versionCheckTable = VersionCheckTable();
+        if(versionCheckTable == null){
+            versionCheckTable = versionCheckTableRepository.findById(1).orElse(null);
+        }
+        //VersionCheckTable versionCheckTable = VersionCheckTable();
         if (version.equals(versionCheckTable.getVersion())) {
             map.put("server", "https://api.classmasteronline.com:8080/");
             return map;
