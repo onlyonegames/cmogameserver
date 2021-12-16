@@ -70,6 +70,11 @@ public class User {
     double fragment;
     Long eventItem;
     int advancedEventItem;
+    Long worrierEmblem;
+    Long thiefEmblem;
+    Long knightEmblem;
+    Long archerEmblem;
+    Long magicianEmblem;
 //    int totalPurchase;
 
     @CreatedDate
@@ -121,6 +126,11 @@ public class User {
         this.fragment = 0;
         this.eventItem = 0L;
         this.advancedEventItem = 0;
+        this.worrierEmblem = 0L;
+        this.thiefEmblem = 0L;
+        this.knightEmblem = 0L;
+        this.archerEmblem = 0L;
+        this.magicianEmblem = 0L;
     }
 
 //    public void AddPurchase(int price) {
@@ -331,6 +341,23 @@ public class User {
 
     public void SetEventItem(String element) {
         this.eventItem = Long.parseLong(element);
+    }
+
+
+    public void SetWorrierEmblem(String element) {
+        this.worrierEmblem = Long.parseLong(element);
+    }
+    public void SetThiefEmblem(String element) {
+        this.thiefEmblem = Long.parseLong(element);
+    }
+    public void SetKnightEmblem(String element) {
+        this.knightEmblem = Long.parseLong(element);
+    }
+    public void SetArcherEmblem(String element) {
+        this.archerEmblem = Long.parseLong(element);
+    }
+    public void SetMagicianEmblem(String element) {
+        this.magicianEmblem = Long.parseLong(element);
     }
 
     public void ADRemove() {
