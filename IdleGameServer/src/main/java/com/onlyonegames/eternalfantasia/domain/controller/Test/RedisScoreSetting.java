@@ -4,10 +4,7 @@ import com.onlyonegames.eternalfantasia.domain.ResponseDTO;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.ArenaLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.StageLeaderboardService;
-import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.WorldBossLeaderboardService;
+import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -30,26 +27,48 @@ public class RedisScoreSetting {
     private final StageRedisRankingRepository stageRedisRankingRepository;
     private final BattlePowerRankingRepository battlePowerRankingRepository;
     private final BattlePowerRedisRankingRepository battlePowerRedisRankingRepository;
+    private final ChallengeTowerWarriorRankingRepository challengeTowerWarriorRankingRepository;
+    private final ChallengeTowerWarriorRedisRankingRepository challengeTowerWarriorRedisRankingRepository;
+    private final ChallengeTowerThiefRankingRepository challengeTowerThiefRankingRepository;
+    private final ChallengeTowerThiefRedisRankingRepository challengeTowerThiefRedisRankingRepository;
+    private final ChallengeTowerKnightRankingRepository challengeTowerKnightRankingRepository;
+    private final ChallengeTowerKnightRedisRankingRepository challengeTowerKnightRedisRankingRepository;
+    private final ChallengeTowerArcherRankingRepository challengeTowerArcherRankingRepository;
+    private final ChallengeTowerArcherRedisRankingRepository challengeTowerArcherRedisRankingRepository;
+    private final ChallengeTowerMagicianRankingRepository challengeTowerMagicianRankingRepository;
+    private final ChallengeTowerMagicianRedisRankingRepository challengeTowerMagicianRedisRankingRepository;
 
     @GetMapping("/api/Test/RedisScoreSetting")
-    public ResponseDTO<Map<String, Object>> ResidScoreSetting() {
+    public ResponseDTO<Map<String, Object>> RedisScoreSetting() {
         Map<String, Object> map = new HashMap<>();
 
         redisLongTemplate.opsForZSet().getOperations().delete(WorldBossLeaderboardService.WORLD_BOSS_RANKING_LEADERBOARD);
-        Iterable<WorldBossRedisRanking> worldBossRedisRankingList = worldBossRedisRankingRepository.findAll();
-        worldBossRedisRankingRepository.deleteAll(worldBossRedisRankingList);
+        worldBossRedisRankingRepository.deleteAll();
 
         redisLongTemplate.opsForZSet().getOperations().delete(ArenaLeaderboardService.ARENA_RANKING_LEADERBOARD);
-        Iterable<ArenaRedisRanking> arenaRedisRankingList = arenaRedisRankingRepository.findAll();
-        arenaRedisRankingRepository.deleteAll(arenaRedisRankingList);
+        arenaRedisRankingRepository.deleteAll();
 
         redisLongTemplate.opsForZSet().getOperations().delete(StageLeaderboardService.STAGE_RANKING_LEADERBOARD);
-        Iterable<StageRedisRanking> stageRedisRankingList = stageRedisRankingRepository.findAll();
         stageRedisRankingRepository.deleteAll();
 
         redisLongTemplate.opsForZSet().getOperations().delete(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD);
-        Iterable<BattlePowerRedisRanking> battlePowerRedisRankingList = battlePowerRedisRankingRepository.findAll();
         battlePowerRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(WarriorChallengeTowerLeaderboardService.WARRIOR_CHALLENGE_RANKING_LEADERBOARD);
+        challengeTowerWarriorRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(ThiefChallengeTowerLeaderboardService.THIEF_CHALLENGE_RANKING_LEADERBOARD);
+        challengeTowerThiefRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(KnightChallengeTowerLeaderboardService.KNIGHT_CHALLENGE_RANKING_LEADERBOARD);
+        challengeTowerKnightRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(ArcherChallengeTowerLeaderboardService.ARCHER_CHALLENGE_RANKING_LEADERBOARD);
+        challengeTowerArcherRedisRankingRepository.deleteAll();
+
+        redisLongTemplate.opsForZSet().getOperations().delete(MagicianChallengeTowerLeaderboardService.MAGICIAN_CHALLENGE_RANKING_LEADERBOARD);
+        challengeTowerMagicianRedisRankingRepository.deleteAll();
+
 
         List<WorldBossRanking> worldBossRankingList = worldBossRankingRepository.findAll();
         for(WorldBossRanking worldBossRanking : worldBossRankingList) {
@@ -95,7 +114,63 @@ public class RedisScoreSetting {
             redisLongTemplate.opsForZSet().add(BattlePowerLeaderboardService.BATTLE_POWER_LEADERBOARD, battlePowerRanking.getUseridUser(), battlePowerRanking.getBattlePower());
         }
 
-        map.put("test", worldBossRedisRankingRepository.findAll());
+        List<ChallengeTowerWarriorRanking> challengeTowerWarriorRankingList = challengeTowerWarriorRankingRepository.findAll();
+        for (ChallengeTowerWarriorRanking challengeTowerWarriorRanking : challengeTowerWarriorRankingList) {
+            if (challengeTowerWarriorRanking.isBlack())
+                continue;
+            ChallengeTowerWarriorRedisRanking challengeTowerWarriorRedisRanking = ChallengeTowerWarriorRedisRanking.builder()
+                    .id(challengeTowerWarriorRanking.getUseridUser()).userGameName(challengeTowerWarriorRanking.getUserGameName())
+                    .point(challengeTowerWarriorRanking.getPoint()).build();
+            challengeTowerWarriorRedisRankingRepository.save(challengeTowerWarriorRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(WarriorChallengeTowerLeaderboardService.WARRIOR_CHALLENGE_RANKING_LEADERBOARD, challengeTowerWarriorRanking.getUseridUser(), challengeTowerWarriorRanking.getPoint());
+        }
+        List<ChallengeTowerThiefRanking> challengeTowerThiefRankingList = challengeTowerThiefRankingRepository.findAll();
+        for (ChallengeTowerThiefRanking challengeTowerThiefRanking : challengeTowerThiefRankingList) {
+            if (challengeTowerThiefRanking.isBlack())
+                continue;
+            ChallengeTowerThiefRedisRanking challengeTowerThiefRedisRanking = ChallengeTowerThiefRedisRanking.builder()
+                    .id(challengeTowerThiefRanking.getUseridUser()).userGameName(challengeTowerThiefRanking.getUserGameName())
+                    .point(challengeTowerThiefRanking.getPoint()).build();
+            challengeTowerThiefRedisRankingRepository.save(challengeTowerThiefRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(ThiefChallengeTowerLeaderboardService.THIEF_CHALLENGE_RANKING_LEADERBOARD, challengeTowerThiefRanking.getUseridUser(), challengeTowerThiefRanking.getPoint());
+        }
+        List<ChallengeTowerKnightRanking> challengeTowerKnightRankingList = challengeTowerKnightRankingRepository.findAll();
+        for (ChallengeTowerKnightRanking challengeTowerKnightRanking : challengeTowerKnightRankingList) {
+            if (challengeTowerKnightRanking.isBlack())
+                continue;
+            ChallengeTowerKnightRedisRanking challengeTowerKnightRedisRanking = ChallengeTowerKnightRedisRanking.builder()
+                    .id(challengeTowerKnightRanking.getUseridUser()).userGameName(challengeTowerKnightRanking.getUserGameName())
+                    .point(challengeTowerKnightRanking.getPoint()).build();
+            challengeTowerKnightRedisRankingRepository.save(challengeTowerKnightRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(KnightChallengeTowerLeaderboardService.KNIGHT_CHALLENGE_RANKING_LEADERBOARD, challengeTowerKnightRanking.getUseridUser(), challengeTowerKnightRanking.getPoint());
+        }
+        List<ChallengeTowerArcherRanking> challengeTowerArcherRankingList = challengeTowerArcherRankingRepository.findAll();
+        for (ChallengeTowerArcherRanking challengeTowerArcherRanking : challengeTowerArcherRankingList) {
+            if (challengeTowerArcherRanking.isBlack())
+                continue;
+            ChallengeTowerArcherRedisRanking challengeTowerArcherRedisRanking = ChallengeTowerArcherRedisRanking.builder()
+                    .id(challengeTowerArcherRanking.getUseridUser()).userGameName(challengeTowerArcherRanking.getUserGameName())
+                    .point(challengeTowerArcherRanking.getPoint()).build();
+            challengeTowerArcherRedisRankingRepository.save(challengeTowerArcherRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(ArcherChallengeTowerLeaderboardService.ARCHER_CHALLENGE_RANKING_LEADERBOARD, challengeTowerArcherRanking.getUseridUser(), challengeTowerArcherRanking.getPoint());
+        }
+        List<ChallengeTowerMagicianRanking> challengeTowerMagicianRankingList = challengeTowerMagicianRankingRepository.findAll();
+        for (ChallengeTowerMagicianRanking challengeTowerMagicianRanking : challengeTowerMagicianRankingList) {
+            if (challengeTowerMagicianRanking.isBlack())
+                continue;
+            ChallengeTowerMagicianRedisRanking challengeTowerMagicianRedisRanking = ChallengeTowerMagicianRedisRanking.builder()
+                    .id(challengeTowerMagicianRanking.getUseridUser()).userGameName(challengeTowerMagicianRanking.getUserGameName())
+                    .point(challengeTowerMagicianRanking.getPoint()).build();
+            challengeTowerMagicianRedisRankingRepository.save(challengeTowerMagicianRedisRanking);
+
+            redisLongTemplate.opsForZSet().add(MagicianChallengeTowerLeaderboardService.MAGICIAN_CHALLENGE_RANKING_LEADERBOARD, challengeTowerMagicianRanking.getUseridUser(), challengeTowerMagicianRanking.getPoint());
+        }
+
+//        map.put("test", worldBossRedisRankingRepository.findAll());
         map.put("success", true);
 
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, map);

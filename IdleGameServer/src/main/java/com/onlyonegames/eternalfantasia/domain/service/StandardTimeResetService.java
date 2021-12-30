@@ -68,6 +68,7 @@ public class StandardTimeResetService {
 //            ResetDayPass();//유저
 //            ResetMyGachaInfo();//유저
             standardTime.SetBaseDayTime();//시스템
+            ResetChallengeTower(standardTime);//시스템
             day = true;
         }
         if(standardTime.getBaseWeekTime().isBefore(now)){
@@ -75,7 +76,6 @@ public class StandardTimeResetService {
             SetPreviousArenaRanking();//시스템
             SetPreviousStageRanking();//시스템
             SetPreviousBattlePowerRanking();//시스템
-            ResetChallengeTower(standardTime);//시스템
             standardTime.SetBaseWeekTime();//시스템
             week = true;
         }

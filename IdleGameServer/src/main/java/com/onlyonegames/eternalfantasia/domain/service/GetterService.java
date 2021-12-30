@@ -68,6 +68,7 @@ public class GetterService {
     private final MyWorldBossPlayDataRepository myWorldBossPlayDataRepository;
     private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
     private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
+    private final MyClassPotentialityDataRepository myClassPotentialityDataRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -97,6 +98,7 @@ public class GetterService {
         MyBoosterInfo myBoosterInfo = null;
         MyAmplificationStatusInfo myAmplificationStatusInfo = null;
         MyEventExchangeInfo myEventExchangeInfo = null;
+        MyClassPotentialityData myClassPotentialityData = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -143,6 +145,11 @@ public class GetterService {
                                 case "fragment":
                                 case "eventItem":
                                 case "advancedEventItem":
+                                case "worrierEmblem":
+                                case "thiefEmblem":
+                                case "knightEmblem":
+                                case "archerEmblem":
+                                case "magicianEmblem":
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -288,8 +295,8 @@ public class GetterService {
                         if (myDungeonInfo == null) {
                             myDungeonInfo = myDungeonInfoRepository.findByUseridUser(userId).orElse(null);
                             if(myDungeonInfo == null) {
-                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-                                throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyDungeonInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyDungeonInfo", ResponseErrorCode.NOT_FIND_DATA);
                             }
                         }
                         break;
@@ -392,6 +399,15 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "potentiality":
+                        if (myClassPotentialityData == null) {
+                            myClassPotentialityData = myClassPotentialityDataRepository.findByUseridUser(userId).orElse(null);
+                            if (myClassPotentialityData == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Fount MyClassPotentialityData", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyClassPotentialityData", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
+                        break;
                 }
             }
         }
@@ -475,6 +491,12 @@ public class GetterService {
                                             break;
                                         case "advancedEventItem":
                                             element.SetValue(user.getAdvancedEventItem());
+                                            break;
+                                        case "classEmblem":
+                                            element.SetValue(user.getClassEmblem());
+                                            break;
+                                        case "challengeTicket":
+                                            element.SetValue(user.getChallengeTicket());
                                             break;
                                     }
                                 }
@@ -801,6 +823,16 @@ public class GetterService {
                                 List<ElementDto> passiveSkillElementDtoList = new ArrayList<>();
                                 boolean passiveSkillFlag = false;
                                 PassiveSkillDataJsonDto passiveSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassiveSkillData.getJson_saveDataValue(), PassiveSkillDataJsonDto.class);
+                                if (passiveSkillDataJsonDto.passiveSkillInfoList.size() <= 16) {
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo firstPassiveSkillInfo = new PassiveSkillDataJsonDto.PassiveSkillInfo();
+                                    firstPassiveSkillInfo.SetFirstPassiveSkillInfo(17, "PSK_016", "일격 확률 증가", 1);
+                                    passiveSkillDataJsonDto.passiveSkillInfoList.add(firstPassiveSkillInfo);
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo secondPassiveSkillInfo = new PassiveSkillDataJsonDto.PassiveSkillInfo();
+                                    secondPassiveSkillInfo.SetFirstPassiveSkillInfo(18, "PSK_017", "일격데미지 증가", 1);
+                                    passiveSkillDataJsonDto.passiveSkillInfoList.add(secondPassiveSkillInfo);
+                                    String passiveSkill_Json = JsonStringHerlper.WriteValueAsStringFromData(passiveSkillDataJsonDto);
+                                    myPassiveSkillData.ResetJson_SaveDataValue(passiveSkill_Json);
+                                }
                                 for(ElementDto element : container.elements) {
                                     if(element.getElement().equals("all")) {
                                         for(PassiveSkillDataJsonDto.PassiveSkillInfo skillInfo : passiveSkillDataJsonDto.passiveSkillInfoList) {
@@ -940,6 +972,12 @@ public class GetterService {
                                     element.SetValue(field.get(myEventExchangeInfo).toString());
                                 }
                                 break;
+                            case "potentiality":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myClassPotentialityData.getClass().getDeclaredField(element.getElement());
+                                    element.SetValue(field.get(myClassPotentialityData).toString());
+                                }
+                                break;
                         }
                     }
                     break;
@@ -1009,6 +1047,12 @@ public class GetterService {
                                         case "eventItem":
                                             user.SetEventItem(element.getValue());
                                             break;
+                                        case "classEmblem":
+                                            user.SetClassEmblem(element.getValue());
+                                            break;
+                                        case "challengeTicket":
+                                            user.SetChallengeTicket(element.getValue());
+                                            break;
                                     }
                                 }
                                 break;
@@ -1074,11 +1118,14 @@ public class GetterService {
                                     MyClassInventory myClassInventory = myClassInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
                                     if( myClassInventory == null) {
                                         MyClassInventoryDto myClassInventoryDto = new MyClassInventoryDto();
-                                        myClassInventoryDto.SetMyClassInventoryDto(userId, classInventoryResponseDto.getCode(), classInventoryResponseDto.getLevel(), classInventoryResponseDto.getCount(), classInventoryResponseDto.getPromotionPercent(), classInventoryResponseDto.getIsPromotionLock());
+                                        myClassInventoryDto.SetMyClassInventoryDto(userId, classInventoryResponseDto.getCode(),
+                                                classInventoryResponseDto.getLevel(), classInventoryResponseDto.getCount(),
+                                                classInventoryResponseDto.getPromotionPercent(), classInventoryResponseDto.getIsPromotionLock(),
+                                                0, "{\"options\":[]}", "{\"optionLockList\":[]}");
                                         myClassInventory = myClassInventoryRepository.save(myClassInventoryDto.ToEntity());
                                         myClassInventoryList.add(myClassInventory);
                                     }else {
-                                        myClassInventory.SetMyClassInventory(classInventoryResponseDto);
+                                        myClassInventory.SetterMyClassInventory(classInventoryResponseDto);
                                     }
                                 }
                                 break;
@@ -1162,6 +1209,14 @@ public class GetterService {
                                 break;
                             case "passiveSkillUserDataTable":
                                 PassiveSkillDataJsonDto passiveSkillDataJsonDto = JsonStringHerlper.ReadValueFromJson(myPassiveSkillData.getJson_saveDataValue(), PassiveSkillDataJsonDto.class);
+                                if (passiveSkillDataJsonDto.passiveSkillInfoList.size() <= 16) {
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo firstPassiveSkillInfo = new PassiveSkillDataJsonDto.PassiveSkillInfo();
+                                    firstPassiveSkillInfo.SetFirstPassiveSkillInfo(17, "PSK_016", "일격 확률 증가", 1);
+                                    passiveSkillDataJsonDto.passiveSkillInfoList.add(firstPassiveSkillInfo);
+                                    PassiveSkillDataJsonDto.PassiveSkillInfo secondPassiveSkillInfo = new PassiveSkillDataJsonDto.PassiveSkillInfo();
+                                    secondPassiveSkillInfo.SetFirstPassiveSkillInfo(18, "PSK_017", "일격데미지 증가", 1);
+                                    passiveSkillDataJsonDto.passiveSkillInfoList.add(secondPassiveSkillInfo);
+                                }
                                 for(ElementDto element : container.elements) {
                                     PassiveSkillDataJsonDto.PassiveSkillInfo passiveSkillInfo = JsonStringHerlper.ReadValueFromJson(element.getValue(), PassiveSkillDataJsonDto.PassiveSkillInfo.class);
                                     passiveSkillDataJsonDto.passiveSkillInfoList.set(Integer.parseInt(element.getElement())-1, passiveSkillInfo);
@@ -1275,6 +1330,16 @@ public class GetterService {
                                         field.set(myAmplificationStatusInfo, Integer.parseInt(element.getValue()));
                                 }
                                 break;
+                            case "potentiality":
+                                for (ElementDto element : container.elements) {
+                                    Field field = myClassPotentialityData.getClass().getDeclaredField(element.getElement());
+                                    Class<?> elementType = field.getType();
+                                    if (elementType.getTypeName().equals("java.lang.Long"))
+                                        field.set(myClassPotentialityData, Long.parseLong(element.getValue()));
+                                    else
+                                        field.set(myClassPotentialityData, element.getValue());
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();
@@ -1293,6 +1358,13 @@ public class GetterService {
                     throw new MyCustomException("Not Found MyEventExchangeInfo", ResponseErrorCode.NOT_FIND_DATA);
                 }
             }
+            if (myContentsInfo == null) {
+                myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
+                if(myContentsInfo == null) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyContentsInfo", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Not Found MyContentsInfo", ResponseErrorCode.NOT_FIND_DATA);
+                }
+            }
             ResetArenaForDay(userId);//유저
             ResetDayPass(userId);//유저
             ResetMyGachaInfo(userId);//유저
@@ -1300,6 +1372,7 @@ public class GetterService {
             day = true;
             user.SetLastDayResetTime(standardTime.getBaseDayTime());
             myEventExchangeInfo.RechargeDay();
+            myContentsInfo.ResetChallengeTowerDiamondCount();
         }
         if (!standardTime.getBaseWeekTime().isEqual(user.getLastWeekResetTime())) {
             if (myEventExchangeInfo == null) {
@@ -1310,7 +1383,7 @@ public class GetterService {
                 }
             }
             week = true;
-            ResetChallengeTower(userId);
+//            ResetChallengeTower(userId);
             user.SetLastWeekResetTime(standardTime.getBaseWeekTime());
             myEventExchangeInfo.RechargeWeek();
         }
@@ -1419,15 +1492,15 @@ public class GetterService {
 
     }
 
-    private void ResetChallengeTower(Long userId) {
-        MyContentsInfo myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
-        if (myContentsInfo == null) {
-            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyContentsInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
-            throw new MyCustomException("Fail! -> Cause: MyContentsInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
-        }
-        if (myContentsInfo.getChallengeTowerFloor() != 0)
-            myContentsInfo.SetChallengeTowerFloor(0);
-    }
+//    private void ResetChallengeTower(Long userId) {
+//        MyContentsInfo myContentsInfo = myContentsInfoRepository.findByUseridUser(userId).orElse(null);
+//        if (myContentsInfo == null) {
+//            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyContentsInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+//            throw new MyCustomException("Fail! -> Cause: MyContentsInfo Can't find", ResponseErrorCode.NOT_FIND_DATA);
+//        }
+//        if (myContentsInfo.getChallengeTowerFloor() != 0)
+//            myContentsInfo.SetChallengeTowerFloor(0);
+//    }
 
     private void ResetShopPurchaseCount(Long userId, boolean day, boolean week, boolean month) {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);

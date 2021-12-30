@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface MyContentsInfoRepository extends JpaRepository<MyContentsInfo, Long> {
     Optional<MyContentsInfo> findByUseridUser (Long userId);
-    List<MyContentsInfo> findAllByChallengeTowerFloorNot(int floor);
 }

@@ -145,7 +145,10 @@ public class MyAccessoryInventoryService {
         }
 
         int spendDiamond = (100 * ((int)(Math.pow(lockCount, 2)) + 1));
-        user.SpendDiamond(spendDiamond);
+        if (!user.SpendDiamond(spendDiamond)) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NEED_MORE_DIAMOND.getIntegerValue(), "Need More Diamond", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Need More Diamond", ResponseErrorCode.NEED_MORE_DIAMOND);
+        }
 
         List<Double> probabilityList = new ArrayList<>();
         probabilityList.add(0.4);

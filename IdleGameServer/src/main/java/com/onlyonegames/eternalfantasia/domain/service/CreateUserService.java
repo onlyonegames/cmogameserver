@@ -96,6 +96,8 @@ public class CreateUserService
 
     private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
 
+    private final MyClassPotentialityDataRepository myClassPotentialityDataRepository;
+
     public Map<String, Object> createUser(UserBaseDto userCreateDto, Map<String, Object> map)
     {
         Set<Role> roles = new HashSet<>();
@@ -193,6 +195,9 @@ public class CreateUserService
         MyEventExchangeInfo myEventExchangeInfo = createMyEventExchangeInfo(userid);
         myEventExchangeInfoRepository.save(myEventExchangeInfo);
 
+        MyClassPotentialityData myClassPotentialityData = createMyClassPotentialityData(userid);
+        myClassPotentialityDataRepository.save(myClassPotentialityData);
+
         return map;
     }
 
@@ -266,7 +271,9 @@ public class CreateUserService
     }
 
     private MyContentsInfo createMyContentsInfo(Long userId) {
-        return MyContentsInfo.builder().useridUser(userId).challengeTowerFloor(0).build();
+        MyContentsInfoDto myContentsInfoDto = new MyContentsInfoDto();
+        myContentsInfoDto.setUseridUser(userId);
+        return myContentsInfoDto.ToEntity();
     }
 
     private MyDungeonInfo createMyDungeonInfo(Long userId) {
@@ -353,5 +360,11 @@ public class CreateUserService
         MyEventExchangeInfoDto myEventExchangeInfoDto = new MyEventExchangeInfoDto();
         myEventExchangeInfoDto.setUseridUser(userId);
         return myEventExchangeInfoDto.ToEntity();
+    }
+
+    private MyClassPotentialityData createMyClassPotentialityData(Long userId) {
+        MyClassPotentialityDataDto myClassPotentialityDataDto = new MyClassPotentialityDataDto();
+        myClassPotentialityDataDto.SetMyClassPotentialityDataDto(userId, gameDataTableService.InitJsonDatasForFirstUser().get(9).getInitJson());
+        return myClassPotentialityDataDto.ToEntity();
     }
 }

@@ -54,6 +54,8 @@ public class UserService {
     private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
     private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
     private final VersionCheckService versionCheckService;
+    private final MyClassPotentialityDataRepository myClassPotentialityDataRepository;
+    private final GameDataTableService gameDataTableService;
 
 
     //세션 redis
@@ -170,6 +172,13 @@ public class UserService {
             MyEventExchangeInfoDto myEventExchangeInfoDto = new MyEventExchangeInfoDto();
             myEventExchangeInfoDto.setUseridUser(userId);
             myEventExchangeInfoRepository.save(myEventExchangeInfoDto.ToEntity());
+        }
+
+        MyClassPotentialityData myClassPotentialityData = myClassPotentialityDataRepository.findByUseridUser(userId).orElse(null);
+        if (myClassPotentialityData == null) {
+            MyClassPotentialityDataDto myClassPotentialityDataDto = new MyClassPotentialityDataDto();
+            myClassPotentialityDataDto.SetMyClassPotentialityDataDto(userId, gameDataTableService.InitJsonDatasForFirstUser().get(9).getInitJson());
+            myClassPotentialityDataRepository.save(myClassPotentialityDataDto.ToEntity());
         }
 
         versionCheckService.VersionCheck(map);

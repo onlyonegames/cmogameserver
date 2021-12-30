@@ -70,11 +70,8 @@ public class User {
     double fragment;
     Long eventItem;
     int advancedEventItem;
-    Long worrierEmblem;
-    Long thiefEmblem;
-    Long knightEmblem;
-    Long archerEmblem;
-    Long magicianEmblem;
+    Long classEmblem;
+    int challengeTicket;
 //    int totalPurchase;
 
     @CreatedDate
@@ -126,11 +123,8 @@ public class User {
         this.fragment = 0;
         this.eventItem = 0L;
         this.advancedEventItem = 0;
-        this.worrierEmblem = 0L;
-        this.thiefEmblem = 0L;
-        this.knightEmblem = 0L;
-        this.archerEmblem = 0L;
-        this.magicianEmblem = 0L;
+        this.classEmblem = 0L;
+        this.challengeTicket = 0;
     }
 
 //    public void AddPurchase(int price) {
@@ -208,6 +202,20 @@ public class User {
         if (spendAdvancedEventItem > this.advancedEventItem)
             return false;
         this.advancedEventItem -= spendAdvancedEventItem;
+        return true;
+    }
+
+    public boolean SpendClassEmblem(Long spendClassEmblem) {
+        if (spendClassEmblem > this.classEmblem)
+            return false;
+        this.classEmblem -= spendClassEmblem;
+        return true;
+    }
+
+    public boolean SpendChallengeTicket(int spendChallengeTicket) {
+        if (spendChallengeTicket > this.challengeTicket)
+            return false;
+        this.challengeTicket -= spendChallengeTicket;
         return true;
     }
 
@@ -344,20 +352,11 @@ public class User {
     }
 
 
-    public void SetWorrierEmblem(String element) {
-        this.worrierEmblem = Long.parseLong(element);
+    public void SetClassEmblem(String element) {
+        this.classEmblem = Long.parseLong(element);
     }
-    public void SetThiefEmblem(String element) {
-        this.thiefEmblem = Long.parseLong(element);
-    }
-    public void SetKnightEmblem(String element) {
-        this.knightEmblem = Long.parseLong(element);
-    }
-    public void SetArcherEmblem(String element) {
-        this.archerEmblem = Long.parseLong(element);
-    }
-    public void SetMagicianEmblem(String element) {
-        this.magicianEmblem = Long.parseLong(element);
+    public void SetChallengeTicket(String element) {
+        this.challengeTicket = Integer.parseInt(element);
     }
 
     public void ADRemove() {

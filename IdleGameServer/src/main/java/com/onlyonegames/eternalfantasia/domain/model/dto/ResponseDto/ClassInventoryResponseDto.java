@@ -10,6 +10,9 @@ public class ClassInventoryResponseDto {
     int count;
     int promotionPercent;
     int isPromotionLock;
+    int superiorLevel;
+    String superiorOptions;
+    String superiorOptionLock;
 
     public void InitFromDB(MyClassInventory dbData) {
         this.code = dbData.getCode();
@@ -17,5 +20,8 @@ public class ClassInventoryResponseDto {
         this.count = dbData.getCount();
         this.promotionPercent = dbData.getPromotionPercent();
         this.isPromotionLock = dbData.getIsPromotionLock();
+        this.superiorLevel = dbData.getSuperiorLevel();
+        this.superiorOptions = dbData.getSuperiorOptions();
+        this.superiorOptionLock = dbData.getSuperiorOptionLock();
     }
 }

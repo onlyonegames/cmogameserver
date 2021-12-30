@@ -23,6 +23,9 @@ public class MyClassInventory extends BaseTimeEntity {
     int count;
     int promotionPercent;
     int isPromotionLock;
+    int superiorLevel;
+    String superiorOptions;
+    String superiorOptionLock;
 
     public void AddCount(int addCount) {
         this.count += addCount;
@@ -40,10 +43,42 @@ public class MyClassInventory extends BaseTimeEntity {
         this.level += 1;
     }
 
+    public void ReturnLegend() {
+        int percent = this.promotionPercent;
+        int count = (percent / 5) * 4;
+        this.promotionPercent = 0;
+        this.count += count;
+    }
+
     public void SetMyClassInventory(ClassInventoryResponseDto dto) {
         this.level = dto.getLevel();
         this.count = dto.getCount();
         this.promotionPercent = dto.getPromotionPercent();
         this.isPromotionLock = dto.getIsPromotionLock();
+        this.superiorOptions = dto.getSuperiorOptions();
+        this.superiorOptionLock = dto.getSuperiorOptionLock();
+    }
+
+    public void SetterMyClassInventory(ClassInventoryResponseDto dto) {
+        this.level = dto.getLevel();
+        this.count = dto.getCount();
+        this.promotionPercent = dto.getPromotionPercent();
+        this.isPromotionLock = dto.getIsPromotionLock();
+        this.superiorOptionLock = dto.getSuperiorOptionLock();
+    }
+
+    public boolean UpgradeClass() {
+        if (this.superiorLevel > 5)
+            return false;
+        this.superiorLevel += 1;
+        return true;
+    }
+
+    public void ResetOptions(String superiorOptions){
+        this.superiorOptions = superiorOptions;
+    }
+
+    public void ResetOptionLock(String superiorOptionLock) {
+        this.superiorOptionLock = superiorOptionLock;
     }
 }

@@ -17,17 +17,35 @@ public class MyContentsInfo extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "hibernate_sequence")
     Long id;
     Long useridUser;
-    public int challengeTowerFloor;
+    public int warriorChallengeTowerFloor;
+    public int thiefChallengeTowerFloor;
+    public int knightChallengeTowerFloor;
+    public int archerChallengeTowerFloor;
+    public int magicianChallengeTowerFloor;
     public int adventureStage;
     public int adventureDifficulty;
+    public int challengeTowerDiamondCount;
 
-    public void SetChallengeTowerFloor(int challengeTowerFloor) {
-        this.challengeTowerFloor = challengeTowerFloor;
+
+    public void SetWarriorChallengeTowerFloor(int warriorChallengeTowerFloor) {
+        this.warriorChallengeTowerFloor = warriorChallengeTowerFloor;
     }
 
-    public void SetChallengeTowerFloor(String challengeTowerFloor) {
-        this.challengeTowerFloor = Integer.parseInt(challengeTowerFloor);
+    public void SetThiefChallengeTowerFloor(int thiefChallengeTowerFloor) {
+        this.thiefChallengeTowerFloor = thiefChallengeTowerFloor;
     }
+
+    public void SetKnightChallengeTowerFloor(int knightChallengeTowerFloor) {
+        this.knightChallengeTowerFloor = knightChallengeTowerFloor;
+    }
+
+    public void SetArcherChallengeTowerFloor(int archerChallengeTowerFloor) {
+        this.archerChallengeTowerFloor = archerChallengeTowerFloor;
+    }
+    public void SetMagicianChallengeTowerFloor(int magicianChallengeTowerFloor) {
+        this.magicianChallengeTowerFloor = magicianChallengeTowerFloor;
+    }
+
 
     public void ClearStage() { //마지막 스테이지를 확인하여 최대 제한
         if (adventureDifficulty == 5 && this.adventureStage == 0)
@@ -41,7 +59,11 @@ public class MyContentsInfo extends BaseTimeEntity {
             this.adventureStage++;
     }
 
-    public void ClearFloor() {
-        this.challengeTowerFloor++;
+    public void DiamondEntry() {
+        this.challengeTowerDiamondCount++;
+    }
+
+    public void ResetChallengeTowerDiamondCount() {
+        this.challengeTowerDiamondCount = 0;
     }
 }
