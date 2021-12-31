@@ -68,15 +68,15 @@ public class MyShopInfoDto {
         this.newYearWhitePackage = 1;
         this.newYearYellowPackage = 1;
         this.newYearRedPackage = 1;
-        this.newYearGrowthUpPackage1 = 1;
+        this.newYearGrowthUpPackage1 = 5;
         this.newYearGrowthUpPackage2 = 3;
         this.newYearGrowthUpPackage3 = 3;
-        this.newYearGrowthUpPackage4 = 2;
+        this.newYearGrowthUpPackage4 = 3;
         this.newYearGrowthUpPackage5 = 1;
-        this.newYearChallengePackage1 = 1;
+        this.newYearChallengePackage1 = 5;
         this.newYearChallengePackage2 = 3;
         this.newYearChallengePackage3 = 3;
-        this.newYearChallengePackage4 = 2;
+        this.newYearChallengePackage4 = 3;
         this.newYearChallengePackage5 = 1;
     }
 }
