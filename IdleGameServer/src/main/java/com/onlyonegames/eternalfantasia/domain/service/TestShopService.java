@@ -149,6 +149,90 @@ public class TestShopService {
                     throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
                 }
                 break;
+            case "임인년 특별패키지(흑)":
+                if (!myShopInfo.BuyNewYearBlackPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 특별패키지(백)":
+                if (!myShopInfo.BuyNewYearWhitePackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 특별패키지(황)":
+                if (!myShopInfo.BuyNewYearYellowPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 특별패키지(홍)":
+                if (!myShopInfo.BuyNewYearRedPackage()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 성장 패키지 1":
+                if (!myShopInfo.BuyNewYearGrowthUpPackage1()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 성장 패키지 2":
+                if (!myShopInfo.BuyNewYearGrowthUpPackage2()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 성장 패키지 3":
+                if (!myShopInfo.BuyNewYearGrowthUpPackage3()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 성장 패키지 4":
+                if (!myShopInfo.BuyNewYearGrowthUpPackage4()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 성장 패키지 5":
+                if (!myShopInfo.BuyNewYearGrowthUpPackage5()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 도전 패키지 1":
+                if (!myShopInfo.BuyNewYearChallengePackage1()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 도전 패키지 2":
+                if (!myShopInfo.BuyNewYearChallengePackage2()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 도전 패키지 3":
+                if (!myShopInfo.BuyNewYearChallengePackage3()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 도전 패키지 4":
+                if (!myShopInfo.BuyNewYearChallengePackage4()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
+            case "임인년 도전 패키지 5":
+                if (!myShopInfo.BuyNewYearChallengePackage5()) {
+                    errorLoggingService.SetErrorLog(userId, ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE.getIntegerValue(), "Fail! -> Cause: Can't buy package anymore", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                    throw new MyCustomException("Fail! -> Cause: Can't buy package anymore", ResponseErrorCode.CANT_BUY_PACKAGE_ANYMORE);
+                }
+                break;
         }
         Map<String, Object> tempMap = new HashMap<>();
         boolean purchase = shopRewardTable.getCurrencyType().equals("cash");
@@ -172,6 +256,13 @@ public class TestShopService {
                 case "legendClass":
                     for (int j = 0; j < Integer.parseInt(reward[1]); j++) {
                         HeroClassInfoTable heroClassInfoTable = GetLegendRandomHeroClassInfoTable();
+                        String code = heroClassInfoTable.getCode();
+                        SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
+                    }
+                    break;
+                case "divineClass":
+                    for (int j = 0; j < Integer.parseInt(reward[1]); j++) {
+                        HeroClassInfoTable heroClassInfoTable = GetDivineRandomHeroClassInfoTable();
                         String code = heroClassInfoTable.getCode();
                         SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
                     }
@@ -282,6 +373,13 @@ public class TestShopService {
     private HeroClassInfoTable GetLegendRandomHeroClassInfoTable() {
         List<HeroClassInfoTable> heroClassInfoTableList = gameDataTableService.HeroClassInfoTable();
         List<HeroClassInfoTable> legendHeroClassInfoTableList = heroClassInfoTableList.stream().filter(i -> i.getGrade().equals("legend")).collect(Collectors.toList());
+        int index = (int) (Math.random() * 5);
+        return legendHeroClassInfoTableList.get(index);
+    }
+
+    private HeroClassInfoTable GetDivineRandomHeroClassInfoTable() {
+        List<HeroClassInfoTable> heroClassInfoTableList = gameDataTableService.HeroClassInfoTable();
+        List<HeroClassInfoTable> legendHeroClassInfoTableList = heroClassInfoTableList.stream().filter(i -> i.getGrade().equals("divine")).collect(Collectors.toList());
         int index = (int) (Math.random() * 5);
         return legendHeroClassInfoTableList.get(index);
     }

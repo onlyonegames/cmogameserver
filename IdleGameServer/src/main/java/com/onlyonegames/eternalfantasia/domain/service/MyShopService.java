@@ -261,6 +261,13 @@ public class MyShopService {
                         SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
                     }
                     break;
+                case "divineClass":
+                    for (int j = 0; j < Integer.parseInt(reward[1]); j++) {
+                        HeroClassInfoTable heroClassInfoTable = GetDivineRandomHeroClassInfoTable();
+                        String code = heroClassInfoTable.getCode();
+                        SendMail(userId, purchase, shopRewardTable.getItemName(), code, "1", tempMap);
+                    }
+                    break;
                 case "legendEquipment":
                     for (int j = 0; j < Integer.parseInt(reward[1]); j++) {
                         EquipmentTable equipmentTable = GetLegendRandomEquipment();
