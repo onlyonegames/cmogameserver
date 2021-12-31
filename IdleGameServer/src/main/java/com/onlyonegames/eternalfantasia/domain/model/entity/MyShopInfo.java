@@ -31,6 +31,20 @@ public class MyShopInfo extends BaseTimeEntity {
     public int soulStoneAD;
     public int speedAD;
     public int fragmentPackage;
+    public int newYearBlackPackage;
+    public int newYearWhitePackage;
+    public int newYearYellowPackage;
+    public int newYearRedPackage;
+    public int newYearGrowthUpPackage1;
+    public int newYearGrowthUpPackage2;
+    public int newYearGrowthUpPackage3;
+    public int newYearGrowthUpPackage4;
+    public int newYearGrowthUpPackage5;
+    public int newYearChallengePackage1;
+    public int newYearChallengePackage2;
+    public int newYearChallengePackage3;
+    public int newYearChallengePackage4;
+    public int newYearChallengePackage5;
     Long useridUser;
 
     public boolean BuyFreeDiamond() {
@@ -125,6 +139,92 @@ public class MyShopInfo extends BaseTimeEntity {
         return true;
     }
 
+
+    public boolean BuyNewYearBlackPackage() {
+        if (this.newYearBlackPackage < 1)
+            return false;
+        this.newYearBlackPackage -= 1;
+        return true;
+    }
+    public boolean BuyNewYearWhitePackage() {
+        if (this.newYearWhitePackage < 1)
+            return false;
+        this.newYearWhitePackage -= 1;
+        return true;
+    }
+    public boolean BuyNewYearYellowPackage() {
+        if (this.newYearYellowPackage < 1)
+            return false;
+        this.newYearYellowPackage -= 1;
+        return true;
+    }
+    public boolean BuyNewYearRedPackage() {
+        if (this.newYearRedPackage < 1)
+            return false;
+        this.newYearRedPackage -= 1;
+        return true;
+    }
+    public boolean BuyNewYearGrowthUpPackage1() {
+        if (this.newYearGrowthUpPackage1 < 1)
+            return false;
+        this.newYearGrowthUpPackage1 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearGrowthUpPackage2() {
+        if (this.newYearGrowthUpPackage2 < 1)
+            return false;
+        this.newYearGrowthUpPackage2 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearGrowthUpPackage3() {
+        if (this.newYearGrowthUpPackage3 < 1)
+            return false;
+        this.newYearGrowthUpPackage3 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearGrowthUpPackage4() {
+        if (this.newYearGrowthUpPackage4 < 1)
+            return false;
+        this.newYearGrowthUpPackage4 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearGrowthUpPackage5() {
+        if (this.newYearGrowthUpPackage5 < 1)
+            return false;
+        this.newYearGrowthUpPackage5 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearChallengePackage1() {
+        if (this.newYearChallengePackage1 < 1)
+            return false;
+        this.newYearChallengePackage1 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearChallengePackage2() {
+        if (this.newYearChallengePackage2 < 1)
+            return false;
+        this.newYearChallengePackage2 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearChallengePackage3() {
+        if (this.newYearChallengePackage3 < 1)
+            return false;
+        this.newYearChallengePackage3 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearChallengePackage4() {
+        if (this.newYearChallengePackage4 < 1)
+            return false;
+        this.newYearChallengePackage4 -= 1;
+        return true;
+    }
+    public boolean BuyNewYearChallengePackage5() {
+        if (this.newYearChallengePackage5 < 1)
+            return false;
+        this.newYearChallengePackage5 -= 1;
+        return true;
+    }
+
     public void RechargeDay() {
         this.freeDiamond = 1;
         this.todayPackage = 3;
@@ -136,6 +236,10 @@ public class MyShopInfo extends BaseTimeEntity {
         this.soulStoneAD = 3;
         this.speedAD = 3;
         this.fragmentPackage = 3;
+        this.newYearGrowthUpPackage2 = 3;
+        this.newYearGrowthUpPackage3 = 3;
+        this.newYearChallengePackage2 = 3;
+        this.newYearChallengePackage3 = 3;
     }
 
     public void RechargeWeek() {
