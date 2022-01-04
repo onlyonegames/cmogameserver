@@ -19,7 +19,7 @@ public class StandardTime extends BaseTimeEntity {
     public LocalDateTime baseDayTime;
     public LocalDateTime baseWeekTime;
     public LocalDateTime baseMonthTime;
-    int challengeTowerClassIndex;
+    public int challengeTowerClassIndex;
 
     public void SetBaseDayTimeNow() {
         baseDayTime = LocalDateTime.now();

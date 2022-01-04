@@ -3,13 +3,16 @@ package com.onlyonegames.eternalfantasia.domain.service.Inventory;
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.MyBelongingInventoryDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.NameChangeLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.BelongingInventoryJsonData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Contents.Leaderboard.ArenaRedisRanking;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Inventory.MyBelongingInventory;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Logging.NameChangeLog;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.MyBelongingInventoryRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.NameChangeLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
 import lombok.AllArgsConstructor;
@@ -39,6 +42,7 @@ public class MyBelongingInventoryService {
     private final WorldBossRankingRepository worldBossRankingRepository;
     private final WorldBossRedisRankingRepository worldBossRedisRankingRepository;
     private final PreviousWorldBossRankingRepository previousWorldBossRankingRepository;
+    private final NameChangeLogRepository nameChangeLogRepository;
 
     public Map<String, Object> SpendItem(Long userId, String code, int count, Map<String, Object> map) {
         String[] codeSplit = code.split("_");
@@ -74,6 +78,8 @@ public class MyBelongingInventoryService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: User not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
+        String previousName = user.getUserGameName();
+        NameChangeLogDto nameChangeLogDto = null;
         if(user.isNew_user())
             user.SetNew_User();
         else {
@@ -84,6 +90,9 @@ public class MyBelongingInventoryService {
             }
             myBelongingInventory.SpendItem(1);
             map.put("count", myBelongingInventory.getCount());
+            nameChangeLogDto = new NameChangeLogDto();
+            nameChangeLogDto.SetNameChangeLogDto(userId, previousName, gameName);
+            nameChangeLogRepository.save(nameChangeLogDto.ToEntity());
         }
         user.SetUserName(gameName);
 
