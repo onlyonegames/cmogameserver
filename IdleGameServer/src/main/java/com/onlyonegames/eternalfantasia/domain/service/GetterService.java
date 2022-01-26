@@ -1078,7 +1078,7 @@ public class GetterService {
                                         MyRuneInventory myRuneInventory = myRuneInventoryList.stream().filter(j -> j.getCode().equals(runeInventoryResponseDto.getCode())).findAny().orElse(null);
                                         if (myRuneInventory == null) {
                                             MyRuneInventoryDto myRuneInventoryDto = new MyRuneInventoryDto();
-                                            myRuneInventoryDto.SetMyRuneInventoryDto(userId, runeInventoryResponseDto.getCode(), runeInventoryResponseDto.getCount(), runeInventoryResponseDto.getLevel());
+                                            myRuneInventoryDto.SetMyRuneInventoryDto(userId, runeInventoryResponseDto.getCode(), runeInventoryResponseDto.getCount(), runeInventoryResponseDto.getLevel(), runeInventoryResponseDto.getIsPromotionLock());
                                             myRuneInventory = myRuneInventoryRepository.save(myRuneInventoryDto.ToEntity());
                                             myRuneInventoryList.add(myRuneInventory);
                                         } else {

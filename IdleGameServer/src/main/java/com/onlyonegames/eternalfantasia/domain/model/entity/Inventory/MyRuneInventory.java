@@ -21,6 +21,7 @@ public class MyRuneInventory extends BaseTimeEntity {
     String code;
     int count;
     int level;
+    int isPromotionLock;
 
 //    public boolean RuneEvolution() {
 //        if(rune_Id != 30 || count >= 2){
@@ -53,5 +54,6 @@ public class MyRuneInventory extends BaseTimeEntity {
     public void SetRuneInventory(RuneInventoryResponseDto dto) {
         this.count = dto.getCount();
         this.level = dto.getLevel();
+        this.isPromotionLock = dto.getIsPromotionLock();
     }
 }

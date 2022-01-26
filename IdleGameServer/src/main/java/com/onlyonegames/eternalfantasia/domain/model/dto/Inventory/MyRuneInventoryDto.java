@@ -10,9 +10,10 @@ public class MyRuneInventoryDto {
     String code;
     int count;
     int level;
+    int isPromotionLock;
 
     public MyRuneInventory ToEntity() {
-        return MyRuneInventory.builder().useridUser(useridUser).code(code).count(count).level(level).build();
+        return MyRuneInventory.builder().useridUser(useridUser).code(code).count(count).level(level).isPromotionLock(0).build();
     }
 
     public void InitFromDBData(MyRuneInventory dbData){
@@ -25,6 +26,7 @@ public class MyRuneInventoryDto {
 //        this.grade = dbData.getGrade();
         this.count = dbData.getCount();
         this.level = dbData.getLevel();
+        this.isPromotionLock = dbData.getIsPromotionLock();
     }
 
 //    public void SetMyRuneInventoryDto(Long useridUser, int type_Id, int count) {
@@ -38,10 +40,11 @@ public class MyRuneInventoryDto {
 //        this.type_Id = Integer.parseInt(type_Id);
 //        this.count = Integer.parseInt(count);
 //    }
-    public void SetMyRuneInventoryDto(Long useridUser, String code, int count, int level){
+    public void SetMyRuneInventoryDto(Long useridUser, String code, int count, int level, int isPromotionLock){
         this.useridUser = useridUser;
         this.code = code;
         this.count = count;
         this.level = level;
+        this.isPromotionLock = isPromotionLock;
     }
 }

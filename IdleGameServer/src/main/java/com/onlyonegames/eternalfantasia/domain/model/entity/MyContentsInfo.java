@@ -48,10 +48,10 @@ public class MyContentsInfo extends BaseTimeEntity {
 
 
     public void ClearStage() { //마지막 스테이지를 확인하여 최대 제한
-        if (adventureDifficulty == 5 && this.adventureStage == 0)
+        if (adventureDifficulty == 7 && this.adventureStage == 0)
             return;
         if(this.adventureStage+1>=140){
-            if(this.adventureDifficulty < 5)
+            if(this.adventureDifficulty < 7)
                 this.adventureDifficulty++;
             this.adventureStage = 0;
         }
