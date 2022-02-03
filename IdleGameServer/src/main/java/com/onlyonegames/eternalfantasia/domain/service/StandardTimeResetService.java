@@ -91,7 +91,7 @@ public class StandardTimeResetService {
 
     private void ResetChallengeTower(StandardTime standardTime) {
         int classIndex = standardTime.getChallengeTowerClassIndex() + 1;
-        standardTime.SetChallengeTowerClassIndex(classIndex<6?classIndex:1);
+        standardTime.SetChallengeTowerClassIndex(classIndex<5?classIndex:0);
 //        List<MyContentsInfo> myContentsInfoList = myContentsInfoRepository.findAllByChallengeTowerFloorNot(0);
 //        for(MyContentsInfo temp : myContentsInfoList) {
 //            temp.SetChallengeTowerFloor(0);
