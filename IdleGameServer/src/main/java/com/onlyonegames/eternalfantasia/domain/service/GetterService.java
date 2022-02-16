@@ -4,6 +4,8 @@ import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
 import com.onlyonegames.eternalfantasia.domain.model.dto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Inventory.*;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.CommonLogDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.LogFormatDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.*;
 import com.onlyonegames.eternalfantasia.domain.model.entity.*;
@@ -15,6 +17,7 @@ import com.onlyonegames.eternalfantasia.domain.repository.*;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyArenaPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Contents.MyWorldBossPlayDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Inventory.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Logging.CommonLogRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Contents.Leaderboard.BattlePowerLeaderboardService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
@@ -26,6 +29,7 @@ import java.lang.reflect.Field;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static com.onlyonegames.eternalfantasia.EternalfantasiaApplication.IS_DIRECT_WRIGHDB;
@@ -69,6 +73,8 @@ public class GetterService {
     private final MyAmplificationStatusInfoRepository myAmplificationStatusInfoRepository;
     private final MyEventExchangeInfoRepository myEventExchangeInfoRepository;
     private final MyClassPotentialityDataRepository myClassPotentialityDataRepository;
+    private final MyHolyThingInventoryRepository myHolyThingInventoryRepository;
+    private final CommonLogRepository commonLogRepository;
 
     public Map<String, Object> Getter(Long userId, RequestDto requestList, Map<String, Object> map) throws IllegalAccessException, NoSuchFieldException {
         ServerStatusInfo serverStatusInfo = serverStatusInfoRepository.getOne(1);
@@ -99,6 +105,7 @@ public class GetterService {
         MyAmplificationStatusInfo myAmplificationStatusInfo = null;
         MyEventExchangeInfo myEventExchangeInfo = null;
         MyClassPotentialityData myClassPotentialityData = null;
+        List<MyHolyThingInventory> myHolyThingInventoryList = null;
 
         User user = userRepository.findById(userId).orElse(null);
         if (user == null) {
@@ -150,6 +157,9 @@ public class GetterService {
                                 case "knightEmblem":
                                 case "archerEmblem":
                                 case "magicianEmblem":
+                                case "crystalBall":
+                                case "starPiece":
+                                case "holyThingGachaCount":
                                     break;
                                 case "runeLevel":
                                     if (myRuneLevelInfoData == null) {
@@ -408,6 +418,14 @@ public class GetterService {
                             }
                         }
                         break;
+                    case "holyThingInventory":
+                        if (myHolyThingInventoryList == null) {
+                            myHolyThingInventoryList = myHolyThingInventoryRepository.findAllByUseridUser(userId);
+                            if (myHolyThingInventoryList == null) {
+                                errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Fount yHolyThingInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                throw new MyCustomException("Not Found MyHolyThingInventory", ResponseErrorCode.NOT_FIND_DATA);
+                            }
+                        }
                 }
             }
         }
@@ -497,6 +515,15 @@ public class GetterService {
                                             break;
                                         case "challengeTicket":
                                             element.SetValue(user.getChallengeTicket());
+                                            break;
+                                        case "crystalBall":
+                                            element.SetValue(user.getCrystalBall());
+                                            break;
+                                        case "starPiece":
+                                            element.SetValue(user.getStarPiece());
+                                            break;
+                                        case "holyThingGachaCount":
+                                            element.SetValue(user.getHolyThingGachaCount());
                                             break;
                                     }
                                 }
@@ -978,6 +1005,35 @@ public class GetterService {
                                     element.SetValue(field.get(myClassPotentialityData).toString());
                                 }
                                 break;
+                            case "holyThingInventory":
+                                List<ElementDto> holyThingElementDtoList = new ArrayList<>();
+                                boolean holyThingFlag = false;
+                                for(ElementDto element : container.elements) {
+                                    if(element.getElement().equals("all")) {
+                                        for(MyHolyThingInventory item : myHolyThingInventoryList) {
+                                            ElementDto inventory = new ElementDto();
+                                            HolyThingInventoryResponseDto holyThingInventoryResponseDto = new HolyThingInventoryResponseDto();
+                                            holyThingInventoryResponseDto.InitFromDB(item);
+                                            String jsonData = JsonStringHerlper.WriteValueAsStringFromData(holyThingInventoryResponseDto);
+                                            inventory.SetElement(item.getCode(), jsonData);
+                                            holyThingElementDtoList.add(inventory);
+                                        }
+                                        holyThingFlag = true;
+                                        break;
+                                    }
+                                    MyHolyThingInventory myHolyThingInventory = myHolyThingInventoryList.stream().filter(i -> i.getCode().equals(element.getElement())).findAny().orElse(null);
+                                    if(myHolyThingInventory == null) {
+                                        errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Not Found MyHolyThingInventory", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                                        throw new MyCustomException("Not Found MyHolyThingInventory", ResponseErrorCode.NOT_FIND_DATA);
+                                    }
+                                    HolyThingInventoryResponseDto holyThingInventoryResponseDto = new HolyThingInventoryResponseDto();
+                                    holyThingInventoryResponseDto.InitFromDB(myHolyThingInventory);
+                                    String jsonData = JsonStringHerlper.WriteValueAsStringFromData(holyThingInventoryResponseDto);
+                                    element.SetValue(jsonData);
+                                }
+                                if (holyThingFlag)
+                                    container.elements = holyThingElementDtoList;
+                                break;
                         }
                     }
                     break;
@@ -1052,6 +1108,15 @@ public class GetterService {
                                             break;
                                         case "challengeTicket":
                                             user.SetChallengeTicket(element.getValue());
+                                            break;
+                                        case "crystalBall":
+                                            user.SetCrystalBall(element.getValue());
+                                            break;
+                                        case "starPiece":
+                                            user.SetStarPiece(element.getValue());
+                                            break;
+                                        case "holyThingGachaCount":
+                                            user.SetHolyThingGachaCount(element.getValue());
                                             break;
                                     }
                                 }
@@ -1340,9 +1405,59 @@ public class GetterService {
                                         field.set(myClassPotentialityData, element.getValue());
                                 }
                                 break;
+                            case "holyThingInventory":
+                                for(ElementDto elementDto : container.elements) {
+                                    HolyThingInventoryResponseDto holyThingInventoryResponseDto = JsonStringHerlper.ReadValueFromJson(elementDto.getValue(), HolyThingInventoryResponseDto.class);
+                                    MyHolyThingInventory myHolyThingInventory = myHolyThingInventoryList.stream().filter(i -> i.getCode().equals(elementDto.getElement())).findAny().orElse(null);
+                                    if (myHolyThingInventory == null) {
+                                        MyHolyThingInventoryDto myHolyThingInventoryDto = new MyHolyThingInventoryDto();
+                                        myHolyThingInventoryDto.SetMyHolyThingInventoryDto(userId, elementDto.getElement(), holyThingInventoryResponseDto.getCount(), holyThingInventoryResponseDto.getLevel());
+                                        myHolyThingInventory = myHolyThingInventoryRepository.save(myHolyThingInventoryDto.ToEntity());
+                                        myHolyThingInventoryList.add(myHolyThingInventory);
+                                    }else {
+                                        myHolyThingInventory.SetMyHolyThingInventoryForResponse(holyThingInventoryResponseDto);
+                                    }
+                                }
+                                break;
                         }
                     }
                     user.SetLastSettingTime();
+                    break;
+                case "log":
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+                    for (ContainerDto container : cmd.containers) {
+                        switch (container.container) {
+                            case "PlayerInfo":
+                                for (ElementDto element : container.elements) {
+                                    switch (element.getElement()) {
+                                        case "crystalBall":
+                                            LogFormatDto logFormatDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
+                                            LocalDateTime logTime = LocalDateTime.parse(logFormatDto.getLogTime(), formatter);
+                                            CommonLogDto commonLogDto = new CommonLogDto();
+                                            commonLogDto.SetCommonLogDto(userId, "crystalBall", logTime, logFormatDto);
+                                            commonLogRepository.save(commonLogDto.ToEntity());
+                                            break;
+                                        case "starPiece":
+                                            LogFormatDto starPieceLogDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
+                                            LocalDateTime starPieceLogTime = LocalDateTime.parse(starPieceLogDto.getLogTime(), formatter);
+                                            CommonLogDto starPieceLog = new CommonLogDto();
+                                            starPieceLog.SetCommonLogDto(userId, "starPiece", starPieceLogTime, starPieceLogDto);
+                                            commonLogRepository.save(starPieceLog.ToEntity());
+                                            break;
+                                    }
+                                }
+                                break;
+                            case "holyThingInventory":
+                                for (ElementDto element : container.elements) {
+                                    LogFormatDto holyThingLogDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
+                                    LocalDateTime holyThingLogTime = LocalDateTime.parse(holyThingLogDto.getLogTime(), formatter);
+                                    CommonLogDto holyThingLog = new CommonLogDto();
+                                    holyThingLog.SetCommonLogDto(userId, element.getElement(), holyThingLogTime, holyThingLogDto);
+                                    commonLogRepository.save(holyThingLog.ToEntity());
+                                }
+                                break;
+                        }
+                    }
                     break;
             }
         }

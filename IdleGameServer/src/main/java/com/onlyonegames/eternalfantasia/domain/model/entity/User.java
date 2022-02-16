@@ -41,6 +41,7 @@ public class User {
     double exp;
     int sexType; //0 : 남자, 1 : 여자 default : 0
     @ManyToMany(fetch = FetchType.EAGER)
+//    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
@@ -72,6 +73,9 @@ public class User {
     int advancedEventItem;
     Long classEmblem;
     int challengeTicket;
+    Long crystalBall;
+    int starPiece;
+    int holyThingGachaCount;
 //    int totalPurchase;
 
     @CreatedDate
@@ -125,6 +129,9 @@ public class User {
         this.advancedEventItem = 0;
         this.classEmblem = 0L;
         this.challengeTicket = 0;
+        this.crystalBall = 0L;
+        this.starPiece = 0;
+        this.holyThingGachaCount = 0;
     }
 
 //    public void AddPurchase(int price) {
@@ -357,6 +364,18 @@ public class User {
     }
     public void SetChallengeTicket(String element) {
         this.challengeTicket = Integer.parseInt(element);
+    }
+
+    public void SetCrystalBall(String element) {
+        this.crystalBall = Long.parseLong(element);
+    }
+
+    public void SetStarPiece(String element) {
+        this.starPiece = Integer.parseInt(element);
+    }
+
+    public void SetHolyThingGachaCount(String element) {
+        this.holyThingGachaCount = Integer.parseInt(element);
     }
 
     public void ADRemove() {
