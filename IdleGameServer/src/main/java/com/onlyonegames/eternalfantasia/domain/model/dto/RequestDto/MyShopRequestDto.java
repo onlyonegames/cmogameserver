@@ -6,4 +6,5 @@ import lombok.Data;
 public class MyShopRequestDto {
     int itemIndex;
     String payLoad;
+    String shop;
 }

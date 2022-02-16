@@ -11,9 +11,11 @@ import com.onlyonegames.eternalfantasia.domain.model.dto.ResponseDto.MyMailBoxRe
 import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.Mail;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailBox;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Mail.MyMailReadLog;
+import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.repository.Mail.MailRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Mail.MyMailBoxRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Mail.MyMailReadLogRepository;
+import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.ErrorLoggingService;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,7 @@ public class MyMailBoxService {
     private final MyMailBoxRepository myMailBoxRepository;
     private final MyMailReadLogRepository myMailReadLogRepository;
     private final ErrorLoggingService errorLoggingService;
+    private final UserRepository userRepository;
 
     public Map<String, Object> GetMyMailBox(Long userId, Map<String, Object> map) {
         MyMailBox myMailBox = myMailBoxRepository.findByUseridUser(userId).orElse(null);
@@ -42,6 +45,12 @@ public class MyMailBoxService {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyMailBox not find.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), IS_DIRECT_WRIGHDB);
             throw new MyCustomException("Fail! -> Cause: MyMailBox not find.", ResponseErrorCode.NOT_FIND_DATA);
         }
+        User user = userRepository.findById(userId).orElse(null);
+        if (user == null) {
+            errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: User Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+            throw new MyCustomException("Fail! -> Cause: User Can't find", ResponseErrorCode.NOT_FIND_DATA);
+        }
+
 
         String json_myMailBoxInfo = myMailBox.getJson_myMailBoxInfo();
         MyMailBoxJsonDto myMailBoxJsonDto = JsonStringHerlper.ReadValueFromJson(json_myMailBoxInfo, MyMailBoxJsonDto.class);

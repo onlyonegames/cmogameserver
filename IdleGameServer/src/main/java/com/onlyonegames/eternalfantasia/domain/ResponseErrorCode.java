@@ -75,7 +75,19 @@ public enum ResponseErrorCode {
     BLACK_USER(-9999, "BLACK_USER"),
 
     ALREADY_USED_COUPON(-10000, "ALREADY_USED_COUPON"),
-    COUPON_NOT_EXIST(-10001, "COUPON_NOT_EXIST");
+    COUPON_NOT_EXIST(-10001, "COUPON_NOT_EXIST"),
+
+    /*-21000부터 Apple AppStore관련 에러*/
+    NOT_USING_HTTP_POST(-21000, "The request to the App Store was not made using the HTTP POST request method."),
+    NO_LONGER_SEND_BY_APP_STORE(-21001, "This status code is no longer sent by the App Store"),
+    WRONG_RECEIPT_DATA(-21002, "The data in the receipt-data property was malformed or the service experienced a temporary issue. Try again."),
+    RECEIPT_COULD_NOT_BE_AUTHENTICATED(-21003, "The receipt could not be authenticated."),
+    SHARED_SECRET_DOES_NOT_MATCH(-21004, "The shared secret you provided does not match the shared secret on file for your account."),
+    RECEIPT_SERVER_NOT_WORK(-21005, "The receipt server was temporarily unable to provide the receipt. Try again."),
+    SUBSCRIPTION_HAS_EXPIRED(-21006, "This receipt is valid but the subscription has expired. When this status code is returned to your server, the receipt data is also decoded and returned as part of the response. Only returned for iOS 6-style transaction receipts for auto-renewable subscriptions."),
+    RECEIPT_FROM_PRODUCTION_TO_TEST(-21008, "This receipt is from the production environment, but it was sent to the test environment for verification."),
+    INTERNAL_DATA_ACCESS_ERROR(-21009, "Internal data access error. Try again later."),
+    USER_ACCOUNT_NOT_FOUND(-21010, "The user account cannot be found or has been deleted.");
     private final int integerValue;
     private final String stringValue;
 

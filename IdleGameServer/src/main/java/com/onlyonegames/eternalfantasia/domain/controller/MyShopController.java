@@ -26,7 +26,7 @@ public class MyShopController {
     public ResponseDTO<Map<String, Object>> ShopBuy(@RequestBody MyShopRequestDto dto) throws IOException {
         Map<String, Object> map = new HashMap<>();
         Long userId = (Long) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Map<String, Object> response = myShopService.ShopBuy(userId, dto.getItemIndex(), dto.getPayLoad(), map);
+        Map<String, Object> response = myShopService.ShopBuy(userId, dto.getItemIndex(), dto.getPayLoad(), dto.getShop(), map);
         return new ResponseDTO<>(HttpStatus.OK, ResponseErrorCode.NONE.getIntegerValue(), "", true, response);
     }
 

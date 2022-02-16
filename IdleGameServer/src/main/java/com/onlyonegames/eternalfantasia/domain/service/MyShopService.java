@@ -2,19 +2,26 @@ package com.onlyonegames.eternalfantasia.domain.service;
 
 import com.onlyonegames.eternalfantasia.domain.MyCustomException;
 import com.onlyonegames.eternalfantasia.domain.ResponseErrorCode;
+import com.onlyonegames.eternalfantasia.domain.model.dto.AppleIap.AppStoreResponse;
+import com.onlyonegames.eternalfantasia.domain.model.dto.AppleIap.ApplePurchaseDataDto;
+import com.onlyonegames.eternalfantasia.domain.model.dto.AppleIap.UserReceipt;
+import com.onlyonegames.eternalfantasia.domain.model.dto.AppleStoreResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.IapResponseDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.Logging.ShopPurchaseLogDto;
 import com.onlyonegames.eternalfantasia.domain.model.dto.RequestDto.MailSendRequestDto;
+import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.ApplePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.Iap.GooglePurchaseData;
 import com.onlyonegames.eternalfantasia.domain.model.entity.MyShopInfo;
 import com.onlyonegames.eternalfantasia.domain.model.entity.User;
 import com.onlyonegames.eternalfantasia.domain.model.gamedatas.*;
+import com.onlyonegames.eternalfantasia.domain.repository.Iap.ApplePurchaseDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Iap.GooglePurchaseDataRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.Logging.ShopPurchaseLogRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.MyShopInfoRepository;
 import com.onlyonegames.eternalfantasia.domain.repository.UserRepository;
 import com.onlyonegames.eternalfantasia.domain.service.Iap.IapService;
 import com.onlyonegames.eternalfantasia.domain.service.Mail.MyMailBoxService;
+import com.onlyonegames.eternalfantasia.etc.AppleUtils;
 import com.onlyonegames.eternalfantasia.etc.JsonStringHerlper;
 import com.onlyonegames.util.MathHelper;
 import lombok.AllArgsConstructor;
@@ -43,8 +50,10 @@ public class MyShopService {
     private final UserRepository userRepository;
     private final GooglePurchaseDataRepository googlePurchaseDataRepository;
     private final ShopPurchaseLogRepository shopPurchaseLogRepository;
+    private final ApplePurchaseDataRepository applePurchaseDataRepository;
+    private final AppleUtils appleUtils;
 
-    public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, Map<String, Object> map) throws IOException {
+    public Map<String, Object> ShopBuy(Long userId, int itemIndex, String payLoad, String shop, Map<String, Object> map) throws IOException {
         MyShopInfo myShopInfo = myShopInfoRepository.findByUseridUser(userId).orElse(null);
         if (myShopInfo == null) {
             errorLoggingService.SetErrorLog(userId, ResponseErrorCode.NOT_FIND_DATA.getIntegerValue(), "Fail! -> Cause: MyShopInfo Can't find", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
@@ -57,7 +66,7 @@ public class MyShopService {
         }
         List<ShopRewardTable> shopRewardTableList = gameDataTableService.ShopRewardTable();
         ShopRewardTable shopRewardTable = shopRewardTableList.get(itemIndex);
-        boolean log = SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad);
+        boolean log = SpendPrice(user, shopRewardTable.getCurrencyType(), shopRewardTable.getPrice(), payLoad, shop);
         String[] rewardList = shopRewardTable.getRewardList().split(",");
         switch (shopRewardTable.getItemName()) {
             case "무료 다이아":
@@ -466,7 +475,7 @@ public class MyShopService {
         myMailBoxService.SendMail(mailSendRequestDto, tempMap);
     }
 
-    private boolean SpendPrice(User user, String currencyType, int price, String payLoad) throws IOException {
+    private boolean SpendPrice(User user, String currencyType, int price, String payLoad, String shop) throws IOException {
         boolean log = false;
         switch (currencyType) {
             case "arenaCoin":
@@ -484,6 +493,7 @@ public class MyShopService {
                 log = true;
                 break;
             case "cash":
+                if (shop.equals("google")) {
                 String test1 = payLoad.replace("Store", "store");
                 String test2 = test1.replace("TransactionID", "transactionID");
                 String test3 = test2.replace("Payload", "payload");
@@ -510,6 +520,32 @@ public class MyShopService {
                 }
                 googlePurchaseData.Consume();
                 break;
+                } else if (shop.equals("apple")) {
+                    AppleStoreResponseDto appleStoreResponseDto = JsonStringHerlper.ReadValueFromJson(payLoad, AppleStoreResponseDto.class);
+                    UserReceipt userReceipt = new UserReceipt();
+                    userReceipt.setReceiptData(appleStoreResponseDto.getPayload());
+                    AppStoreResponse appStoreResponse = null;
+                    try {
+                        appStoreResponse = appleUtils.verifyReceipt(userReceipt, user.getId());
+                    } catch (Exception e) {
+                        errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NOT_VERIFIED_PURCHASE.getIntegerValue(), "Fail! -> Cause: Not Verified Purchase.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: Not Verified Purchase.", ResponseErrorCode.NOT_VERIFIED_PURCHASE);
+                    }
+
+                    ApplePurchaseDataDto applePurchaseDataDto = new ApplePurchaseDataDto();
+                    applePurchaseDataDto.SetApplePurchaseDataDto(user.getId(), appStoreResponse.getReceipt().getInApp().get(0));
+                    ApplePurchaseData applePurchaseData = applePurchaseDataRepository.findByTransactionId(applePurchaseDataDto.getTransactionId()).orElse(null);
+                    if (applePurchaseData == null) {
+                        applePurchaseData = applePurchaseDataRepository.save(applePurchaseDataDto.ToEntity());
+                    }
+                    if (applePurchaseData.isConsume()) {
+                        errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.ALREADY_RECEIVED_ITEM.getIntegerValue(), "Fail! -> Cause: Already Received Item.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
+                        throw new MyCustomException("Fail! -> Cause: Already Received Item.", ResponseErrorCode.ALREADY_RECEIVED_ITEM);
+                    }
+                    applePurchaseData.Consume();
+                    break;
+//                    String response = HttpClient
+                }
             case "mileage":
                 if (!user.SpendMileage(price)) {
                     errorLoggingService.SetErrorLog(user.getId(), ResponseErrorCode.NEED_MORE_MILEAGE.getIntegerValue(), "Fail! -> Cause: Need More Mileage.", this.getClass().getSimpleName(), Thread.currentThread().getStackTrace()[1].getMethodName(), Thread.currentThread().getStackTrace()[1].getLineNumber(), IS_DIRECT_WRIGHDB);
