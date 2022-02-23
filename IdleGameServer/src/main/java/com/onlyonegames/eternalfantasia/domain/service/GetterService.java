@@ -1426,36 +1426,12 @@ public class GetterService {
                 case "log":
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
                     for (ContainerDto container : cmd.containers) {
-                        switch (container.container) {
-                            case "PlayerInfo":
                                 for (ElementDto element : container.elements) {
-                                    switch (element.getElement()) {
-                                        case "crystalBall":
-                                            LogFormatDto logFormatDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
-                                            LocalDateTime logTime = LocalDateTime.parse(logFormatDto.getLogTime(), formatter);
-                                            CommonLogDto commonLogDto = new CommonLogDto();
-                                            commonLogDto.SetCommonLogDto(userId, "crystalBall", logTime, logFormatDto);
-                                            commonLogRepository.save(commonLogDto.ToEntity());
-                                            break;
-                                        case "starPiece":
-                                            LogFormatDto starPieceLogDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
-                                            LocalDateTime starPieceLogTime = LocalDateTime.parse(starPieceLogDto.getLogTime(), formatter);
-                                            CommonLogDto starPieceLog = new CommonLogDto();
-                                            starPieceLog.SetCommonLogDto(userId, "starPiece", starPieceLogTime, starPieceLogDto);
-                                            commonLogRepository.save(starPieceLog.ToEntity());
-                                            break;
-                                    }
-                                }
-                                break;
-                            case "holyThingInventory":
-                                for (ElementDto element : container.elements) {
-                                    LogFormatDto holyThingLogDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
-                                    LocalDateTime holyThingLogTime = LocalDateTime.parse(holyThingLogDto.getLogTime(), formatter);
-                                    CommonLogDto holyThingLog = new CommonLogDto();
-                                    holyThingLog.SetCommonLogDto(userId, element.getElement(), holyThingLogTime, holyThingLogDto);
-                                    commonLogRepository.save(holyThingLog.ToEntity());
-                                }
-                                break;
+                            LogFormatDto commonLogDto = JsonStringHerlper.ReadValueFromJson(element.getValue(), LogFormatDto.class);
+                            LocalDateTime commonLogTime = LocalDateTime.parse(commonLogDto.getLogTime(), formatter);
+                            CommonLogDto commonLog = new CommonLogDto();
+                            commonLog.SetCommonLogDto(userId, element.getElement(), commonLogTime, commonLogDto);
+                            commonLogRepository.save(commonLog.ToEntity());
                         }
                     }
                     break;
